@@ -6,3 +6,8 @@
 			url("./Pilowlava-Regular.woff2"), 
 			format("WOFF2");
 }
+
+::selection {
+	color: #ede9fe;
+	background: #9333ea;
+}
