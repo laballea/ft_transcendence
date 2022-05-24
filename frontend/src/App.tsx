@@ -1,27 +1,41 @@
 import React from 'react'
-import  { Router, Link } from 'react-router-dom'
-import logo from './logo.svg';
+import Logging from './components/logging';
+import Home from './components/home';
+import Profil from './components/profil';
+import { useSelector } from 'react-redux';
+import {
+	BrowserRouter as Router,
+	Routes,
+	Route } from "react-router-dom";
 import './App.css';
 
-function Loggin(){ 
-	const url = new URL("https://api.intra.42.fr/oauth/authorize");
-	url.searchParams.append('client_id', "9384000c12d958f2a599467c2bd482b25cbb0ae8e588e3b3382720ff3d290d02");
-	url.searchParams.append('redirect_uri', "http://localhost/");
-	url.searchParams.append('state', "bonjour je m'appelle pas");
-	url.searchParams.append('response_type', "code");
-	return (
-		<button onClick={event =>  window.location.href=url.toString()}>Log in 42</button>
-	)
-}
-
 function App() {
+
 	return (
-		<div className="App">
-			<header className="App-header">
-				<Loggin/>
-			</header>
-		</div>
+		<Router>
+			<div className="App">
+				<Routes>
+					<Route path="/Profil" element={<Profil/>}/>
+					<Route path="/" element={<Main/>}/>
+				</Routes>
+			</div>
+		</Router>
 	);
 }
+
+function Main() {
+	const global = useSelector((state: any) => state.global)
+	document.title = global.username ===undefined ? "Login" : global.username;
+	return (
+		<>
+			{global.logged === false ?
+				<Logging/>
+				:
+				<Home />
+			}
+		</>
+	);
+  }
+  
 
 export default App;

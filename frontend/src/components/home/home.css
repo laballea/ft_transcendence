@@ -1,0 +1,17 @@
+.header {
+	background-color: #21242b;
+	width: 100%;
+	height: 8vh;
+	text-align: center;
+	justify-content: center;
+	align-items: center;
+}
+
+.contactList {
+	position: absolute;
+	right:0;
+	top:8vh;
+	width:15%;
+	height: 92vh;
+	background-color: #2b303b;
+}
