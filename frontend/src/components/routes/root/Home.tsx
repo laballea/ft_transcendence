@@ -1,7 +1,6 @@
 import React from 'react'
-import Header from '../header'
-import './home.css';
-import ContactList from '../contactList';
+import Header from '../../commons/navbar/NavBar'
+import ContactList from '../../contactList/ContactList';
 export default function Home() {
 	
 	return (

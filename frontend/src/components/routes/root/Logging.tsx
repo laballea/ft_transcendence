@@ -1,11 +1,14 @@
 import React, { useState } from 'react'
+
+// Components
+import BackgroundLogging from '../../commons/backgrounds/BackgroundLogging';
+
+// Hooks
 import { useDispatch } from 'react-redux'
-import { login } from '../../store/global/reducer'
-
-import './logging.css';
+import { login } from '../../../store/global/reducer'
 
 
-export default function Logging() {
+const Logging = () => {
 	const [username, setUsername] = useState("");
 	const dispatch = useDispatch()
 
@@ -43,16 +46,20 @@ export default function Logging() {
 	  };
 
 	return (
-		<div>
+		<>
+			<BackgroundLogging/>
 			<form onSubmit={handleSubmit}>			
-				<div className="container">
-					<label><b>Username</b></label>
+				<div>
+					<label className="font-pilowlava text-amber-800">Username</label>
 					<br/>
 					<input type="text" value={username} onChange={e => setUsername(e.target.value)} required/>
 				</div>
-				<button className="btn" type="submit">Login</button>
-				<button className="btn" onClick={event =>  window.location.href=url.toString()}>Log in 42</button>
+				<button type="submit">Login</button>
+				<button onClick={event =>  window.location.href=url.toString()}>Log in 42</button>
 			</form> 
-		</div>
+		</>
 	);
+
 }
+
+export default Logging

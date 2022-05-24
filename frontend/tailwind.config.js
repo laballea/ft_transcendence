@@ -1,7 +1,15 @@
 module.exports = {
-  content: [],
+  content: [
+    "./src/**/*.{js,jsx,ts,tsx}",
+  ],
   theme: {
-    extend: {},
+    extend: {
+
+    },
+    fontFamily: {
+      'pilowlava': ['Pilowlava-Regular', 'sans-serif'],
+      'space' : ['Space Mono', 'monospace']
+    }
   },
   plugins: [],
 }

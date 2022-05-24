@@ -1,41 +1,30 @@
 import React from 'react'
-import Logging from './components/logging';
-import Home from './components/home';
-import Profil from './components/profil';
-import { useSelector } from 'react-redux';
+
+// Components
+import Profile from './components/routes/root/Profile';
+import Root from './components/routes/root/Root';
+
+// Hooks
 import {
 	BrowserRouter as Router,
 	Routes,
-	Route } from "react-router-dom";
-import './App.css';
+	Route 
+} from "react-router-dom";
 
 function App() {
 
 	return (
 		<Router>
-			<div className="App">
+			<div className="bg-slate-900 w-screen h-screen">
 				<Routes>
-					<Route path="/Profil" element={<Profil/>}/>
-					<Route path="/" element={<Main/>}/>
+					<Route path="/" element={<Root/>}/>
+					<Route path="/Profil" element={<Profile/>}/>
 				</Routes>
 			</div>
 		</Router>
 	);
 }
 
-function Main() {
-	const global = useSelector((state: any) => state.global)
-	document.title = global.username ===undefined ? "Login" : global.username;
-	return (
-		<>
-			{global.logged === false ?
-				<Logging/>
-				:
-				<Home />
-			}
-		</>
-	);
-  }
-  
+
 
 export default App;
