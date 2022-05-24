@@ -1,9 +1,11 @@
-version: "3.8"
+version: "3.3"
 services:
     front:
       build:
           dockerfile: Dockerfile
           context: ./frontend
+      environment:
+          API_URL: http://localhost:5000
       depends_on: 
           - api
       ports:
@@ -16,7 +18,8 @@ services:
             context: ./backend
         depends_on: 
             - postgres
-        environment: 
+        environment:
+            SECRET_KEY: "randomString"
             DATABASE_URL: postgres://user:password@postgres:5432/db
             NODE_ENV: development
             PORT: 5000

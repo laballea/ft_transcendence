@@ -1,0 +1,14 @@
+.contactItem {
+	display: flex;
+	flex:1;
+	flex-direction: row;
+	font-size: 18px;
+	width: 100%;
+	height:5vh;
+}
+
+.main {
+	width:100%;
+	height:100%;
+	background-color: #2b303b;
+}

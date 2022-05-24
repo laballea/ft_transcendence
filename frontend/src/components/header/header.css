@@ -1,0 +1,39 @@
+.main-container {
+	align-items: center;
+	display: flex;
+	height: 100%;
+}
+
+.profil-header {
+	margin-left: 5%;
+	text-align: center;
+	color: #C41E3D;
+    cursor: pointer;
+	font-size: 18px;
+	font-weight: 800;
+}
+
+.logout-header {
+	position: absolute;
+	right:1%;
+}
+
+.logout-btn{
+	font-size: 15px;
+	font-weight: 300;
+	color: #C41E3D;
+}
+
+button:hover {
+	font-size: 22px;
+}
+
+button {
+	background-color: transparent;
+	background-repeat: no-repeat;
+    border: none;
+    cursor: pointer;
+    overflow: hidden;
+    outline: none;
+	transition-duration: 0.4s;
+}
