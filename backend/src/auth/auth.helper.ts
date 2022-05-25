@@ -2,8 +2,8 @@ import { Injectable, HttpException, HttpStatus, UnauthorizedException } from '@n
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { UserEntity } from '../models/user.entity';
-import { UserI } from '../models/user.interface';
+import { UserEntity } from '../user/models/user.entity';
+import { UserI } from '../user/models/user.interface';
 import * as bcrypt from 'bcryptjs';
 
 @Injectable()
