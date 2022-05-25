@@ -18,7 +18,7 @@ function App() {
 			<div className="bg-slate-900 w-screen h-screen">
 				<Routes>
 					<Route path="/" element={<Root/>}/>
-					<Route path="/Profil" element={<Profile/>}/>
+					<Route path="/profile" element={<Profile/>}/>
 				</Routes>
 			</div>
 		</Router>

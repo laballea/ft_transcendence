@@ -1,16 +1,22 @@
 import React from 'react'
-import Header from '../../commons/navbar/NavBar'
+
+// Components
+import NavBar from '../../navbar/NavBar'
 import ContactList from '../../contactList/ContactList';
+import HomeContent from '../../contactList/ContactList';
+import Footer from '../../commons/footer/Footer';
+
+
 export default function Home() {
 	
 	return (
 		<>
-			<div className='header'>
-				<Header/>
-			</div>
-			<div className='contactList'>
+			<NavBar/>
+			<div>
+				<HomeContent/>
 				<ContactList/>
 			</div>
+			<Footer/>
 		</>
 	)
 }
