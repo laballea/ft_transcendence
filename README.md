@@ -12,3 +12,9 @@ run `npm run` to run server locally
   http://localhost:5000 => api
   
   http://localhost:3000 => react app
+
+  http://localhost:5050 => postgres admin
+
+		email: admin@admin.com
+		pw:	root
+
