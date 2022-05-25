@@ -6,17 +6,17 @@ import { IconType } from 'react-icons';
 // Components
 import {FiSmile} from 'react-icons/fi'
 
-type NavBarButtonPrimaryProps = {
+type NavBarButtonSecondaryProps = {
 	cta : string,
 	icon: IconType,
 	onClick : () => void
 }
 
-const NavBarButtonPrimary = ({cta, onClick, icon } : NavBarButtonPrimaryProps) => {
+const NavBarButtonSecondary = ({cta, onClick, icon } : NavBarButtonSecondaryProps) => {
 	const Icon = icon;
 	return (
 		<button	
-				className="	bg-transparent border-2 border-slate-400 hover:border-slate-200 h-[48px] sm:h-[64px] w-[160px] sm:w-[200px] rounded
+				className="	bg-transparent h-[48px] sm:h-[64px] w-[160px] sm:w-[200px] rounded
 							font-space text-[20px] text-slate-400 hover:text-slate-200
 							transition-all duration-300 ease-in-out
 							flex justify-center items-center" 
@@ -27,10 +27,10 @@ const NavBarButtonPrimary = ({cta, onClick, icon } : NavBarButtonPrimaryProps) =
 	)
 }
 
-NavBarButtonPrimary.defaultProps = {
+NavBarButtonSecondary.defaultProps = {
 	cta: "Default",
 	onClick: () => { console.log("Default Click : no actions assigned")},
 	icon: {FiSmile}
 }
 
-export default NavBarButtonPrimary
+export default NavBarButtonSecondary
