@@ -4,7 +4,6 @@ module.exports = {
   ],
   theme: {
     extend: {
-      
     },
     fontFamily: {
       'pilowlava': ['Pilowlava-Regular', 'sans-serif'],

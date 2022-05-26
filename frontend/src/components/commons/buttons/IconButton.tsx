@@ -15,7 +15,7 @@ const IconButton = ({onClick, icon } : IconButtonProps) => {
 	const Icon = icon;
 	return (
 		<button	
-				className="	bg-transparent h-[16px] sm:h-[24px] w-[16px] sm:w-[24px] rounded
+				className="	bg-transparent h-[16px] sm:h-[24px] w-[16px] sm:w-[24px] mr-[8px] rounded
 							text-slate-400 hover:text-slate-200
 							transition-all duration-300 ease-in-out" 
 				onClick={onClick} >

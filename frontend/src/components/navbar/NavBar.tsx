@@ -19,17 +19,25 @@ const NavBar = () => {
 	const global = useSelector((state: any) => state.global)
 	const dispatch = useDispatch()
 
+	// Show Menu hook
 	return (
-		
 		<div className="flex justify-between items-center w-full h-[80px] sm:h-[112px] p-[16px] sm:p-[24px] bg-slate-900"> 
 
 			<div className="flex items-center">
 				<NavBarButtonPrimary cta="Play Now" icon={FiZap}/>
-				<NavBarButtonSecondary cta="Message" icon={FiMessageCircle} />
+				<div className="hidden sm:block">
+					<NavBarButtonSecondary cta="Message" icon={FiMessageCircle} />
+				</div>
 			</div>
 
 			<div>
-				<NavProfile/>
+				<NavProfile 
+					username={global.username}
+					// userImage={global.userImage}
+					// onClickSettings={}
+					onClickLogOut={() => {dispatch(logout())}}
+					onClickProfile={() => {navigate('profile')}}
+				/>
 				{/* <button onClick={() => {navigate('profile')}}>{global.username}</button> */}
 				{/* <button onClick={() => {dispatch(logout())}}>Log out</button> */}
 			</div>
