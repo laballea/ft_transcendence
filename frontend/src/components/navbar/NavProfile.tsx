@@ -1,9 +1,10 @@
 import React from 'react'
 // Components
 import IconButton from 	'../commons/buttons/IconButton'
+import MobileMenuButton from '../commons/buttons/MobileMenuButton'
 
 // Assets
-import {FiSettings, FiLogOut} from 'react-icons/fi'
+import {FiSettings, FiLogOut, FiMessageCircle, FiUser} from 'react-icons/fi'
 import defaultUserImage from '../../assets/images/default-user.png'
 
 type NavProfileProps = {
@@ -46,10 +47,22 @@ const NavProfile = ({username, userImage, onClickLogOut, onClickProfile} : NavPr
 				<div>
 					<img src={userImage} width="40" height="40" alt="userimage" className="rounded-full mr-[8px]"></img>
 				</div>
-				{ showMenu ? 
-				<div className="absolute left-0 top-[80px] w-full h-full bg-slate-800" >
-
-				</div> : null }
+				{ showMenu 
+					? 
+					<div className="flex flex-col justify-between items-stretch
+									absolute left-0 top-[80px] w-full h-[calc(100vh-90px)] bg-slate-800" >
+						<div>
+							<MobileMenuButton cta="Profile"		icon={FiUser}			onClick={onClickProfile} />
+							<MobileMenuButton cta="Message"		icon={FiMessageCircle}	onClick={() => {}} />
+							<MobileMenuButton cta="Settings"	icon={FiSettings}		onClick={() => {}} />
+						</div>
+						<div>
+							<MobileMenuButton cta="Log Out"		icon={FiLogOut}			onClick={onClickLogOut} logout={true}/>
+						</div>
+					</div> 
+					: 
+					null 
+				}
 			</div>
 		</>
 	)
