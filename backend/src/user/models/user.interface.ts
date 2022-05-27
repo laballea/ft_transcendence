@@ -11,3 +11,8 @@ export interface UserI {
 
 	bloqued:number[]
 }
+
+export interface UserP {
+	username: string;
+	socket: any;
+}

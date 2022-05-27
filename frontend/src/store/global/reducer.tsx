@@ -1,5 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { user, status } from '../../common/types'
+import io from "socket.io-client";
 
 const InitialState: user = {
 	logged:false,
@@ -15,6 +16,8 @@ export const globalSlice = createSlice({
 			state.status = status.Connected
 			state.logged = true
 			state.token = data.payload.token
+			state.socket = io("http://localhost:5000/").connect();
+			state.socket.emit('loggin', { username: state.username });
 		},
 		logout: (state: any) => {
 
@@ -31,6 +34,7 @@ export const globalSlice = createSlice({
 				.then(data=>{
 					console.log(data)
 			});
+			state.socket.disconnect();
 			state.username = undefined
 			state.status = status.Disconnected
 			state.logged = false
