@@ -13,9 +13,9 @@ const AddFriendButton = ({ onClick } : AddFriendButtonProps) => {
 	const Icon = FiPlus;
 	return (
 		<button	
-				className="	bg-slate-600 h-[48px] w-full rounded
-							flex justify-left items-center p-[12px]
-							font-space text-[16px] text-slate-400 hover:text-slate-200
+				className="	bg-slate-700 h-[48px] w-full rounded
+							flex justify-left items-center p-[12px] 
+							font-space text-[16px] text-slate-500 hover:text-slate-400
 							transition-all duration-300 ease-in-out" 
 
 				placeholder="Add a Friend"

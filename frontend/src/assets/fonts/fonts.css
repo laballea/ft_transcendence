@@ -11,3 +11,10 @@
 	color: #ede9fe;
 	background: #9333ea;
 }
+
+.backgroundTextOutline {
+	-webkit-text-stroke: 1px #94A3B8;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	text-rendering: optimizeLegibility;
+ }

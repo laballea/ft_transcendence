@@ -3,15 +3,13 @@ import React from 'react'
 // Components
 import LoadingSpinner from '../commons/utils/loadingSpinner';
 import AddFriendButton from '../commons/buttons/AddFriendButton';
+
 // Hooks
 import {useState, useEffect} from 'react'
 import { useSelector } from 'react-redux'
 import { status } from '../../common/types';
 
-
-
-
-export default function ContactList() {
+const ContactList = () => {
 	const global = useSelector((state: any) => state.global)
 	const [state, setState] = useState({contactList:[]})
 
@@ -38,16 +36,19 @@ export default function ContactList() {
 	): [];
 	
 	return (
-		<div className='w-[400px] h-full bg-slate-800 p-[24px] rounded-l'>
+		<div className='block w-full sm:w-[400px] h-full bg-slate-800 p-[16px] mx-[16px] sm:mx-0 rounded sm:rounded-l overflow-scroll'>
 			<AddFriendButton/>
-			{state.contactList.length > 0 ?
+			{
+				state.contactList.length > 0 
+				?
 				listItems
 				:
-				<div style={{width:'100%', height:'100%', justifyContent:'center', display:'flex', alignItems:'center'}}>
+				<div style={{justifyContent:'center', display:'flex', alignItems:'center'}}>
 					<LoadingSpinner/>
 				</div>
 			}
-
 		</div>
 	)
 }
+
+export default ContactList
