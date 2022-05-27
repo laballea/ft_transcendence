@@ -1,8 +1,7 @@
 import React, {useState, useEffect} from 'react'
 import { useSelector } from 'react-redux'
 import { status } from '../../common/types';
-import './contactList.css';
-import LoadingSpinner from '../utils/loadingSpinner';
+import LoadingSpinner from '../commons/utils/loadingSpinner';
 
 export default function ContactList() {
 	const global = useSelector((state: any) => state.global)
@@ -29,8 +28,9 @@ export default function ContactList() {
 			</div>
 		</div>
 	): [];
+	
 	return (
-		<div className='main'>
+		<div className='w-[400px] h-full bg-slate-800 rounded-l'>
 			{state.contactList.length > 0 ?
 				listItems
 				:

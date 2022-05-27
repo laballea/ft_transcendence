@@ -1,9 +1,17 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+
+// CSS
 import './index.css';
+import './assets/fonts/Pilowlava-Regular.woff2';
+import './assets/fonts/fonts.css';
+
+// Components
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import store from './store/global/store'
+
+// Hooks
 import { Provider } from 'react-redux'
 import { persistStore } from 'redux-persist';
 import { PersistGate } from 'redux-persist/integration/react';
