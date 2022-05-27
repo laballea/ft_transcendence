@@ -1,9 +1,16 @@
-import React, {useState, useEffect} from 'react'
+import React from 'react'
+
+// Components
+import LoadingSpinner from '../commons/utils/loadingSpinner';
+import EmptyStateContactList from './EmptyStateContactList';
+import AddFriendButton from '../commons/buttons/AddFriendButton';
+
+// Hooks
+import {useState, useEffect} from 'react'
 import { useSelector } from 'react-redux'
 import { status } from '../../common/types';
-import LoadingSpinner from '../commons/utils/loadingSpinner';
 
-export default function ContactList() {
+const ContactList = () => {
 	const global = useSelector((state: any) => state.global)
 	const [state, setState] = useState({contactList:[]})
 
@@ -30,15 +37,19 @@ export default function ContactList() {
 	): [];
 	
 	return (
-		<div className='w-[400px] h-full bg-slate-800 rounded-l'>
-			{state.contactList.length > 0 ?
-				listItems
-				:
-				<div style={{width:'100%', height:'100%', justifyContent:'center', display:'flex', alignItems:'center'}}>
-					<LoadingSpinner/>
-				</div>
-			}
-
+		<div className="relative w-full bg-slate-800 sm:w-[400px] h-full p-[16px] mx-[16px] sm:mx-0 rounded sm:rounded-l overflow-scroll">
+			<AddFriendButton/>
+			<div className="h-full">
+				{
+					state.contactList.length > 0 
+					?
+					listItems
+					:
+					<EmptyStateContactList/>
+				}
+			</div>
 		</div>
 	)
 }
+
+export default ContactList

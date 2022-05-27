@@ -1,6 +1,6 @@
 import React from 'react'
 
-import './BackgroundLogging.css';
+import '../../../assets/fonts/fonts.css';
 
 const BackgroundLogging = () => {
 
