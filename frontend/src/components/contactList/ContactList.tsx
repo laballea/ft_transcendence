@@ -28,8 +28,9 @@ export default function ContactList() {
 			</div>
 		</div>
 	): [];
+	
 	return (
-		<div className='main'>
+		<div className='w-[400px] h-full bg-slate-800 rounded-l'>
 			{state.contactList.length > 0 ?
 				listItems
 				:

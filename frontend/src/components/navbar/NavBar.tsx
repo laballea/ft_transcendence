@@ -21,7 +21,9 @@ const NavBar = () => {
 
 	// Show Menu hook
 	return (
-		<div className="flex justify-between items-center w-full h-[80px] sm:h-[112px] p-[16px] sm:p-[24px] bg-slate-900"> 
+		<header className="absolute top-0 left-0 w-full h-[80px] sm:h-[112px] bg-transparent
+						flex justify-between items-center p-[16px] sm:p-[24px] 
+						bg-slate-900"> 
 
 			<div className="flex items-center">
 				<NavBarButtonPrimary cta="Play Now" icon={FiZap}/>
@@ -42,7 +44,7 @@ const NavBar = () => {
 				{/* <button onClick={() => {dispatch(logout())}}>Log out</button> */}
 			</div>
 	
-		</div>
+		</header>
 	)
 }
 

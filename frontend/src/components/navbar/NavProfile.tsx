@@ -22,7 +22,7 @@ const NavProfile = ({username, userImage, onClickLogOut, onClickProfile} : NavPr
 	return (
 		<>
 		{/* Desktop Profile Menu */}
-			<div className="hidden sm:flex items-center sm:w-[400px]">
+			<div className="hidden sm:flex items-center sm:w-[376px]">
 				<div className="flex justify-end sm:justify-start items-center mr-[8px] font-space
 								text-slate-400 hover:text-slate-200 text-[20px]
 								transition-all duration-300 ease-in-out
@@ -36,7 +36,7 @@ const NavProfile = ({username, userImage, onClickLogOut, onClickProfile} : NavPr
 				</div>
 				<div className="hidden sm:flex items-center">
 					<IconButton icon={FiSettings}></IconButton>
-					<IconButton icon={FiLogOut}></IconButton>
+					<IconButton icon={FiLogOut} onClick={onClickLogOut}></IconButton>
 				</div>
 			</div>
 		{/* // Desktop Mobile Menu */}
