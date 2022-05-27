@@ -4,6 +4,9 @@ module.exports = {
   ],
   theme: {
     extend: {
+      boxShadow: {
+        'addFriend': '0px 0px 12px 8px #1E293B',
+      }
     },
     fontFamily: {
       'pilowlava': ['Pilowlava-Regular', 'sans-serif'],

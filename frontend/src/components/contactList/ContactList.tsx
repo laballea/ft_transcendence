@@ -2,6 +2,7 @@ import React from 'react'
 
 // Components
 import LoadingSpinner from '../commons/utils/loadingSpinner';
+import EmptyStateContactList from './EmptyStateContactList';
 import AddFriendButton from '../commons/buttons/AddFriendButton';
 
 // Hooks
@@ -36,17 +37,17 @@ const ContactList = () => {
 	): [];
 	
 	return (
-		<div className='block w-full sm:w-[400px] h-full bg-slate-800 p-[16px] mx-[16px] sm:mx-0 rounded sm:rounded-l overflow-scroll'>
+		<div className="relative w-full bg-slate-800 sm:w-[400px] h-full p-[16px] mx-[16px] sm:mx-0 rounded sm:rounded-l overflow-scroll">
 			<AddFriendButton/>
-			{
-				state.contactList.length > 0 
-				?
-				listItems
-				:
-				<div style={{justifyContent:'center', display:'flex', alignItems:'center'}}>
-					<LoadingSpinner/>
-				</div>
-			}
+			<div className="h-full">
+				{
+					state.contactList.length > 0 
+					?
+					listItems
+					:
+					<EmptyStateContactList/>
+				}
+			</div>
 		</div>
 	)
 }
