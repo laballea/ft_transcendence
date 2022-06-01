@@ -4,3 +4,8 @@ export interface MessageEvent {
 	type?: string;
 	retry?: number;
 }
+
+export interface friendEvent {
+	id: number;
+	friend_id: number;
+}

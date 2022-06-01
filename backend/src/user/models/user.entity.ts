@@ -23,6 +23,10 @@ export class UserEntity {
 
 	@Column("int", { array: true,nullable: true })
 	bloqued: number[];
+
+	@Column("int", { array: true, default: '{}', nullable:true})
+	friendsRequest: number[];
+
 }
 
 

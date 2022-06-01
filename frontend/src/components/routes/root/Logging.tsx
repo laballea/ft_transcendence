@@ -35,8 +35,9 @@ const Logging = () => {
 		fetch("http://localhost:5000/auth/login", requestOptions)
 		.then(async response=>{
 			if (response.ok){
-				const resp = await response.text()
-				dispatch(login({username:username, token:resp}))
+				const resp:any = await response.json()
+				console.log(resp)
+				dispatch(login({username:username, id:resp.user.id, token:resp.token}))
 
 			}
 			else {

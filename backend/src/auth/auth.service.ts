@@ -33,7 +33,7 @@ export class AuthService {
 	/*
 		login user if user exist in db, else create it, update status of user, return JWT token
 	*/
-	public async login(body: LoginDto): Promise<string | never> {
+	public async login(body: LoginDto): Promise<Object | never> {
 		const { username}: LoginDto = body;
 		var user: UserEntity = await this.repository.findOne({ where: { username } });
 
@@ -41,13 +41,10 @@ export class AuthService {
 			await this.register(body);
 			user = await this.repository.findOne({ where: { username } });
 		}
-		await getConnection()
-			.createQueryBuilder()
-			.update(UserEntity)
-			.set({ status: status.Connected })
-			.where("username = :username", { username: user.username })
-			.execute();
-		return this.helper.generateToken(user);
+		if (user.status === status.Connected){
+			throw new HttpException('Conflict', HttpStatus.CONFLICT);
+		}
+		return {user:user, token:this.helper.generateToken(user)};
 	}
 
 	public async refresh(user: UserEntity): Promise<string> {

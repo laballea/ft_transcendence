@@ -7,12 +7,14 @@ export interface UserI {
 
 	status:status;
 
-	friends:number[]
+	friends:number[];
 
-	bloqued:number[]
+	bloqued:number[];
+
+	friendsRequest:number[];
 }
 
 export interface UserP {
-	username: string;
+	id: number;
 	socket: any;
 }
