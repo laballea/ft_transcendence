@@ -6,7 +6,6 @@ import AddFriendButton from '../commons/buttons/AddFriendButton';
 import React, {useState, useEffect} from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { status } from '../../common/types';
-import LoadingSpinner from '../commons/utils/loadingSpinner';
 import { sendFriendRequest } from '../../store/global/reducer';
 const ContactList = () => {
 	const global = useSelector((state: any) => state.global)
