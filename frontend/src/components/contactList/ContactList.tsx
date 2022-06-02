@@ -1,7 +1,7 @@
 import React from 'react'
 
 // Components
-import LoadingSpinner from '../commons/utils/loadingSpinner';
+// import LoadingSpinner from '../commons/utils/loadingSpinner';
 import EmptyStateContactList from './EmptyStateContactList';
 import AddFriendButton from '../commons/buttons/AddFriendButton';
 

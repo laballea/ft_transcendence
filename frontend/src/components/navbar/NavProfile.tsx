@@ -4,7 +4,7 @@ import IconButton from 	'../commons/buttons/IconButton'
 import MobileMenuButton from '../commons/buttons/MobileMenuButton'
 
 // Assets
-import {FiSettings, FiLogOut, FiMessageCircle, FiUser} from 'react-icons/fi'
+import {FiSettings, FiLogOut, FiMessageCircle, FiUser, FiHome} from 'react-icons/fi'
 import defaultUserImage from '../../assets/images/default-user.png'
 
 type NavProfileProps = {
@@ -13,9 +13,10 @@ type NavProfileProps = {
 	onClickSettings: () => void,
 	onClickLogOut: () => void,
 	onClickProfile: () => void,
+	onClickHome: () => void,
 }
 
-const NavProfile = ({username, userImage, onClickLogOut, onClickProfile} : NavProfileProps) => {
+const NavProfile = ({username, userImage, onClickLogOut, onClickProfile, onClickHome} : NavProfileProps) => {
 
 	const [showMenu, setShowMenu] = React.useState(false);
 
@@ -49,9 +50,10 @@ const NavProfile = ({username, userImage, onClickLogOut, onClickProfile} : NavPr
 				</div>
 				{ showMenu 
 					? 
-					<div className="flex flex-col justify-between items-stretch
+					<div className="flex flex-col justify-between items-stretch z-10
 									absolute left-0 top-[80px] w-full h-[calc(100vh-90px)] bg-slate-800" >
 						<div>
+							<MobileMenuButton cta="Home"		icon={FiHome}			onClick={onClickProfile} />
 							<MobileMenuButton cta="Profile"		icon={FiUser}			onClick={onClickProfile} />
 							<MobileMenuButton cta="Message"		icon={FiMessageCircle}	onClick={() => {}} />
 							<MobileMenuButton cta="Settings"	icon={FiSettings}		onClick={() => {}} />
@@ -73,7 +75,8 @@ NavProfile.defaultProps = {
 	userImage: defaultUserImage,
 	onClickSettings: () => { console.log("onClickSettings")},
 	onClickLogOut: () => { console.log("onClickLogOut")},
-	onClickProfile: () => { console.log("onClickLogOut")},
+	onClickProfile: () => { console.log("onClickProfile")},
+	onClickHome: () => { console.log("onClickHome")},
 }
 
 export default NavProfile
