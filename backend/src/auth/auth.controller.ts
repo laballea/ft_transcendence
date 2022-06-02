@@ -1,5 +1,5 @@
 import { Body, Controller, Inject, Post, ClassSerializerInterceptor, UseInterceptors, UseGuards, Req, Get} from '@nestjs/common';
-import { UserEntity } from '../models/user.entity';
+import { UserEntity } from '../user/models/user.entity';
 import { RegisterDto, LoginDto } from './auth.dto';
 import { JwtAuthGuard } from './auth.guard';
 import { AuthService } from './auth.service';
@@ -10,14 +10,11 @@ export class AuthController {
 	@Inject(AuthService)
 	private readonly service: AuthService;
 
-	@Post('register')
-	@UseInterceptors(ClassSerializerInterceptor)
-	private register(@Body() body: RegisterDto): Promise<UserEntity | never> {
-		return this.service.register(body);
-	}
-
+	/*
+		receive username, create user if not in db, and return JWT token
+	*/
 	@Post('login')
-	private async login(@Body() body: LoginDto): Promise<string | never> {
+	private async login(@Body() body: LoginDto): Promise<Object | never> {
 		const resp = await this.service.login(body);
 		return resp;
 	}

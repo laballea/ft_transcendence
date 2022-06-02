@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom/client';
 
 // CSS
 import './index.css';
-import './assets/fonts/Pilowlava-Regular.woff2';
 import './assets/fonts/fonts.css';
 
 // Components

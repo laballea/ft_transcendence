@@ -12,7 +12,6 @@ services:
     #       - "3000:3000"
 
     api:
-        # image: auth
         build:
             dockerfile: Dockerfile
             context: ./backend
@@ -29,13 +28,21 @@ services:
     postgres:
         image: postgres:10.4
         ports:
-            - "35000:5432"
+            - "5432:5432"
         volumes:
             - pgdata:/var/lib/postgresql/data
         environment: 
             POSTGRES_USER: user
             POSTGRES_PASSWORD: password
             POSTGRES_DB: db
-
+    pgadmin:
+      container_name: pgadmin4_container
+      image: dpage/pgadmin4
+      restart: always
+      environment:
+        PGADMIN_DEFAULT_EMAIL: admin@admin.com
+        PGADMIN_DEFAULT_PASSWORD: root
+      ports:
+        - "5050:80"
 volumes: 
     pgdata:
