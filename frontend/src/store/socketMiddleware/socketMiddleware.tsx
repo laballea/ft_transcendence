@@ -1,6 +1,6 @@
 import { Middleware } from 'redux'
 import { io } from 'socket.io-client';
-import { login, logout, receiveFriendRequest } from '../global/reducer';
+import { acceptFriend, login, logout, receiveFriendRequest } from '../global/reducer';
 import { socketActions } from './socketSlice';
 
 const socketMiddleware: Middleware = store => {
@@ -15,12 +15,15 @@ const socketMiddleware: Middleware = store => {
 
 			socket.on('loggin', (data: {}) => {
 				store.dispatch(socketActions.connectionEstablished());
-				socket.emit("setID", {socketID:socket.id, id:store.getState().global.id});
+				socket.emit('setID', {socketID:socket.id, id:store.getState().global.id});
 			})
 
 			socket.on('friendRequest', (data:number[]) => {
 				store.dispatch(receiveFriendRequest(data));
 			})
+		}
+		if (acceptFriend.match(action) && isConnectionEstablished) {
+			socket.emit('acceptFriend', {socketID:socket.id, id:store.getState().global.id})
 		}
 		if (logout.match(action) && isConnectionEstablished) {
 			socket.disconnect();

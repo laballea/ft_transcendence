@@ -1,12 +1,13 @@
 // Components
 import EmptyStateContactList from './EmptyStateContactList';
 import AddFriendButton from '../commons/buttons/AddFriendButton';
-
+import { FiCheck, FiX} from "react-icons/fi";
 // Hooks
 import React, {useState, useEffect} from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { status } from '../../common/types';
-import { sendFriendRequest } from '../../store/global/reducer';
+import { sendFriendRequest, acceptFriend, ignoreFriend } from '../../store/global/reducer';
+
 const ContactList = () => {
 	const global = useSelector((state: any) => state.global)
 	const [state, setState] = useState({contactList:[]})
@@ -36,6 +37,18 @@ const ContactList = () => {
 		<div key={contact.username} style={{flex:1,display:"flex",flexDirection:"row", color:contact.status === status.Connected ? "#2CDA9D" : "#C41E3D"}}>
 			<div style={{flex:3, padding:10}}>
 				<p>friend request from {contact.username}</p>
+			</div>
+			<div style={{flex:1, padding:10}}>
+				<button
+					onClick={() => {dispatch(acceptFriend())}}
+				>
+					<FiCheck/>
+				</button>
+				<button
+					onClick={() => {dispatch(ignoreFriend())}}
+				>
+					<FiX/>
+				</button>
 			</div>
 		</div>
 	): [];
