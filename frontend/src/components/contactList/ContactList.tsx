@@ -1,4 +1,5 @@
 // Components
+
 import EmptyStateContactList from './EmptyStateContactList';
 import AddFriendButton from '../commons/buttons/AddFriendButton';
 
