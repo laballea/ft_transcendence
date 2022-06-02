@@ -7,6 +7,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from './models/user.entity';
 import { status } from './models/user.entity';
 
+@WebSocketGateway({
+	cors: {
+		origin: '*',
+	},
+})
+
 @WebSocketGateway()
 export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit {
 	constructor(
@@ -17,11 +23,11 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 	private logger: Logger = new Logger("UserGateway");
 	public connectedUser: UserP[] = [];
 
-    @WebSocketServer()
-    server: any;
+	@WebSocketServer()
+	server: any;
 
 	@SubscribeMessage('setID')
-    async setID(@MessageBody() data: any) {
+	async setID(@MessageBody() data: any) {
 		let user = this.connectedUser.find((user: any) => {
 			return user.socket.id === data.socketID
 		})
@@ -33,18 +39,18 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 			.where("id = :id", { id: data.id })
 			.execute();
 		user.id = data.id
-    }
+	}
 
-    handleConnection(client: any) {
+	handleConnection(client: any) {
 		this.connectedUser.push({
 			id:undefined,
 			socket: client
 		})
 		console.log("here")
-        this.server.emit('loggin');
-    }
+		this.server.emit('loggin');
+	}
 
-    async handleDisconnect(client: any, ...args: any[]) {
+	async handleDisconnect(client: any, ...args: any[]) {
 		const user_idx = this.connectedUser.findIndex(v => v.socket.id === client.id)
 		console.log("User", this.connectedUser[user_idx].id, "disconnected");
 		await getConnection()
@@ -54,12 +60,12 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 			.where("id = :id", { id: this.connectedUser[user_idx].id })
 			.execute();
 		this.connectedUser.splice(user_idx, 1);
-    }
+	}
 
-    afterInit(server: any) {
-        console.log('Socket is live')
+	afterInit(server: any) {
+		console.log('Socket is live')
 		this.logger.log("Socket is live")
-    }
+	}
 
 	async friendRequest(data:any){
 		try {

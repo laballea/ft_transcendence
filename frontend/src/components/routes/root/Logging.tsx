@@ -27,10 +27,9 @@ const Logging = () => {
 			  'Access-Control-Allow-Origin': '*',
 			},
 			body: JSON.stringify(
-				{
-					username: username,
-				}
-			)
+			{
+				username: username,
+			})
 		}
 		fetch("http://localhost:5000/auth/login", requestOptions)
 		.then(async response=>{
