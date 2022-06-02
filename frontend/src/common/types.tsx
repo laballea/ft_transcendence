@@ -9,4 +9,5 @@ export interface user {
 	status?: string;
 	token?: string;
 	logged?:boolean;
+	friendRequest?:Array<number>;
 }

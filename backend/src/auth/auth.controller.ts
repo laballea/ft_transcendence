@@ -14,7 +14,7 @@ export class AuthController {
 		receive username, create user if not in db, and return JWT token
 	*/
 	@Post('login')
-	private async login(@Body() body: LoginDto): Promise<string | never> {
+	private async login(@Body() body: LoginDto): Promise<Object | never> {
 		const resp = await this.service.login(body);
 		return resp;
 	}
