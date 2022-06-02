@@ -3,11 +3,12 @@ import React from 'react'
 // Components
 import NavBarButtonPrimary from		'../commons/buttons/NavBarButtonPrimary'
 import NavBarButtonSecondary from	'../commons/buttons/NavBarButtonSecondary'
+import NavBarButtonHome from		'../commons/buttons/NavBarButtonHome'
 
 import NavProfile from './NavProfile'
 
 // Icons
-import { FiZap, FiMessageCircle } from 'react-icons/fi'
+import { FiZap, FiMessageCircle} from 'react-icons/fi'
 
 // Hooks
 import { useSelector, useDispatch } from 'react-redux'
@@ -26,6 +27,9 @@ const NavBar = () => {
 						bg-slate-900"> 
 
 			<div className="flex items-center">
+				<div className="hidden sm:block">
+					<NavBarButtonHome />
+				</div>
 				<NavBarButtonPrimary cta="Play Now" icon={FiZap}/>
 				<div className="hidden sm:block">
 					<NavBarButtonSecondary cta="Message" icon={FiMessageCircle} />
@@ -36,9 +40,10 @@ const NavBar = () => {
 				<NavProfile 
 					username={global.username}
 					// userImage={global.userImage}
-					// onClickSettings={}
+					// onClickSettings={navigate('settings')}
 					onClickLogOut={() => {dispatch(logout())}}
 					onClickProfile={() => {navigate('profile')}}
+					onClickHome={() => {navigate('/')}}
 				/>
 				{/* <button onClick={() => {navigate('profile')}}>{global.username}</button> */}
 				{/* <button onClick={() => {dispatch(logout())}}>Log out</button> */}
