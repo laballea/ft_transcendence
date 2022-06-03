@@ -12,26 +12,25 @@ import '../../../assets/fonts/fonts.css';
 import { SocketContext } from '../../../context/socket';
 
 //Redux
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { updateDB } from '../../../store/global/reducer';
 
 export default function Home() {
 	const socket = useContext(SocketContext);
 	const global = useSelector((state: any) => state.global)
-
+	const dispatch = useDispatch();
 	useEffect(() => {
-		// as soon as the component is mounted, do the following tasks:
-	
-		// emit USER_ONLINE event
-		socket.on('connect', () => {
-			socket.emit("CONNECT", {socketID: socket.id, id:global.id}); 
-		 });
-	
+		socket.emit("CONNECT", {socketID: socket.id, id:global.id, username:global.username}); 
+		socket.on("UPDATE_DB", (data) => {
+			dispatch(updateDB(data));
+		});
 		return () => {
 		  // before the component is destroyed
 		  // unbind all event handlers used in this component
-		  socket.off('connect');
+		  socket.off('CONNECT');
+		  socket.off('RECEIVE_REQUEST');
 		};
-	  }, [socket]);
+	  }, [socket, dispatch, global]);
 	return (
 		<div className="w-full h-screen relative bg-slate-900">
 			<NavBar/>

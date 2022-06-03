@@ -30,27 +30,6 @@ export class UserController {
 	}
 
 	/*
-		update status of user db
-	*/
-	@Post('friend')
-	@UseGuards(JwtAuthGuard)
-	addFriend(@Request() req, @Body() body):string {
-		this.userGateway.friendRequest({id:req.user.id, friendID:body.friendID})
-		/*var ret = this.userService.addFriend({username:req.username, friend_id:req.friend_id});*/
-		return "lol";
-	}
-
-	/*
-		update status of user db
-	*/
-	@Delete('friend')
-	@UseGuards(JwtAuthGuard)
-	removeFriend(@Request() req):Promise<string> {
-		var ret = this.userService.removeFriend({id:req.user.id, friend_id:req.friend_id});
-		return ret;
-	}
-
-	/*
 		send to all client who listening to /user/contactList the list of user in db
 	*/
 	@Sse('contactList')

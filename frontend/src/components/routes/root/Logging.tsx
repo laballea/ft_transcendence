@@ -12,11 +12,7 @@ const Logging = () => {
 	const [username, setUsername] = useState("");
 	const dispatch = useDispatch()
 
-	const url = new URL("https://api.intra.42.fr/oauth/authorize");
-	url.searchParams.append('client_id', "ecdd4ec88a6567706cd0ca7fbc9415e1e1ef93f2319469f0dc40660d2d96e2c6");
-	url.searchParams.append('redirect_uri', "http://localhost:3000/");
-	url.searchParams.append('state', "bonjour je m'appelle pas");
-	url.searchParams.append('response_type', "code");
+	const url = new URL("https://api.intra.42.fr/oauth/authorize?client_id=254ee9c51d283d7911364b29f60d76fd8b47354cf9de36ed2edc9ae2d65e1136&redirect_uri=http%3A%2F%2Flocalhost%3A5000%2Fauth%2Flogin&response_type=code");
 	const handleSubmit = async (event: any) => {
 		// Prevent page reload
 		event.preventDefault();
@@ -35,7 +31,8 @@ const Logging = () => {
 		.then(async response=>{
 			if (response.ok){
 				const resp:any = await response.json()
-				dispatch(login({username:username, id:resp.user.id, token:resp.token}))
+				console.log(resp.user);
+				dispatch(login({user:resp.user, token:resp.token}))
 			}
 			else {
 				console.log(response);

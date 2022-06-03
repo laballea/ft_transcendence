@@ -4,7 +4,7 @@ import { user, status } from '../../common/types'
 const InitialState: user = {
 	logged:false,
 	username:undefined,
-	friendRequest:[]
+	friendsRequest:[]
 }
 
 export const globalSlice = createSlice({
@@ -12,12 +12,12 @@ export const globalSlice = createSlice({
 	initialState:InitialState,
 	reducers: {
 		login: (state: any, data: any) => {
-			state.username = data.payload.username
-			state.id = data.payload.id
+			state.username = data.payload.user.username
+			state.id = data.payload.user.id
 			state.status = status.Connected
 			state.logged = true
 			state.token = data.payload.token
-			state.friendRequest = []
+			state.friendsRequest = data.payload.user.friendsRequest
 
 		},
 		logout: (state: any) => {
@@ -40,7 +40,9 @@ export const globalSlice = createSlice({
 			state.token = ""
 		},
 		sendFriendRequest: (state: any, data: any) => {
-			const requestOptions = {
+			const {socket, username} = data.payload;
+			console.log(socket, username)
+			/*const requestOptions = {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json;charset=utf-8',
@@ -63,10 +65,17 @@ export const globalSlice = createSlice({
 				else {
 					console.log(response);
 				}
-			})
+			})*/
 		},
 		receiveFriendRequest: (state: any, data:any) => {
 			state.friendRequest = data.payload;
+		},
+		updateDB: (state:any, data:any) => {
+			console.log(data.payload);
+			state.status = data.payload.status
+			state.friendsRequest = data.payload.friendsRequest
+			state.friends = data.payload.friends
+			state.bloqued = data.payload.bloqued
 		},
 		acceptFriend: () => {
 			console.log("Accept")
@@ -78,6 +87,6 @@ export const globalSlice = createSlice({
 })
 
 // Action creators are generated for each case reducer function
-export const { login, logout, sendFriendRequest, receiveFriendRequest, acceptFriend, ignoreFriend } = globalSlice.actions
+export const { login, logout, sendFriendRequest, updateDB, acceptFriend, ignoreFriend } = globalSlice.actions
 
 export default globalSlice.reducer

@@ -14,13 +14,13 @@ const Root = () => {
 	document.title = global.username === undefined ? "Login" : global.username;
 	return (
 		<>
-			{global.logged === false ? 
-				<Logging/>
-				:
-				<SocketContext.Provider value={socket}>
-					<Home />
-				</SocketContext.Provider>
-			}
+				{global.logged === false ? 
+					<Logging/>
+					:
+					<SocketContext.Provider value={socket}>
+						<Home />
+					</SocketContext.Provider>
+				}
 		</>
 	);
 }

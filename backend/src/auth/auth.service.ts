@@ -4,12 +4,14 @@ import { UserEntity, status } from '../user/models/user.entity';
 import { Repository, getConnection } from 'typeorm';
 import { RegisterDto, LoginDto } from './auth.dto';
 import { AuthHelper } from './auth.helper';
+import { UserService } from 'src/user/user.service';
 
 @Injectable()
 export class AuthService {
 	@InjectRepository(UserEntity)
 	private readonly repository: Repository<UserEntity>;
-
+	@Inject(UserService)
+	private readonly userService: UserService;
 	@Inject(AuthHelper)
 	private readonly helper: AuthHelper;
 
@@ -44,7 +46,7 @@ export class AuthService {
 		if (user.status === status.Connected){
 			throw new HttpException('Conflict', HttpStatus.CONFLICT);
 		}
-		return {user:user, token:this.helper.generateToken(user)};
+		return {user:await this.userService.parseUserInfo(user), token:this.helper.generateToken(user)};
 	}
 
 	public async refresh(user: UserEntity): Promise<string> {

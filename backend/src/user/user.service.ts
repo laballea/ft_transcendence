@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { from, Observable } from 'rxjs';
 import { Repository, getConnection } from 'typeorm';
 import { UserEntity, status } from './models/user.entity';
-import { UserI } from './models/user.interface';
+import { UserI, UserSafeInfo } from './models/user.interface';
 import { friendEvent } from 'src/common/types';
 @Injectable()
 export class UserService {
@@ -42,10 +42,13 @@ export class UserService {
 	/*
 		return list of user in db without current user
 	*/
-	async getContactList(username: string):Promise<UserI[]>{
+	async getContactList(username: string):Promise<{ id: number; username: string; }[]>{
 		const list = await this.userRepository.find();
-		list.splice(list.findIndex(object => {return object.username === username}), 1); // remove current user from list
-		return list;
+		const user: UserEntity = await this.userRepository.findOne({ where:{username:username} });
+		return user.friends.map(id => ({ id: id, username: list.find(el => el.id == id).username, status:list.find(el => el.id == id).status}));
+
+		/*list.splice(list.findIndex(object => {return object.username === username}), 1); // remove current user from list
+		return list.map(id => ({ id: id, username: userRepo.find(el => el.id == id).username}));*/
 	}
 
 	/*
@@ -53,7 +56,8 @@ export class UserService {
 	*/
 	async addFriend(data: friendEvent):Promise<string> {
 		const user: UserEntity = await this.userRepository.findOne({ where:{id:data.id} });
-		user.friends.push(data.friend_id)
+		const user2: UserEntity = await this.userRepository.findOne({ where:{id:data.friend_id} });
+		user.friends.push(user2.id)
 		await getConnection()
 			.createQueryBuilder()
 			.update(UserEntity)
@@ -68,7 +72,8 @@ export class UserService {
 	*/
 	async removeFriend(data: friendEvent):Promise<string> {
 		const user: UserEntity = await this.userRepository.findOne({ where:{id:data.id} });
-		user.friends.splice(user.friends.indexOf(data.friend_id))
+		const user2: UserEntity = await this.userRepository.findOne({ where:{id:data.friend_id} });
+		user.friends.splice(user.friends.indexOf(user2.id))
 		await getConnection()
 			.createQueryBuilder()
 			.update(UserEntity)
@@ -76,5 +81,17 @@ export class UserService {
 			.where("id = :id", { id: data.id })
 			.execute();
 		return "ok";
+	}
+
+	async parseUserInfo(userInfo:UserEntity):Promise<UserSafeInfo> {
+		const userRepo = await this.userRepository.find()
+		var UserSafeInfo:UserSafeInfo = {
+			id: userInfo.id,
+			username: userInfo.username
+		};
+		UserSafeInfo.friends = userInfo.friends.map(id => ({ id: id, username: userRepo.find(el => el.id == id).username}));
+		UserSafeInfo.bloqued = userInfo.bloqued.map(id => ({ id: id, username: userRepo.find(el => el.id == id).username}));
+		UserSafeInfo.friendsRequest = userInfo.friendsRequest.map(id => ({ id: id, username: userRepo.find(el => el.id == id).username}));
+		return UserSafeInfo;
 	}
 }
