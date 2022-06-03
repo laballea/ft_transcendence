@@ -29,11 +29,11 @@ export class UserService {
 	/*
 		update user status to Disconnected
 	*/
-	async logout(id: number):Promise<string> {
+	async updateStatus(id: number, status:status):Promise<string> {
 		await getConnection()
 			.createQueryBuilder()
 			.update(UserEntity)
-			.set({ status: status.Disconnected })
+			.set({ status: status })
 			.where("id = :id", { id: id })
 			.execute();
 		return "ok";

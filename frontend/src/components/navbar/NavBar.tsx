@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useContext} from 'react'
 
 // Components
 import NavBarButtonPrimary from		'../commons/buttons/NavBarButtonPrimary'
@@ -15,10 +15,14 @@ import { useSelector, useDispatch } from 'react-redux'
 import { logout } from '../../store/global/reducer'
 import { useNavigate } from "react-router-dom";
 
+//socket
+import { SocketContext } from '../../context/socket';
+
 const NavBar = () => {
 	let navigate = useNavigate();
 	const global = useSelector((state: any) => state.global)
 	const dispatch = useDispatch()
+	const socket = useContext(SocketContext);
 
 	// Show Menu hook
 	return (
@@ -41,7 +45,7 @@ const NavBar = () => {
 					username={global.username}
 					// userImage={global.userImage}
 					// onClickSettings={navigate('settings')}
-					onClickLogOut={() => {dispatch(logout())}}
+					onClickLogOut={() => {socket.disconnect();dispatch(logout())}}
 					onClickProfile={() => {navigate('profile')}}
 					onClickHome={() => {navigate('/')}}
 				/>

@@ -12,7 +12,6 @@ export const globalSlice = createSlice({
 	initialState:InitialState,
 	reducers: {
 		login: (state: any, data: any) => {
-			console.log("state", state)
 			state.username = data.payload.username
 			state.id = data.payload.id
 			state.status = status.Connected

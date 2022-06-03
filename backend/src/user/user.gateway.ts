@@ -26,12 +26,11 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 	@WebSocketServer()
 	server: any;
 
-	@SubscribeMessage('setID')
-	async setID(@MessageBody() data: any) {
+	@SubscribeMessage('CONNECT')
+	async connect(@MessageBody() data: {socketID:string, id:number}) {
 		let user = this.connectedUser.find((user: any) => {
 			return user.socket.id === data.socketID
 		})
-		console.log("User", data.id, "connected");
 		await getConnection()
 			.createQueryBuilder()
 			.update(UserEntity)
@@ -39,6 +38,7 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 			.where("id = :id", { id: data.id })
 			.execute();
 		user.id = data.id
+		console.log("User", user.id, "connected");
 	}
 
 	handleConnection(client: any) {
@@ -46,8 +46,6 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 			id:undefined,
 			socket: client
 		})
-		console.log("here")
-		this.server.emit('loggin');
 	}
 
 	async handleDisconnect(client: any, ...args: any[]) {
@@ -91,4 +89,6 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 			console.log(e);
 		}
 	}
+
+
 }

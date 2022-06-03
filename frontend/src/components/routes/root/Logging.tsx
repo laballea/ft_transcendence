@@ -35,9 +35,7 @@ const Logging = () => {
 		.then(async response=>{
 			if (response.ok){
 				const resp:any = await response.json()
-				console.log(resp)
 				dispatch(login({username:username, id:resp.user.id, token:resp.token}))
-
 			}
 			else {
 				console.log(response);

@@ -6,7 +6,7 @@ import { UserGateway } from './user.gateway';
 import { JwtAuthGuard } from '../auth/auth.guard';
 import { MessageEvent } from '@nestjs/common';
 import { EventsService } from './events.service';
-  
+import { status } from './models/user.entity';
 @Controller('users')
 export class UserController {
 	constructor(private userService:UserService, private userGateway:UserGateway, private readonly eventsService: EventsService) {}
@@ -15,7 +15,6 @@ export class UserController {
 		return all user in db
 	*/
 	@Get()
-	@UseGuards(JwtAuthGuard)
 	findAll():Promise<UserI[]> {
 		return this.userService.findAll();
 	}
@@ -26,7 +25,7 @@ export class UserController {
 	@Post('logout')
 	@UseGuards(JwtAuthGuard)
 	logout(@Request() req):Promise<string> {
-		var ret = this.userService.logout(req.user.id);
+		var ret = this.userService.updateStatus(req.user.id,status.Disconnected);
 		return ret;
 	}
 
