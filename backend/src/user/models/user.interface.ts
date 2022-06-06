@@ -3,6 +3,8 @@ import { status } from "./user.entity";
 export interface UserI {
 	id:number;
 
+	intraID:number;
+
 	username:string;
 
 	status:status;
@@ -12,6 +14,7 @@ export interface UserI {
 	bloqued:number[];
 
 	friendsRequest:number[];
+	nullChecks():Promise<void>;
 }
 
 export interface UserP {

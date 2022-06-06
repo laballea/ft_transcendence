@@ -36,7 +36,7 @@ export class AuthService {
 		login user if user exist in db, else create it, update status of user, return JWT token
 	*/
 	public async login(body: LoginDto): Promise<Object | never> {
-		const { username}: LoginDto = body;
+		const { username }: LoginDto = body;
 		var user: UserEntity = await this.repository.findOne({ where: { username } });
 
 		if (!user) {
@@ -48,7 +48,31 @@ export class AuthService {
 		}
 		return {user:await this.userService.parseUserInfo(user), token:this.helper.generateToken(user)};
 	}
+	public createToken(user: UserEntity): string{
+		return this.helper.generateToken(user);
+	}
 
+	public async registerIntra(intraID:number): Promise<UserEntity | never> {
+		var user: UserEntity = new UserEntity();
+		user.username = "";
+		user.intraID = intraID;
+		return this.repository.save(user);
+	}
+
+	public async loginIntra(intraID: number): Promise<Object | never> {
+		var user: UserEntity = await this.userService.findUserByIntra(intraID);
+
+		if (!user) {
+			user = await this.registerIntra(intraID);
+		}
+		if (user.status === status.Connected){
+			throw new HttpException('Already Connected', HttpStatus.CONFLICT);
+		}
+		return user;
+	}
+	public async validToken(jwt: string): Promise<boolean> {
+		return this.helper.validate(jwt);
+	}
 	public async refresh(user: UserEntity): Promise<string> {
 		return this.helper.generateToken(user);
 	}

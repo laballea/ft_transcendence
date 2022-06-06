@@ -15,6 +15,9 @@ export class UserEntity {
 	@Column()
 	username:string;
 
+	@Column("int", {nullable:true})
+	intraID:number;
+
 	@Column({default:status.Disconnected})
 	status:status;
 
@@ -31,7 +34,7 @@ export class UserEntity {
 	@AfterLoad()
 	@AfterInsert()
 	@AfterUpdate()
-	async nullChecks() {
+	async nullChecks():Promise<void> {
 	  if (!this.friendsRequest) {
 		this.friendsRequest = []
 	  }

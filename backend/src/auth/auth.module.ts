@@ -9,11 +9,15 @@ import { AuthService } from './auth.service';
 import { JwtStrategy } from './auth.strategy';
 import { ConfigService } from '@nestjs/config';
 import { UserService } from 'src/user/user.service';
+import { HttpModule } from '@nestjs/axios';
+import { IntraStrategy } from './42.strategy';
+import { SessionSerializer } from './auth.serializer';
 
 @Module({
   imports: [
     PassportModule.register({ defaultStrategy: 'jwt', property: 'user' }),
-    JwtModule.registerAsync({
+    HttpModule,
+	JwtModule.registerAsync({
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
         secret: process.env.SECRET_KEY || "randomString",
@@ -23,6 +27,6 @@ import { UserService } from 'src/user/user.service';
     TypeOrmModule.forFeature([UserEntity]),
   ],
   controllers: [AuthController],
-  providers: [AuthService, AuthHelper, JwtStrategy, UserService],
+  providers: [AuthService, AuthHelper, JwtStrategy, IntraStrategy, UserService, SessionSerializer],
 })
 export class AuthModule {}

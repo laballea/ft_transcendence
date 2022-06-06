@@ -25,7 +25,12 @@ export class UserService {
 	findOne(username: string):Promise<UserI | undefined> {
 		return this.userRepository.findOne({ username });
 	}
-
+	/*
+		find user by username
+	*/
+	findUserByIntra(intraID: number):Promise<UserI | undefined> {
+		return this.userRepository.findOne({ where:{intraID:intraID} });
+	}
 	/*
 		update user status to Disconnected
 	*/

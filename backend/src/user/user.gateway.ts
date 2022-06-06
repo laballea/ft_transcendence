@@ -33,14 +33,16 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 
 	async handleDisconnect(client: any, ...args: any[]) {
 		const user_idx = this.connectedUser.findIndex(v => v.socket.id === client.id)
-		console.log(this.connectedUser[user_idx].username, "disconnected");
-		await getConnection()
-			.createQueryBuilder()
-			.update(UserEntity)
-			.set({ status: status.Disconnected })
-			.where("id = :id", { id: this.connectedUser[user_idx].id })
-			.execute();
-		this.connectedUser.splice(user_idx, 1);
+		if (this.connectedUser[user_idx]) {
+			console.log(this.connectedUser[user_idx].username, "disconnected");
+			await getConnection()
+				.createQueryBuilder()
+				.update(UserEntity)
+				.set({ status: status.Disconnected })
+				.where("id = :id", { id: this.connectedUser[user_idx].id })
+				.execute();
+			this.connectedUser.splice(user_idx, 1);
+		}
 	}
 
 	afterInit(server: any) {
