@@ -4,16 +4,30 @@ import React, { useState } from 'react'
 import BackgroundLogging from '../../commons/backgrounds/BackgroundLogging';
 import Footer from '../../commons/footer/Footer';
 // Hooks
-import { useDispatch } from 'react-redux'
 import { login } from '../../../store/global/reducer'
+import { Navigate, useSearchParams } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
-
+import Popup from 'reactjs-popup'; 
+import { useDispatch, useSelector } from 'react-redux';
+import PopUpWindow from '../../commons/popup/PopUpWindow';
 
 const Logging = () => {
 	const [username, setUsername] = useState("");
+	const global = useSelector((state: any) => state.global)
+	const dispatch = useDispatch();const [open, setOpen] = useState({open:false, message:""});
 	const navigate = useNavigate();
 	const url = new URL("http://localhost:5000/auth/login"); //url for intra auth
+	const [searchParams, setSearchParams] = useSearchParams();
+	const jwt = searchParams.get("jwt") == null ? global.token : searchParams.get("jwt"); // get jwt token on query
+	document.title = "login";
 
+	React.useEffect(() => {
+		if (open.open) {
+			setTimeout(() => {
+				setOpen(current => {return {open:!current.open, message:""}})
+			}, 2000);
+		}
+	  }, [open]);
 	/*
 		POST username at auth/login, back respond with jwt token
 		and we redirect to home with jwt in query
@@ -32,13 +46,39 @@ const Logging = () => {
 		}
 		fetch("http://localhost:5000/auth/login", requestOptions)
 		.then(async response=>{
+			const resp:any = await response.json()
 			if (response.ok){
-				const resp:any = await response.json()
-				navigate(`/home?jwt=${resp.token}`)
+				navigate(`/login?jwt=${resp.token}`)
+			} else {
+				setOpen({open:true, message:resp.message})
 			}
 		})
-	  };
-
+	};
+	if (jwt){ // if token exist in redux user is already logged
+		const requestOptions = {
+			method: 'GET',
+			headers: {
+			  'Content-Type': 'application/json;charset=utf-8',
+			  'Access-Control-Allow-Origin': '*',
+			  'Authorization': 'bearer ' + jwt,
+			},
+		}
+		fetch("http://localhost:5000/auth/user", requestOptions)
+		.then(async response=>{
+			let resp = await response.json();
+			if (response.ok){
+				dispatch(login({user:resp, token:jwt}))
+				navigate('/home')
+			}
+			else {
+				if (searchParams.get("jwt")){
+					searchParams.delete("jwt");
+					setSearchParams(searchParams);
+				}
+				setOpen({open:true, message:resp.message})
+			}
+		})
+	}
 	return (
 		<>
 			<BackgroundLogging/>
@@ -57,6 +97,9 @@ const Logging = () => {
 					onClick={event =>  window.location.href=url.toString()}> {/*on click redirect to backend auth/login*/}
 						Log in with 42 account
 				</button>
+				<Popup open={open.open} contentStyle={{position:'absolute', bottom:0, left:0}}>
+					<PopUpWindow content={open.message}/>
+				</Popup>
 			</div>
 			<Footer/>
 		</>

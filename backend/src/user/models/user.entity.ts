@@ -21,9 +21,6 @@ export class UserEntity {
 	@Column({nullable:true})
 	profilIntraUrl:string;
 
-	@Column({default:status.Disconnected})
-	status:status;
-
 	@Column("int", { array: true, default: '{}',nullable: true})
 	friends: number[];
 

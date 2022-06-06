@@ -1,6 +1,4 @@
-
-import { Logger } from '@nestjs/common';
-import { UserP } from './models/user.interface';
+import { UserP, UserSafeInfo } from './models/user.interface';
 import { MessageBody, SubscribeMessage, WebSocketGateway, WebSocketServer, OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit, ConnectedSocket } from '@nestjs/websockets';
 import { Repository, getConnection } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -8,6 +6,7 @@ import { UserEntity } from './models/user.entity';
 import { status } from './models/user.entity';
 import { FRIEND_REQUEST_ACTIONS, FRIEND_REQUEST_DATA } from 'src/common/types';
 import { UserService } from './user.service';
+import { Inject } from '@nestjs/common';
 @WebSocketGateway({
 	cors: {
 		origin: '*',
@@ -19,50 +18,53 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 	constructor(
 		@InjectRepository(UserEntity)
 		private userRepository: Repository<UserEntity>,
-		private userService:UserService
+		
+		@Inject(UserService)
+		private userService: UserService,
 	){}
 
-	private logger: Logger = new Logger("UserGateway");
 	public connectedUser: UserP[] = [];
 
 	@WebSocketServer()
 	server: any;
 
-	handleConnection(client: any) {
-	}
+	handleConnection(client: any) {};
+	afterInit(server: any) {}
 
 	async handleDisconnect(client: any, ...args: any[]) {
 		const user_idx = this.connectedUser.findIndex(v => v.socket.id === client.id)
 		if (this.connectedUser[user_idx]) {
 			console.log(this.connectedUser[user_idx].username, "disconnected");
-			await getConnection()
-				.createQueryBuilder()
-				.update(UserEntity)
-				.set({ status: status.Disconnected })
-				.where("id = :id", { id: this.connectedUser[user_idx].id })
-				.execute();
 			this.connectedUser.splice(user_idx, 1);
 		}
 	}
 
-	afterInit(server: any) {
-		console.log('Socket is live')
-		this.logger.log("Socket is live")
+	getStatus(id:number):status{
+		const user = this.connectedUser.find((user: any) => {return user.id === id})
+		if (user)
+			return user.status;
+		else
+			return status.Disconnected;
 	}
 
 	@SubscribeMessage('CONNECT')
 	async connect(@MessageBody() data: {socketID:string, id:number, username:string}, @ConnectedSocket() client: any) {
-		this.connectedUser.push({
-			id:data.id,
-			username:data.username,
-			socket: client
-		})
-		await getConnection()
-			.createQueryBuilder()
-			.update(UserEntity)
-			.set({ status: status.Connected })
-			.where("id = :id", { id: data.id })
-			.execute();
+		console.log("WHY BOTH")
+		const user = this.connectedUser.find((user: any) => {return user.id === data.id})
+		if (!user){
+			this.connectedUser.push({
+				id:data.id,
+				username:data.username,
+				socket: client,
+				status:status.Connected,
+			})
+			this.userService.addUser({
+				id:data.id,
+				username:data.username,
+				socket: client,
+				status:status.Connected,
+			})
+		}
 		console.log(data.username, "connected");
 	}
 
@@ -108,13 +110,29 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 				.where("id = :id", { id: db_user_emit.id })
 				.execute();
 			if (user_recv)
-				user_recv.socket.emit('UPDATE_DB', await this.userService.parseUserInfo(db_user_recv))
+				user_recv.socket.emit('UPDATE_DB', await this.parseUserInfo(db_user_recv))
 			if (user_emit)
-				user_emit.socket.emit('UPDATE_DB', await this.userService.parseUserInfo(db_user_emit))
+				user_emit.socket.emit('UPDATE_DB', await this.parseUserInfo(db_user_emit))
 		}
 		catch (e){
 			console.log(e);
 		}
 	}
-
+	async parseUserInfo(userInfo:UserEntity):Promise<UserSafeInfo> {
+		const userRepo = await this.userRepository.find()
+		var UserSafeInfo:UserSafeInfo = {
+			id: userInfo.id,
+			username: userInfo.username,
+			status:this.getStatus(userInfo.id),
+		};
+		UserSafeInfo.friends = userInfo.friends.map(id => ({ id: id, username: userRepo.find(el => el.id == id).username}));
+		UserSafeInfo.bloqued = userInfo.bloqued.map(id => ({ id: id, username: userRepo.find(el => el.id == id).username}));
+		UserSafeInfo.friendsRequest = userInfo.friendsRequest.map(id => ({ id: id, username: userRepo.find(el => el.id == id).username}));
+		return UserSafeInfo;
+	}
+	async getContactList(username: string):Promise<{ id: number; username: string; }[]>{
+		const list = await this.userRepository.find();
+		const user: UserEntity = await this.userRepository.findOne({ where:{username:username} });
+		return user.friends.map(id => ({ id: id, username: list.find(el => el.id == id).username, status:this.getStatus(list.find(el => el.id == id).id)}));
+	}
 }

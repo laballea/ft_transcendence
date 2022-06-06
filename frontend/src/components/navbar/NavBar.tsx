@@ -23,7 +23,6 @@ const NavBar = () => {
 	const global = useSelector((state: any) => state.global)
 	const dispatch = useDispatch()
 	const socket = useContext(SocketContext);
-	console.log(global.userImage)
 	// Show Menu hook
 	return (
 		<header className="absolute top-0 left-0 w-full h-[80px] sm:h-[112px] bg-transparent

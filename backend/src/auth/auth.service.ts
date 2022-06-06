@@ -5,13 +5,16 @@ import { Repository, getConnection } from 'typeorm';
 import { RegisterDto, LoginDto } from './auth.dto';
 import { AuthHelper } from './auth.helper';
 import { UserService } from 'src/user/user.service';
-
+import { HTTP_STATUS } from 'src/common/types';
+import { UserGateway } from 'src/user/user.gateway';
 @Injectable()
 export class AuthService {
 	@InjectRepository(UserEntity)
 	private readonly repository: Repository<UserEntity>;
 	@Inject(UserService)
 	private readonly userService: UserService;
+	@Inject(UserGateway)
+	private readonly userGateway: UserGateway;
 	@Inject(AuthHelper)
 	private readonly helper: AuthHelper;
 
@@ -22,12 +25,9 @@ export class AuthService {
 		const { username }: RegisterDto = body;
 		let user: UserEntity = await this.repository.findOne({ where: { username } });
 
-		if (user) {
-			throw new HttpException('Conflict', HttpStatus.CONFLICT);
-		}
-
+		if (user) 
+			throw new HttpException(HTTP_STATUS.ALREADY_EXIST, HttpStatus.CONFLICT);
 		user = new UserEntity();
-
 		user.username = username;
 		return this.repository.save(user);
 	}
@@ -43,10 +43,9 @@ export class AuthService {
 			await this.register(body);
 			user = await this.repository.findOne({ where: { username } });
 		}
-		if (user.status === status.Connected){
-			throw new HttpException('Conflict', HttpStatus.CONFLICT);
-		}
-		return {user:await this.userService.parseUserInfo(user), token:this.helper.generateToken(user)};
+		/*if (this.userGateway.getStatus(user.id) == status.Connected)
+			throw new HttpException(HTTP_STATUS.ALREADY_CONNECTED, HttpStatus.CONFLICT);*/
+		return {user:await this.userGateway.parseUserInfo(user), token:this.helper.generateToken(user)};
 	}
 	public createToken(user: UserEntity): string{
 		return this.helper.generateToken(user);
@@ -54,7 +53,6 @@ export class AuthService {
 
 	public async registerIntra(userData: any): Promise<UserEntity | never> {
 		var user: UserEntity = new UserEntity();
-		console.log(user)
 		user.username = userData.login;
 		user.intraID = userData.id;
 		user.profilIntraUrl = userData.image_url;
@@ -63,11 +61,8 @@ export class AuthService {
 
 	public async loginIntra(userData: any): Promise<Object | never> {
 		var user: UserEntity = await this.userService.findUserByIntra(userData.id);
-
-		console.log(user)
-		if (!user) {
+		if (!user)
 			user = await this.registerIntra(userData);
-		}
 		return user;
 	}
 	public async validToken(jwt: string): Promise<boolean> {

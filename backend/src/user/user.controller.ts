@@ -18,23 +18,22 @@ export class UserController {
 	findAll():Promise<UserI[]> {
 		return this.userService.findAll();
 	}
-	/*
-		update status of user db
-	*/
-	@Post('logout')
-	@UseGuards(JwtAuthGuard)
-	logout(@Request() req):Promise<string> {
-		var ret = this.userService.updateStatus(req.user.id,status.Disconnected);
-		return ret;
-	}
 
+	@Get('connected')
+	findConnected():Object {
+		return this.userGateway.connectedUser.map(data => ({id:data.id, status:data.status, username:data.username}));
+	}
+	@Get('test')
+	findCon():Object {
+		return this.userService.getConnected();
+	}
 	/*
 		send to all client who listening to /user/contactList the list of user in db
 	*/
 	@Sse('contactList')
 	sse(@Query() query): Observable<any> {
 		return interval(1000).pipe(
-			mergeMap( async (_) => ({ data: { contactList: await this.userService.getContactList(query.username)} })
+			mergeMap( async (_) => ({ data: { contactList: await this.userGateway.getContactList(query.username)} })
 		));
 	}
 }

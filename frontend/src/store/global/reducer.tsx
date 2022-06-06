@@ -21,18 +21,6 @@ export const globalSlice = createSlice({
 			state.userImage = data.payload.user.profilIntraUrl
 		},
 		logout: (state: any) => {
-			const requestOptions = {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json;charset=utf-8',
-					'Access-Control-Allow-Origin': '*',
-					'Authorization': 'bearer ' + state.token,
-				},
-			}
-			fetch("http://localhost:5000/users/logout", requestOptions)
-				.then(response=>response.text())
-				.then(data=>{console.log(data)
-			});
 			state.username = undefined
 			state.id = undefined
 			state.status = status.Disconnected
@@ -40,7 +28,6 @@ export const globalSlice = createSlice({
 			state.token = undefined
 		},
 		updateDB: (state:any, data:any) => {
-			console.log(data.payload);
 			state.status = data.payload.status
 			state.friendsRequest = data.payload.friendsRequest
 			state.friends = data.payload.friends

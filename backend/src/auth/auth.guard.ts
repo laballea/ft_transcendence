@@ -3,6 +3,7 @@ import { AuthGuard, IAuthGuard } from '@nestjs/passport';
 import { Request } from 'express';
 import { UserEntity } from '../user/models/user.entity';
 import { HttpException } from '@nestjs/common';
+import { HTTP_STATUS } from 'src/common/types';
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') implements IAuthGuard {
@@ -33,10 +34,8 @@ export class IntraAuthGuard extends AuthGuard('intra-oauth') {
 	}
 
 	handleRequest(err: any, user: any) {
-		console.log(user)
-		if (err || !user) {
-			throw new HttpException('failed to login', err.status);
-		}
+		if (err || !user)
+			throw new HttpException(HTTP_STATUS.LOGIN_FAILED, err.status);
 		return user;
 	}
 }

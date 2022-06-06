@@ -27,6 +27,12 @@ import { SessionSerializer } from './auth.serializer';
     TypeOrmModule.forFeature([UserEntity]),
   ],
   controllers: [AuthController],
-  providers: [AuthService, AuthHelper, JwtStrategy, IntraStrategy, UserService, SessionSerializer],
+  providers: [
+	  AuthService,
+	  AuthHelper,
+	  JwtStrategy,
+	  IntraStrategy,
+	  UserService,
+	  SessionSerializer],
 })
 export class AuthModule {}

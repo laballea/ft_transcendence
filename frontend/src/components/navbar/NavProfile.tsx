@@ -18,7 +18,6 @@ type NavProfileProps = {
 
 const NavProfile = ({username, userImage, onClickLogOut, onClickProfile, onClickHome} : NavProfileProps) => {
 	const [showMenu, setShowMenu] = React.useState(false);
-	console.log(userImage)
 	return (
 		<>
 		{/* Desktop Profile Menu */}
