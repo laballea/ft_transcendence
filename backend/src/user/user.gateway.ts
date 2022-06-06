@@ -28,7 +28,9 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 	@WebSocketServer()
 	server: any;
 
-	handleConnection(client: any) {};
+	handleConnection(client: any) {
+		if (!this.server) this.server = client.server;
+	};
 	afterInit(server: any) {}
 
 	async handleDisconnect(client: any, ...args: any[]) {
@@ -58,13 +60,9 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 				socket: client,
 				status:status.Connected,
 			})
-			this.userService.addUser({
-				id:data.id,
-				username:data.username,
-				socket: client,
-				status:status.Connected,
-			})
 		}
+		console.log("sockets map", this.server.sockets.sockets)
+		console.log("server", this.server.sockets.server)
 		console.log(data.username, "connected");
 	}
 
