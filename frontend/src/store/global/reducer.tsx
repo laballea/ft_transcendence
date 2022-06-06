@@ -18,7 +18,7 @@ export const globalSlice = createSlice({
 			state.logged = true
 			state.token = data.payload.token
 			state.friendsRequest = data.payload.user.friendsRequest
-
+			state.userImage = data.payload.user.profilIntraUrl
 		},
 		logout: (state: any) => {
 			const requestOptions = {
@@ -37,38 +37,7 @@ export const globalSlice = createSlice({
 			state.id = undefined
 			state.status = status.Disconnected
 			state.logged = false
-			state.token = ""
-		},
-		sendFriendRequest: (state: any, data: any) => {
-			const {socket, username} = data.payload;
-			console.log(socket, username)
-			/*const requestOptions = {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json;charset=utf-8',
-					'Access-Control-Allow-Origin': '*',
-					'Authorization': "Bearer " + state.token
-				},
-				body: JSON.stringify(
-					{
-						id: state.id,
-						friendID: data.payload.friendID
-					}
-				)
-			}
-			fetch("http://localhost:5000/users/friend", requestOptions)
-			.then(async response=>{
-				if (response.ok){
-					const resp = await response.text()
-					console.log(resp)
-				}
-				else {
-					console.log(response);
-				}
-			})*/
-		},
-		receiveFriendRequest: (state: any, data:any) => {
-			state.friendRequest = data.payload;
+			state.token = undefined
 		},
 		updateDB: (state:any, data:any) => {
 			console.log(data.payload);
@@ -77,16 +46,10 @@ export const globalSlice = createSlice({
 			state.friends = data.payload.friends
 			state.bloqued = data.payload.bloqued
 		},
-		acceptFriend: () => {
-			console.log("Accept")
-		},
-		ignoreFriend: () => {
-			console.log("Ignore")
-		}
 	},
 })
 
 // Action creators are generated for each case reducer function
-export const { login, logout, sendFriendRequest, updateDB, acceptFriend, ignoreFriend } = globalSlice.actions
+export const { login, logout, updateDB } = globalSlice.actions
 
 export default globalSlice.reducer

@@ -3,7 +3,7 @@ import { interval, Observable, mergeMap } from 'rxjs';
 import { UserI } from './models/user.interface';
 import { UserService } from './user.service';
 import { UserGateway } from './user.gateway';
-import { JwtAuthGuard } from '../auth/auth.guard';
+import { JwtAuthGuard, IntraAuthGuard } from '../auth/auth.guard';
 import { MessageEvent } from '@nestjs/common';
 import { EventsService } from './events.service';
 import { status } from './models/user.entity';
@@ -18,7 +18,6 @@ export class UserController {
 	findAll():Promise<UserI[]> {
 		return this.userService.findAll();
 	}
-
 	/*
 		update status of user db
 	*/
