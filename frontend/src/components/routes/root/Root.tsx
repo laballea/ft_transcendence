@@ -4,42 +4,65 @@ import React, { useState, useEffect } from 'react'
 import Home from './Home';
 
 // Hooks
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 //socket
 import { SocketContext, socket} from '../../../context/socket';
 import { Navigate, useSearchParams } from 'react-router-dom';
+import { login } from '../../../store/global/reducer';
+export enum loginStatus {
+	waiting = 'WAITING',
+	valid = 'VALID',
+	invalid = 'INVALID',
+}
 
 const Root = () => {
 	const global = useSelector((state: any) => state.global)
+	const dispatch = useDispatch();
 	const [searchParams, setSearchParams] = useSearchParams();
-	const [validLogin, setValidLogin] = useState(false);
-	const jwt = searchParams.get("jwt") == null ? global.token : searchParams.get("jwt");
+	const jwt = searchParams.get("jwt") == null ? global.token : searchParams.get("jwt"); // get jwt token on query
 
-	if (validLogin == false){
+	/*
+		GET method on /auth/user with jwt auth
+		backend respond with user data or unauthaurized
+		if succeed we update redux store with user data and remove query from url
+		else we redirect to login page
+	*/
+	if (global.token != jwt){ // if token exist in redux user is already logged
 		const requestOptions = {
-			method: 'POST',
+			method: 'GET',
 			headers: {
 			  'Content-Type': 'application/json;charset=utf-8',
 			  'Access-Control-Allow-Origin': '*',
+			  'Authorization': 'bearer ' + jwt,
 			},
-			body: JSON.stringify({jwt: jwt})
 		}
-		fetch("http://localhost:5000/auth/validToken", requestOptions)
+		fetch("http://localhost:5000/auth/user", requestOptions)
 		.then(async response=>{
+			let user = await response.json();
 			if (response.ok){
-				setValidLogin(current => !current);
+				dispatch(login({user:user, token:jwt}))
+				if (searchParams.get("jwt")){
+					searchParams.delete("jwt");
+					setSearchParams(searchParams);
+				}
 			}
 		})
 	}
-	if (validLogin) {
-		return(
-			<SocketContext.Provider value={socket}>
-				<Home />
-			</SocketContext.Provider>
-		)
-	}
-	return <Navigate to="/login" replace />
-
+	return (
+		<>
+			{(function() {
+				if (global.logged) {
+					return (
+						<SocketContext.Provider value={socket}>
+							<Home/>
+						</SocketContext.Provider>
+					);
+				} else{
+					return <Navigate to="/login" replace />
+				}
+		 	 })()} 
+		</>
+	)
 }
 
 export default Root

@@ -18,6 +18,7 @@ import { updateDB } from '../../../store/global/reducer';
 export default function Home() {
 	const socket = useContext(SocketContext);
 	const global = useSelector((state: any) => state.global)
+	document.title = global.username === undefined ? "Login" : global.username;
 	const dispatch = useDispatch();
 	useEffect(() => {
 		socket.emit("CONNECT", {socketID: socket.id, id:global.id, username:global.username}); 

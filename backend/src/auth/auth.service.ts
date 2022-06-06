@@ -52,21 +52,21 @@ export class AuthService {
 		return this.helper.generateToken(user);
 	}
 
-	public async registerIntra(intraID:number): Promise<UserEntity | never> {
+	public async registerIntra(userData: any): Promise<UserEntity | never> {
 		var user: UserEntity = new UserEntity();
-		user.username = "";
-		user.intraID = intraID;
+		console.log(user)
+		user.username = userData.login;
+		user.intraID = userData.id;
+		user.profilIntraUrl = userData.image_url;
 		return this.repository.save(user);
 	}
 
-	public async loginIntra(intraID: number): Promise<Object | never> {
-		var user: UserEntity = await this.userService.findUserByIntra(intraID);
+	public async loginIntra(userData: any): Promise<Object | never> {
+		var user: UserEntity = await this.userService.findUserByIntra(userData.id);
 
+		console.log(user)
 		if (!user) {
-			user = await this.registerIntra(intraID);
-		}
-		if (user.status === status.Connected){
-			throw new HttpException('Already Connected', HttpStatus.CONFLICT);
+			user = await this.registerIntra(userData);
 		}
 		return user;
 	}

@@ -18,6 +18,9 @@ export class UserEntity {
 	@Column("int", {nullable:true})
 	intraID:number;
 
+	@Column({nullable:true})
+	profilIntraUrl:string;
+
 	@Column({default:status.Disconnected})
 	status:status;
 

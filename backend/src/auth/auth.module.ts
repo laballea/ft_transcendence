@@ -10,7 +10,7 @@ import { JwtStrategy } from './auth.strategy';
 import { ConfigService } from '@nestjs/config';
 import { UserService } from 'src/user/user.service';
 import { HttpModule } from '@nestjs/axios';
-import { IntraStrategy } from './42.strategy';
+import { IntraStrategy } from './intra.strategy';
 import { SessionSerializer } from './auth.serializer';
 
 @Module({

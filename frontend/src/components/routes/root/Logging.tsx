@@ -6,25 +6,27 @@ import Footer from '../../commons/footer/Footer';
 // Hooks
 import { useDispatch } from 'react-redux'
 import { login } from '../../../store/global/reducer'
+import { useNavigate } from 'react-router-dom';
 
 
 const Logging = () => {
 	const [username, setUsername] = useState("");
-	const dispatch = useDispatch()
+	const navigate = useNavigate();
+	const url = new URL("http://localhost:5000/auth/login"); //url for intra auth
 
-	const url = new URL("https://api.intra.42.fr/oauth/authorize?client_id=254ee9c51d283d7911364b29f60d76fd8b47354cf9de36ed2edc9ae2d65e1136&redirect_uri=http%3A%2F%2Flocalhost%3A5000%2Fauth%2Flogin&response_type=code");
-	const urlBis = new URL("http://localhost:5000/auth/login");
+	/*
+		POST username at auth/login, back respond with jwt token
+		and we redirect to home with jwt in query
+	*/
 	const handleSubmit = async (event: any) => {
-		// Prevent page reload
-		event.preventDefault();
+		event.preventDefault();// Prevent page reload
 		const requestOptions = {
 			method: 'POST',
 			headers: {
 			  'Content-Type': 'application/json;charset=utf-8',
 			  'Access-Control-Allow-Origin': '*',
 			},
-			body: JSON.stringify(
-			{
+			body: JSON.stringify({
 				username: username,
 			})
 		}
@@ -32,11 +34,7 @@ const Logging = () => {
 		.then(async response=>{
 			if (response.ok){
 				const resp:any = await response.json()
-				console.log(resp.user);
-				dispatch(login({user:resp.user, token:resp.token}))
-			}
-			else {
-				console.log(response);
+				navigate(`/home?jwt=${resp.token}`)
 			}
 		})
 	  };
@@ -56,7 +54,7 @@ const Logging = () => {
 				</form> 
 				<button 
 					className="w-[260px] h-[80px] sm:h-[64px] bg-transparent border-2 border-slate-400 hover:border-slate-200 text-md text-slate-400 hover:text-slate-200 font-space rounded transition-all duration-700 ease-in-out"
-					onClick={event =>  window.location.href=urlBis.toString()}>
+					onClick={event =>  window.location.href=url.toString()}> {/*on click redirect to backend auth/login*/}
 						Log in with 42 account
 				</button>
 			</div>

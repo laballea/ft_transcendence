@@ -6,6 +6,8 @@ export interface UserI {
 	intraID:number;
 
 	username:string;
+	
+	profilIntraUrl:string;
 
 	status:status;
 

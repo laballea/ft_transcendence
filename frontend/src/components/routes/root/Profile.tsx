@@ -13,7 +13,7 @@ const Profile = () => {
 			<div>
 				<div>
 					<div>
-						<button onClick={() => {navigate('/')}}>Go back</button>
+						<button onClick={() => {navigate('/home')}}>Go back</button>
 					</div>
 				</div>
 			</div>

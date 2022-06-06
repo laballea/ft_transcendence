@@ -23,10 +23,10 @@ export class IntraStrategy extends PassportStrategy(Strategy, 'intra-oauth') {
 	}
 
 	async validate(accessToken: string): Promise<any> {
-		const { data } = await lastValueFrom(this.httpService
+		let { data } = await lastValueFrom(this.httpService
 		.get('https://api.intra.42.fr/v2/me', {
 			headers: { Authorization: `Bearer ${accessToken}` },
 		}));
-		return this.authService.loginIntra(data.id);
+		return this.authService.loginIntra(data);
 	}
 }
