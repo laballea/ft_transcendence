@@ -8,7 +8,7 @@ const Chat: React.FC<IProps> = ({ msg }) => {
 			return (
 				<li className="Chat">
 					<div className="Chat-header">
-						<p style={{color:'white'}}>{message.date} {message.author}: {message.content}</p>
+						<p style={{color:'white', paddingTop:'10px', paddingLeft: '200px'}}>{message.date} {message.author}: {message.content}</p>
 					</div>
 				</li>
 			)

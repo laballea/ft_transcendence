@@ -10,7 +10,11 @@ import {
 	OnGatewayInit,
 	ConnectedSocket
 } from '@nestjs/websockets';
-import { Repository, getConnection } from 'typeorm';
+import {
+	Repository,
+	getConnection,
+	getRepository
+} from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Conversation, Message, User } from './models/user.entity';
 import { status } from './models/user.entity';
@@ -145,7 +149,7 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		let conv : Conversation = await this.convRepository.findOne({ 
 			where: {
 				//id: data.conversation.id
-				 id: 68
+				 id: -1
 				// users: [db_user_emit.id]
 			},
 		})
@@ -163,11 +167,32 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		if (!conv) {
 			console.log('ntm')
 			conv = new Conversation();
-			conv.id = 69;
+			//conv.id = 68;
 			conv.users = [db_user_emit, db_user_recv];
 		}
 		conv.messages = [msg];
 		this.convRepository.save(conv);
+
+		// Get conv by User
+		const tmpEmit = await this.userRepository.find({
+			relations: ['conversations'],
+			where: {
+				id: db_user_emit.id
+			}
+		})
+		const tmpRecv = await this.userRepository.find({
+			relations: ['conversations'],
+			where: {
+				id: db_user_recv.id
+			}
+		})
+		const tmpTEST = await this.userRepository.find({
+			relations: ['conversations'],
+			where: {
+				id: 3
+			}
+		})
+		console.log("EMIT: ", tmpEmit[0].conversations, "RECV: ", tmpRecv[0].conversations, "tmpTEST: ", tmpTEST[0].conversations);
 		if (user_emit && user_recv) {
 			user_emit.socket.emit('dmClient', data.client_emit, data.content, msg.date.toLocaleTimeString('fr-EU'))
 			user_recv.socket.emit('dmClient', data.client_emit, data.content, msg.date.toLocaleTimeString('fr-EU'))

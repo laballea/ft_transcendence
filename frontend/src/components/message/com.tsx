@@ -59,11 +59,12 @@ const Com: React.FC<IProps> = ({ msg, setMessage }) => {
 				value={input.content}
 				onChange={handleChange}
 				name="content"
+				style={{marginLeft: '200px', paddingLeft: '100px'}}
 			/>
 			<button
 				className="add-chat"
 				onClick={sendMessage}
-				style={{color: "white"}}
+				style={{color:'white', padding: '100px'}}
 			>
 				Send
 			</button>

@@ -16,7 +16,7 @@ function Message() {
 
 	return (
 		<div className="chat">
-			<h3 style={{color:'white'}}>WhatsApp</h3>
+			<h3 style={{color:'white', padding:'200px'}}>WhatsApp</h3>
 			<Chat msg={msg}/>
 			<Com msg={msg} setMessage={setMessage}/>
 		</div>
