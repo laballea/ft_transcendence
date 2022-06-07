@@ -1,13 +1,23 @@
-
 import { Logger } from '@nestjs/common';
 import { UserP } from './models/user.interface';
-import { MessageBody, SubscribeMessage, WebSocketGateway, WebSocketServer, OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit, ConnectedSocket } from '@nestjs/websockets';
+import {
+	MessageBody,
+	SubscribeMessage,
+	WebSocketGateway,
+	WebSocketServer,
+	OnGatewayConnection,
+	OnGatewayDisconnect,
+	OnGatewayInit,
+	ConnectedSocket
+} from '@nestjs/websockets';
 import { Repository, getConnection } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UserEntity } from './models/user.entity';
+import { Conversation, Message, User } from './models/user.entity';
 import { status } from './models/user.entity';
-import { FRIEND_REQUEST_ACTIONS, FRIEND_REQUEST_DATA } from 'src/common/types';
+import { FRIEND_REQUEST_ACTIONS, FRIEND_REQUEST_DATA, MESSAGE_DATA } from 'src/common/types';
 import { UserService } from './user.service';
+import { Socket, Server } from 'socket.io';
+
 @WebSocketGateway({
 	cors: {
 		origin: '*',
@@ -17,8 +27,12 @@ import { UserService } from './user.service';
 @WebSocketGateway()
 export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit {
 	constructor(
-		@InjectRepository(UserEntity)
-		private userRepository: Repository<UserEntity>,
+		@InjectRepository(User)
+		private userRepository: Repository<User>,
+		@InjectRepository(Message)
+		private messageRepository: Repository<Message>,
+		@InjectRepository(Conversation)
+		private convRepository: Repository<Conversation>,
 		private userService:UserService
 	){}
 
@@ -26,18 +40,18 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 	public connectedUser: UserP[] = [];
 
 	@WebSocketServer()
-	server: any;
+	server: Server;
 
-	handleConnection(client: any) {
+	handleConnection(client: Socket) {
 	}
 
-	async handleDisconnect(client: any, ...args: any[]) {
+	async handleDisconnect(client: Socket, ...args: any[]) {
 		const user_idx = this.connectedUser.findIndex(v => v.socket.id === client.id)
 		if (this.connectedUser[user_idx]) {
 			console.log(this.connectedUser[user_idx].username, "disconnected");
 			await getConnection()
 				.createQueryBuilder()
-				.update(UserEntity)
+				.update(User)
 				.set({ status: status.Disconnected })
 				.where("id = :id", { id: this.connectedUser[user_idx].id })
 				.execute();
@@ -45,13 +59,13 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		}
 	}
 
-	afterInit(server: any) {
+	afterInit(server: Server) {
 		console.log('Socket is live')
 		this.logger.log("Socket is live")
 	}
 
 	@SubscribeMessage('CONNECT')
-	async connect(@MessageBody() data: {socketID:string, id:number, username:string}, @ConnectedSocket() client: any) {
+	async connect(@MessageBody() data: {socketID:string, id:number, username:string}, @ConnectedSocket() client: Socket) {
 		this.connectedUser.push({
 			id:data.id,
 			username:data.username,
@@ -59,7 +73,7 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		})
 		await getConnection()
 			.createQueryBuilder()
-			.update(UserEntity)
+			.update(User)
 			.set({ status: status.Connected })
 			.where("id = :id", { id: data.id })
 			.execute();
@@ -97,13 +111,13 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 			/* update both user db */
 			await getConnection()
 				.createQueryBuilder()
-				.update(UserEntity)
+				.update(User)
 				.set(db_user_recv)
 				.where("id = :id", { id: db_user_recv.id })
 				.execute();
 			await getConnection()
 				.createQueryBuilder()
-				.update(UserEntity)
+				.update(User)
 				.set(db_user_emit)
 				.where("id = :id", { id: db_user_emit.id })
 				.execute();
@@ -117,4 +131,46 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		}
 	}
 
+	@SubscribeMessage('dmServer')
+	async handleDM(@MessageBody() data: MESSAGE_DATA) {
+		// Find socket user
+		const user_emit = this.connectedUser.find((user: any) => {return user.username === data.client_emit})
+		const user_recv = this.connectedUser.find((user: any) => {return user.username === data.client_recv})
+
+		// Find user info
+		const db_user_emit :User = await this.userRepository.findOne({ where:{username:data.client_emit} })
+		const db_user_recv :User = await this.userRepository.findOne({ where:{username:data.client_recv} })
+
+		// Search existant conv or create it
+		let conv : Conversation = await this.convRepository.findOne({ 
+			where: {
+				//id: data.conversation.id
+				 id: 68
+				// users: [db_user_emit.id]
+			},
+		})
+
+		// Create new msg
+		let hour: Date = new Date()
+		let msg = new Message();
+		msg.content = data.content;
+		msg.conversation = conv;
+		msg.date = hour;
+		msg.idSend = db_user_emit.id;
+		msg.idRecv = db_user_recv.id;
+		this.messageRepository.save(msg);
+
+		if (!conv) {
+			console.log('ntm')
+			conv = new Conversation();
+			conv.id = 69;
+			conv.users = [db_user_emit, db_user_recv];
+		}
+		conv.messages = [msg];
+		this.convRepository.save(conv);
+		if (user_emit && user_recv) {
+			user_emit.socket.emit('dmClient', data.client_emit, data.content, msg.date.toLocaleTimeString('fr-EU'))
+			user_recv.socket.emit('dmClient', data.client_emit, data.content, msg.date.toLocaleTimeString('fr-EU'))
+		}
+	}
 }

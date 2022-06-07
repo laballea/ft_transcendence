@@ -6,17 +6,17 @@ import { FiCheck, FiX} from "react-icons/fi";
 
 // Hooks
 import React, {useState, useEffect, useContext} from 'react'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { FRIEND_REQUEST_ACTIONS, status } from '../../common/types';
 
 //
 import { SocketContext } from '../../context/socket';
-
+import { setClientChat } from '../../store/global/reducer';
 const ContactList = () => {
 	const global = useSelector((state: any) => state.global)
 	const [state, setState] = useState({contactList:[]})
 	const socket = useContext(SocketContext);
-
+	const dispatch = useDispatch()
 
 	var eventSource:EventSource;
 	useEffect(() => {
@@ -33,7 +33,15 @@ const ContactList = () => {
 	const listItems = state.contactList.length > 0 ? state.contactList.map((contact: any) =>  
 		<div key={contact.username} style={{flex:1,display:"flex",flexDirection:"row", color:contact.status === status.Connected ? "#2CDA9D" : "#C41E3D"}}>
 			<div style={{flex:3, padding:10}}>
-				<p>{contact.username}</p>
+				<p>
+					<button
+						onClick={() => {
+							dispatch(setClientChat(contact.username))
+						}}
+					>
+						{contact.username}
+					</button>
+				</p>
 			</div>
 		</div>
 	): [];

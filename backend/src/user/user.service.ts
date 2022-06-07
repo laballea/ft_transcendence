@@ -2,14 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { from, Observable } from 'rxjs';
 import { Repository, getConnection } from 'typeorm';
-import { UserEntity, status } from './models/user.entity';
+import { User, status } from './models/user.entity';
 import { UserI, UserSafeInfo } from './models/user.interface';
 import { friendEvent } from 'src/common/types';
 @Injectable()
 export class UserService {
 	constructor(
-		@InjectRepository(UserEntity)
-		private userRepository: Repository<UserEntity>
+		@InjectRepository(User)
+		private userRepository: Repository<User>
 	){}
 
 	/*
@@ -37,7 +37,7 @@ export class UserService {
 	async updateStatus(id: number, status:status):Promise<string> {
 		await getConnection()
 			.createQueryBuilder()
-			.update(UserEntity)
+			.update(User)
 			.set({ status: status })
 			.where("id = :id", { id: id })
 			.execute();
@@ -49,7 +49,7 @@ export class UserService {
 	*/
 	async getContactList(username: string):Promise<{ id: number; username: string; }[]>{
 		const list = await this.userRepository.find();
-		const user: UserEntity = await this.userRepository.findOne({ where:{username:username} });
+		const user: User = await this.userRepository.findOne({ where:{username:username} });
 		return user.friends.map(id => ({ id: id, username: list.find(el => el.id == id).username, status:list.find(el => el.id == id).status}));
 
 		/*list.splice(list.findIndex(object => {return object.username === username}), 1); // remove current user from list
@@ -60,12 +60,12 @@ export class UserService {
 		add friend to user list
 	*/
 	async addFriend(data: friendEvent):Promise<string> {
-		const user: UserEntity = await this.userRepository.findOne({ where:{id:data.id} });
-		const user2: UserEntity = await this.userRepository.findOne({ where:{id:data.friend_id} });
+		const user: User = await this.userRepository.findOne({ where:{id:data.id} });
+		const user2: User = await this.userRepository.findOne({ where:{id:data.friend_id} });
 		user.friends.push(user2.id)
 		await getConnection()
 			.createQueryBuilder()
-			.update(UserEntity)
+			.update(User)
 			.set({ friends: user.friends })
 			.where("id = :id", { id: data.id })
 			.execute();
@@ -76,19 +76,19 @@ export class UserService {
 		remove friend from user list
 	*/
 	async removeFriend(data: friendEvent):Promise<string> {
-		const user: UserEntity = await this.userRepository.findOne({ where:{id:data.id} });
-		const user2: UserEntity = await this.userRepository.findOne({ where:{id:data.friend_id} });
+		const user: User = await this.userRepository.findOne({ where:{id:data.id} });
+		const user2: User = await this.userRepository.findOne({ where:{id:data.friend_id} });
 		user.friends.splice(user.friends.indexOf(user2.id))
 		await getConnection()
 			.createQueryBuilder()
-			.update(UserEntity)
+			.update(User)
 			.set({ friends: user.friends })
 			.where("id = :id", { id: data.id })
 			.execute();
 		return "ok";
 	}
 
-	async parseUserInfo(userInfo:UserEntity):Promise<UserSafeInfo> {
+	async parseUserInfo(userInfo:User):Promise<UserSafeInfo> {
 		const userRepo = await this.userRepository.find()
 		var UserSafeInfo:UserSafeInfo = {
 			id: userInfo.id,
