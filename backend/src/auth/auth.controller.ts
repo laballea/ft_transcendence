@@ -7,15 +7,13 @@ import { Request } from 'express';
 import { UserService } from 'src/user/user.service';
 import { status } from '../user/models/user.entity';
 import { HTTP_STATUS } from 'src/common/types';
-//import { UserGateway } from 'src/user/user.gateway';
+
 @Controller('auth')
 export class AuthController {
 	@Inject(AuthService)
 	private readonly service: AuthService;
 	@Inject(UserService)
 	private readonly userService: UserService;
-	/*@Inject(UserGateway)
-	private readonly userGateway: UserGateway;*/
 
 	/*
 		use for test login
@@ -54,8 +52,8 @@ export class AuthController {
 	@Get('/user')
 	@UseGuards(JwtAuthGuard)
 	async getUser(@Res() res, @Req() req): Promise<any> {
-		/*if (this.userGateway.getStatus(req.user.id) == status.Connected)
-			throw new HttpException(HTTP_STATUS.ALREADY_CONNECTED, HttpStatus.CONFLICT);*/
+		if (this.userService.getUserStatus(req.user.id) == status.Connected)
+			throw new HttpException(HTTP_STATUS.ALREADY_CONNECTED, HttpStatus.CONFLICT);
 		res.status(HttpStatus.OK).send(req.user);
 	}
 }

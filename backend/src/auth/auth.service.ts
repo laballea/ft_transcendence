@@ -6,15 +6,13 @@ import { RegisterDto, LoginDto } from './auth.dto';
 import { AuthHelper } from './auth.helper';
 import { UserService } from 'src/user/user.service';
 import { HTTP_STATUS } from 'src/common/types';
-import { UserGateway } from 'src/user/user.gateway';
+
 @Injectable()
 export class AuthService {
 	@InjectRepository(UserEntity)
 	private readonly repository: Repository<UserEntity>;
 	@Inject(UserService)
 	private readonly userService: UserService;
-	@Inject(UserGateway)
-	private readonly userGateway: UserGateway;
 	@Inject(AuthHelper)
 	private readonly helper: AuthHelper;
 
@@ -43,9 +41,9 @@ export class AuthService {
 			await this.register(body);
 			user = await this.repository.findOne({ where: { username } });
 		}
-		/*if (this.userGateway.getStatus(user.id) == status.Connected)
-			throw new HttpException(HTTP_STATUS.ALREADY_CONNECTED, HttpStatus.CONFLICT);*/
-		return {user:await this.userGateway.parseUserInfo(user), token:this.helper.generateToken(user)};
+		if (this.userService.getUserStatus(user.id) == status.Connected)
+			throw new HttpException(HTTP_STATUS.ALREADY_CONNECTED, HttpStatus.CONFLICT);
+		return {user:await this.userService.parseUserInfo(user), token:this.helper.generateToken(user)};
 	}
 	public createToken(user: UserEntity): string{
 		return this.helper.generateToken(user);

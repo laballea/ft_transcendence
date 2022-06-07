@@ -20,10 +20,6 @@ export class UserController {
 	}
 
 	@Get('connected')
-	findConnected():Object {
-		return this.userGateway.connectedUser.map(data => ({id:data.id, status:data.status, username:data.username}));
-	}
-	@Get('test')
 	findCon():Object {
 		return this.userService.getConnected();
 	}

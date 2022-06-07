@@ -12,7 +12,6 @@ import { UserService } from 'src/user/user.service';
 import { HttpModule } from '@nestjs/axios';
 import { IntraStrategy } from './intra.strategy';
 import { SessionSerializer } from './auth.serializer';
-import { UserGateway } from 'src/user/user.gateway';
 
 @Module({
   imports: [
@@ -34,7 +33,6 @@ import { UserGateway } from 'src/user/user.gateway';
 	  JwtStrategy,
 	  IntraStrategy,
 	  UserService,
-	  UserGateway,
 	  SessionSerializer],
 })
 export class AuthModule {}
