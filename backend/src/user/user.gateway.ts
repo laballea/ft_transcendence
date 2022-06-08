@@ -146,11 +146,9 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 			},
 		})
 		if (!conv){
-			const conv = new Conversation();
+			conv = new Conversation();
 			conv.users = [db_user_emit, db_user_recv];
 			await this.convRepository.save(conv);
-			console.log("Create conversation")
-
 		}
 
 		// Create new msg
@@ -161,6 +159,7 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		msg.idRecv = db_user_recv.id;
 		msg.conversation = conv;
 		await this.messageRepository.save(msg);
+		await this.convRepository.save(conv);
 
 		if (user_emit && user_recv) {
 			user_emit.socket.emit('dmClient', data.client_emit, data.content, msg.date.toLocaleTimeString('fr-EU'))

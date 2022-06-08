@@ -15,7 +15,7 @@ import { setClientChat } from '../../store/global/reducer';
 const ContactList = () => {
 	const global = useSelector((state: any) => state.global)
 	const [state, setState] = useState({contactList:[]})
-	const {socket} = useContext(SocketContext);
+	const socket = useContext(SocketContext);
 	const dispatch = useDispatch()
 
 	var eventSource:EventSource;

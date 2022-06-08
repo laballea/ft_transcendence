@@ -20,27 +20,32 @@ import PopUpWindow from '../../commons/popup/PopUpWindow';
 import {io} from "socket.io-client";
 
 export default function Home() {
-	const {socket, setSocket} = useContext(SocketContext);
+	const socket = useContext(SocketContext);
 	const global = useSelector((state: any) => state.global)
 	const [popup, setPopup] = useState({open:false, error:true, message:""});
 	document.title = global.username;
 	const dispatch = useDispatch();
 
-	useEffect(() => {
-		console.log(socket, "HERE")
-		socket.connect()
-		socket.emit("CONNECT", {socketID: socket.id, id:global.id, username:global.username});
-		socket.on("UPDATE_DB", (data) => {
-			dispatch(updateDB(data));
+	useEffect( () => {
+		if (socket.connected == false)
+			socket.connect()
+		socket.on("connect", () => {
+			socket.emit("CONNECT", {socketID: socket.id, id:global.id, username:global.username});
+			socket.on("UPDATE_DB", (data) => {
+				dispatch(updateDB(data));
+			});
+			socket.on("PopUp", (data) => {
+				setPopup({open:true, error:data.error, message:data.message})
+			});
 		});
-		socket.on("PopUp", (data) => {
-			setPopup({open:true, error:data.error, message:data.message})
-		});
+		
 		return () => {
 			// before the component is destroyed
 			// unbind all event handlers used in this component
 			socket.off('CONNECT');
+			socket.off('connect');
 			socket.off('RECEIVE_REQUEST');
+			socket.disconnect();
 		};
 	}, []);
 	React.useEffect(() => {
