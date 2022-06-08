@@ -157,7 +157,6 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		if (!conv) {
 			console.log('ntm')
 			conv = new Conversation();
-			//conv.id = 68;
 			conv.users = [db_user_emit, db_user_recv];
 		}
 
@@ -171,31 +170,6 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		msg.conversation = conv;
 		this.messageRepository.save(msg);
 
-		// conv.messages.push(msg);
-		// this.convRepository.save(conv);
-
-		// Get conv by User
-		const tmpEmit = await this.userRepository.find({
-			relations: ['conversations'],
-			where: {
-				id: db_user_emit.id
-			}
-		})
-		const tmpRecv = await this.userRepository.find({
-			relations: ['conversations'],
-			where: {
-				id: db_user_recv.id
-			}
-		})
-
-		const tmpTEST = await this.messageRepository.find({
-			where: {
-				conversation: 1
-			}
-		})
-
-
-		console.log("EMIT: ", tmpEmit[0].conversations[0], "RECV: ", tmpRecv[0].conversations, "tmpTEST: ", tmpTEST);
 		if (user_emit && user_recv) {
 			user_emit.socket.emit('dmClient', data.client_emit, data.content, msg.date.toLocaleTimeString('fr-EU'))
 			user_recv.socket.emit('dmClient', data.client_emit, data.content, msg.date.toLocaleTimeString('fr-EU'))

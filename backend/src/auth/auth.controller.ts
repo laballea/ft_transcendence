@@ -54,6 +54,6 @@ export class AuthController {
 		if (req.user.status === status.Connected){
 			throw new HttpException('Already Connected', HttpStatus.CONFLICT);
 		}
-		res.status(HttpStatus.OK).send(req.user);
+		res.status(HttpStatus.OK).send(this.userService.parseUserInfo(req.user));
 	}
 }
