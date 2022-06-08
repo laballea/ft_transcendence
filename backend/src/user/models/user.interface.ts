@@ -21,6 +21,20 @@ export interface UserI {
 
 }
 
+export interface MessageI {
+	id: number;
+	idSend: number;
+	idRecv: number;
+	content: string;
+	date: Date;
+}
+
+export interface ConversationI {
+	id: number;
+	users: UserI[];
+	messages: MessageI[];
+}
+
 export interface UserP {
 	id: number;
 	username:string;

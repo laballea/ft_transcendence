@@ -52,8 +52,9 @@ export class AuthController {
 	@Get('/user')
 	@UseGuards(JwtAuthGuard)
 	async getUser(@Res() res, @Req() req): Promise<any> {
+		console.log('getUser')
 		if (this.userService.getUserStatus(req.user.id) != status.Disconnected)
 			throw new HttpException(HTTP_STATUS.ALREADY_CONNECTED, HttpStatus.CONFLICT);
-		res.status(HttpStatus.OK).send(req.user);
+		res.status(HttpStatus.OK).send(await this.userService.parseUserInfo(req.user));
 	}
 }

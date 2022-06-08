@@ -1,15 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { from, Observable } from 'rxjs';
 import { Repository, getConnection } from 'typeorm';
-import { User, status } from './models/user.entity';
-import { UserI, UserSafeInfo } from './models/user.interface';
-import { UserP } from './models/user.interface';
+import { User, Message, Conversation, status } from './models/user.entity';
+import { ConversationI, UserI, UserSafeInfo, UserP } from './models/user.interface';
+
 @Injectable()
 export class UserService {
 	constructor(
 		@InjectRepository(User)
-		private userRepository: Repository<User>
+		private userRepository: Repository<User>,
+		@InjectRepository(Conversation)
+		private convRepository: Repository<Conversation>,
+		@InjectRepository(Message)
+		private messageRepository: Repository<Message>,
 	){}
 
 	public connectedUser: UserP[] = [];
@@ -112,10 +115,31 @@ export class UserService {
 			.execute();
 	}
 
+	async getConversationByUser(userInfo:User):Promise<ConversationI>{
+		var res: ConversationI;
+
+		const convUser = await this.userRepository.find({
+			relations: ['conversations'],
+			where: {
+				id: userInfo.id
+			}
+		})
+	
+		// iter on conversations id
+		const msgConv = await this.messageRepository.find({
+			where: {
+				conversation: 1
+			}
+		})
+		console.log("convUser: ", convUser[0].conversations[0], "msgConv: ", msgConv);
+		return res;
+	}
+
 	/*
 		return more readable user data for client
 	*/
 	async parseUserInfo(userInfo:User):Promise<UserSafeInfo> {
+		console.log('parse user info')
 		const userRepo = await this.userRepository.find()
 		var UserSafeInfo:UserSafeInfo = {
 			id: userInfo.id,
@@ -125,6 +149,9 @@ export class UserService {
 		UserSafeInfo.friends = userInfo.friends.map(id => ({ id: id, username: userRepo.find(el => el.id == id).username}));
 		UserSafeInfo.bloqued = userInfo.bloqued.map(id => ({ id: id, username: userRepo.find(el => el.id == id).username}));
 		UserSafeInfo.friendsRequest = userInfo.friendsRequest.map(id => ({ id: id, username: userRepo.find(el => el.id == id).username}));
+		
+		this.getConversationByUser(userInfo);
+		
 		return UserSafeInfo;
 	}
 }
