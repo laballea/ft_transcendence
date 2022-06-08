@@ -133,8 +133,8 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 	@SubscribeMessage('dmServer')
 	async handleDM(@MessageBody() data: MESSAGE_DATA) {
 		// Find socket user
-		const user_emit = this.connectedUser.find((user: any) => {return user.username === data.client_emit})
-		const user_recv = this.connectedUser.find((user: any) => {return user.username === data.client_recv})
+		const user_emit = this.userService.findConnectedUserByUsername(data.client_emit);
+		const user_recv = this.userService.findConnectedUserByUsername(data.client_recv);
 
 		// Find user info
 		const db_user_emit :User = await this.userRepository.findOne({ where:{username:data.client_emit} })
@@ -150,6 +150,7 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 			conv.users = [db_user_emit, db_user_recv];
 			await this.convRepository.save(conv);
 			console.log("Create conversation")
+
 		}
 
 		// Create new msg
@@ -159,7 +160,7 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		msg.idSend = db_user_emit.id;
 		msg.idRecv = db_user_recv.id;
 		msg.conversation = conv;
-		this.messageRepository.save(msg);
+		await this.messageRepository.save(msg);
 
 		if (user_emit && user_recv) {
 			user_emit.socket.emit('dmClient', data.client_emit, data.content, msg.date.toLocaleTimeString('fr-EU'))
