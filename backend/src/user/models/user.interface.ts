@@ -14,7 +14,7 @@ export interface UserI {
 
 	bloqued:number[];
 
-	conversations: Conversation[];
+	conversations?: Conversation[];
 
 	friendsRequest:number[];
 	nullChecks():Promise<void>;

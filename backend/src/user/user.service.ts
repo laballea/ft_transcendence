@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, getConnection } from 'typeorm';
 import { User, Message, Conversation, status } from './models/user.entity';
-import { ConversationI, UserI, UserSafeInfo, UserP } from './models/user.interface';
+import { ConversationI, UserI, UserSafeInfo, UserP, MessageI } from './models/user.interface';
 
 @Injectable()
 export class UserService {
@@ -115,25 +115,40 @@ export class UserService {
 			.execute();
 	}
 
-	async getConversationByUser(userInfo:User):Promise<ConversationI>{
-		var res: ConversationI;
+	// function createUser(user: User): UserSafeInfo {
+	// 	return ({
+	// 		id: user.id,
+	// 		username: user.username,
+	// 	})
+	// }
 
-		const convUser = await this.userRepository.find({
-			relations: ['conversations'],
-			where: {
-				id: userInfo.id
-			}
-		})
+	// function createConv(conversation: Conversation): ConversationI {
+	// 	return ({
+	// 			id:conversation.id,
+	// 			users: [createUser(conversation.users[0]), createUser(conversation.user[1])]
+	// 	})
+	// }
+
+	// async getConversationByUser(userInfo:User):Promise<ConversationI[]>{
+	// 	var res: ConversationI;
+
+	// 	const convUser = await this.userRepository.find({
+	// 		relations: ['conversations'],
+	// 		where: {
+	// 			id: userInfo.id
+	// 		}
+	// 	})
 	
-		// iter on conversations id
-		const msgConv = await this.messageRepository.find({
-			where: {
-				conversation: 1
-			}
-		})
-		console.log("convUser: ", convUser[0].conversations[0], "msgConv: ", msgConv);
-		return res;
-	}
+	// 	for (let conv of convUser[0].conversations) {
+	// 		const msgConv = await this.messageRepository.find({
+	// 			where: {
+	// 				conversation: conv.id
+	// 			}
+	// 		})
+	// 	}
+	// 	// console.log(res);
+	// 	return res;
+	// }
 
 	/*
 		return more readable user data for client
