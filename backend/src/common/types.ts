@@ -1,3 +1,5 @@
+import { Conversation } from "src/user/models/user.entity";
+
 export interface MessageEvent {
 	data: string | object;
 	id?: string;
@@ -29,3 +31,12 @@ export enum HTTP_STATUS {
 	ALREADY_CONNECTED = 'User is already connected.',
 	LOGIN_FAILED = 'Login failed.',
 } 
+
+export interface MESSAGE_DATA {
+	client_emit: string;
+	client_recv: string;
+	content: string;
+	conversationID: number;
+	date: Date;
+	jwt: number;
+}

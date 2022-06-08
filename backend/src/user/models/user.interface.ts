@@ -1,4 +1,5 @@
 import { status } from "./user.entity";
+import { Conversation } from "./user.entity";
 
 export interface UserI {
 	id:number;
@@ -13,8 +14,11 @@ export interface UserI {
 
 	bloqued:number[];
 
+	conversations: Conversation[];
+
 	friendsRequest:number[];
 	nullChecks():Promise<void>;
+
 }
 
 export interface UserP {

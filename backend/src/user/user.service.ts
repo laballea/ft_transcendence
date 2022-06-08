@@ -2,14 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { from, Observable } from 'rxjs';
 import { Repository, getConnection } from 'typeorm';
-import { UserEntity, status } from './models/user.entity';
+import { User, status } from './models/user.entity';
 import { UserI, UserSafeInfo } from './models/user.interface';
 import { UserP } from './models/user.interface';
 @Injectable()
 export class UserService {
 	constructor(
-		@InjectRepository(UserEntity)
-		private userRepository: Repository<UserEntity>,
+		@InjectRepository(User)
+		private userRepository: Repository<User>
 	){}
 
 	public connectedUser: UserP[] = [];
@@ -53,7 +53,6 @@ export class UserService {
 				status:status.Connected,
 			})
 		}
-		console.log(this.connectedUser)
 		console.log(data.username, "connected");
 	}
 
@@ -96,7 +95,6 @@ export class UserService {
 	/*
 	*/
 	getUserStatus(id:number):status {
-		console.log(this.connectedUser)
 		const user = this.connectedUser.find((user: any) => {return user.id === id})
 		if (user)
 			return user.status;
@@ -105,10 +103,10 @@ export class UserService {
 
 	/*
 	*/
-	async updateUserDB(user:UserEntity) {
+	async updateUserDB(user:User) {
 		await getConnection()
 			.createQueryBuilder()
-			.update(UserEntity)
+			.update(User)
 			.set(user)
 			.where("id = :id", { id: user.id })
 			.execute();
@@ -117,7 +115,7 @@ export class UserService {
 	/*
 		return more readable user data for client
 	*/
-	async parseUserInfo(userInfo:UserEntity):Promise<UserSafeInfo> {
+	async parseUserInfo(userInfo:User):Promise<UserSafeInfo> {
 		const userRepo = await this.userRepository.find()
 		var UserSafeInfo:UserSafeInfo = {
 			id: userInfo.id,

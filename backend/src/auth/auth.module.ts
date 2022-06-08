@@ -2,7 +2,7 @@ import { Module , forwardRef} from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UserEntity } from '../user/models/user.entity';
+import { User } from '../user/models/user.entity';
 import { AuthController } from './auth.controller';
 import { AuthHelper } from './auth.helper';
 import { AuthService } from './auth.service';
@@ -26,7 +26,7 @@ import { UserModule } from 'src/user/user.module';
         signOptions: { expiresIn: '60s' },
       }),
     }),
-    TypeOrmModule.forFeature([UserEntity]),
+    TypeOrmModule.forFeature([User]),
   ],
   controllers: [AuthController],
   providers: [

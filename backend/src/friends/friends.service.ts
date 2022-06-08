@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { from, Observable } from 'rxjs';
 import { UserService } from 'src/user/user.service';
 import { Repository, getConnection } from 'typeorm';
-import { UserEntity } from '../user/models/user.entity';
+import { User } from '../user/models/user.entity';
 
 @Injectable()
 export class FriendsService {
@@ -13,6 +13,6 @@ export class FriendsService {
 	){}
 
 	isFriend(){
-
+		
 	}
 }

@@ -1,5 +1,5 @@
 import { Body, Controller, Inject, Post, UseGuards, Req, Get, Res, HttpException, HttpStatus} from '@nestjs/common';
-import { UserEntity } from '../user/models/user.entity';
+import { User } from '../user/models/user.entity';
 import { LoginDto } from './auth.dto';
 import { JwtAuthGuard, IntraAuthGuard } from './auth.guard';
 import { AuthService } from './auth.service';
@@ -28,7 +28,7 @@ export class AuthController {
 	@Post('refresh')
 	@UseGuards(JwtAuthGuard)
 	private refresh(@Req() { user }: Request): Promise<string | never> {
-		return this.service.refresh(<UserEntity>user);
+		return this.service.refresh(<User>user);
 	}
 
 	/*

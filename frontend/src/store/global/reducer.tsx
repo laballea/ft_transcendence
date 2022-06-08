@@ -4,7 +4,8 @@ import { user, status } from '../../common/types'
 const InitialState: user = {
 	logged:false,
 	username:undefined,
-	friendsRequest:[]
+	friendsRequest:[],
+	clientChat:"",
 }
 
 export const globalSlice = createSlice({
@@ -33,10 +34,14 @@ export const globalSlice = createSlice({
 			state.friends = data.payload.friends
 			state.bloqued = data.payload.bloqued
 		},
+		setClientChat: (state:any, data:any) => {
+			console.log(data.payload)
+			state.clientChat = data.payload;
+		},
 	},
 })
 
 // Action creators are generated for each case reducer function
-export const { login, logout, updateDB } = globalSlice.actions
+export const { login, logout, updateDB, setClientChat } = globalSlice.actions
 
 export default globalSlice.reducer

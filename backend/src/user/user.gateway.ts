@@ -1,13 +1,28 @@
-import { UserP, UserSafeInfo } from './models/user.interface';
-import { MessageBody, SubscribeMessage, WebSocketGateway, WebSocketServer, OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit, ConnectedSocket } from '@nestjs/websockets';
-import { Repository, getConnection } from 'typeorm';
+import { Logger } from '@nestjs/common';
+import { UserP } from './models/user.interface';
+import {
+	MessageBody,
+	SubscribeMessage,
+	WebSocketGateway,
+	WebSocketServer,
+	OnGatewayConnection,
+	OnGatewayDisconnect,
+	OnGatewayInit,
+	ConnectedSocket
+} from '@nestjs/websockets';
+import {
+	Repository,
+	getConnection,
+	getRepository
+} from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UserEntity } from './models/user.entity';
+import { Conversation, Message, User } from './models/user.entity';
 import { status } from './models/user.entity';
-import { FRIEND_REQUEST_ACTIONS, FRIEND_REQUEST_DATA } from 'src/common/types';
+import { FRIEND_REQUEST_ACTIONS, FRIEND_REQUEST_DATA, MESSAGE_DATA } from 'src/common/types';
 import { UserService } from './user.service';
 import { Inject } from '@nestjs/common';
 import { truncateString } from 'src/common/utils';
+import { Socket, Server } from 'socket.io';
 
 @WebSocketGateway({
 	cors: {
@@ -18,17 +33,19 @@ import { truncateString } from 'src/common/utils';
 @WebSocketGateway()
 export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit {
 	constructor(
-		@InjectRepository(UserEntity)
-		private userRepository: Repository<UserEntity>,
-		
-		@Inject(UserService)
-		private userService: UserService,
+		@InjectRepository(User)
+		private userRepository: Repository<User>,
+		@InjectRepository(Message)
+		private messageRepository: Repository<Message>,
+		@InjectRepository(Conversation)
+		private convRepository: Repository<Conversation>,
+		private userService:UserService
 	){}
 
 	public connectedUser: UserP[] = [];
 
 	@WebSocketServer()
-	server: any;
+	server: Server;
 
 	handleConnection(client: any) {
 		if (!this.server) this.server = client.server;
@@ -103,7 +120,7 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 	*/
 	async getContactList(username: string):Promise<{ id: number; username: string; }[]>{
 		const list = await this.userRepository.find(); // retrieve all users in db
-		const user: UserEntity = await this.userRepository.findOne({ where:{username:username} }); // find user by his username
+		const user: User = await this.userRepository.findOne({ where:{username:username} }); // find user by his username
 		
 		return user.friends.map(id => ({ id: id, username: list.find(el => el.id == id).username, status:this.userService.getUserStatus(list.find(el => el.id == id).id)}));
 	}
@@ -111,6 +128,64 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 	emitPopUp(users:UserP[], error:boolean, message:string):void{
 		for (let user of users) {
 			user.socket.emit("PopUp", {message:message, error:error});
+		}
+	}
+	@SubscribeMessage('dmServer')
+	async handleDM(@MessageBody() data: MESSAGE_DATA) {
+		// Find socket user
+		const user_emit = this.connectedUser.find((user: any) => {return user.username === data.client_emit})
+		const user_recv = this.connectedUser.find((user: any) => {return user.username === data.client_recv})
+
+		// Find user info
+		const db_user_emit :User = await this.userRepository.findOne({ where:{username:data.client_emit} })
+		const db_user_recv :User = await this.userRepository.findOne({ where:{username:data.client_recv} })
+		
+		let conv : Conversation = await this.convRepository.findOne({ 
+			where: {
+				id: data.conversationID
+			},
+		})
+		if (!conv){
+			const conv = new Conversation();
+			conv.users = [db_user_emit, db_user_recv];
+			await this.convRepository.save(conv);
+			console.log("Create conversation")
+		}
+
+		// Create new msg
+		let msg = new Message();
+		msg.content = data.content;
+		msg.date = new Date();
+		msg.idSend = db_user_emit.id;
+		msg.idRecv = db_user_recv.id;
+		msg.conversation = conv;
+		this.messageRepository.save(msg);
+
+		// Get conv by User
+		const tmpEmit = await this.userRepository.find({
+			relations: ['conversations'],
+			where: {
+				id: db_user_emit.id
+			}
+		})
+		const tmpRecv = await this.userRepository.find({
+			relations: ['conversations'],
+			where: {
+				id: db_user_recv.id
+			}
+		})
+
+		const tmpTEST = await this.messageRepository.find({
+			where: {
+				conversation: 1
+			}
+		})
+
+
+		console.log("EMIT: ", tmpEmit[0].conversations[0], "RECV: ", tmpRecv[0].conversations, "tmpTEST: ", tmpTEST);
+		if (user_emit && user_recv) {
+			user_emit.socket.emit('dmClient', data.client_emit, data.content, msg.date.toLocaleTimeString('fr-EU'))
+			user_recv.socket.emit('dmClient', data.client_emit, data.content, msg.date.toLocaleTimeString('fr-EU'))
 		}
 	}
 }

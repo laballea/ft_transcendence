@@ -11,6 +11,7 @@ export interface user {
 	logged?:boolean;
 	friendsRequest?:Array<number>;
 	friends?:Array<number>;
+	clientChat:string;
 }
 
 export enum FRIEND_REQUEST_ACTIONS {
