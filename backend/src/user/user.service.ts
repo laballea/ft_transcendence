@@ -131,7 +131,7 @@ export class UserService {
 				conversation: 1
 			}
 		})
-		console.log("convUser: ", convUser[0].conversations[0], "msgConv: ", msgConv);
+		//console.log("convUser: ", convUser[0].conversations[0], "msgConv: ", msgConv);
 		return res;
 	}
 
@@ -139,12 +139,11 @@ export class UserService {
 		return more readable user data for client
 	*/
 	async parseUserInfo(userInfo:User):Promise<UserSafeInfo> {
-		console.log('parse user info')
 		const userRepo = await this.userRepository.find()
 		var UserSafeInfo:UserSafeInfo = {
 			id: userInfo.id,
 			username: userInfo.username,
-			status:this.getUserStatus(userInfo.id),//this.getStatus(userInfo.id),
+			status:this.getUserStatus(userInfo.id),
 		};
 		UserSafeInfo.friends = userInfo.friends.map(id => ({ id: id, username: userRepo.find(el => el.id == id).username}));
 		UserSafeInfo.bloqued = userInfo.bloqued.map(id => ({ id: id, username: userRepo.find(el => el.id == id).username}));

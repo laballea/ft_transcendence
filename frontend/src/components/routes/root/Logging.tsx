@@ -19,7 +19,7 @@ const Logging = () => {
 	const navigate = useNavigate();
 	const url = new URL("http://localhost:5000/auth/login"); //url for intra auth
 	const [searchParams, setSearchParams] = useSearchParams();
-	const jwt = searchParams.get("jwt") == null ? global.token : searchParams.get("jwt"); // get jwt token on query
+	const jwt = searchParams.get("jwt") == null ? null : searchParams.get("jwt"); // get jwt token on query
 	document.title = "login";
 
 	React.useEffect(() => {
@@ -55,7 +55,7 @@ const Logging = () => {
 			}
 		})
 	};
-	if (jwt){ // if token exist in redux user is already logged
+	if (jwt && !global.token){ // if token exist in redux user is already logged
 		const requestOptions = {
 			method: 'GET',
 			headers: {
@@ -68,8 +68,8 @@ const Logging = () => {
 		.then(async response=>{
 			let resp = await response.json();
 			if (response.ok){
-				dispatch(login({user:resp, token:jwt}))
 				navigate('/home')
+				dispatch(login({user:resp, token:jwt}))
 			}
 			else {
 				if (searchParams.get("jwt")){

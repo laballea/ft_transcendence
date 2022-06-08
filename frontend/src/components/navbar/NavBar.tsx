@@ -22,7 +22,7 @@ const NavBar = () => {
 	let navigate = useNavigate();
 	const global = useSelector((state: any) => state.global)
 	const dispatch = useDispatch()
-	const socket = useContext(SocketContext);
+	const {socket} = useContext(SocketContext);
 	// Show Menu hook
 	return (
 		<header className="absolute top-0 left-0 w-full h-[80px] sm:h-[112px] bg-transparent
