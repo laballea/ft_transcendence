@@ -3,6 +3,7 @@ import React, {useContext, useEffect} from 'react'
 // Components
 import NavBar from '../../navbar/NavBar'
 import ContactList from '../../contactList/ContactList';
+import Message from '../../message/index';
 import Footer from '../../commons/footer/Footer';
 
 // CSS
@@ -40,6 +41,9 @@ export default function Home() {
 				<main className="hidden sm:block w-[100px]">
 				</main>
 				<ContactList/>
+			</div>
+			<div className="absolute flex justify-between">
+				<Message/>
 			</div>
 			<Footer/>
 		</div>

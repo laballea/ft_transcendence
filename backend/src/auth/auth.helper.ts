@@ -2,13 +2,13 @@ import { Injectable, HttpException, HttpStatus, UnauthorizedException } from '@n
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { UserEntity } from '../user/models/user.entity';
+import { User } from '../user/models/user.entity';
 import { UserI } from '../user/models/user.interface';
 import * as bcrypt from 'bcryptjs';
 
 @Injectable()
 export class AuthHelper {
-	@InjectRepository(UserEntity)
+	@InjectRepository(User)
 	private readonly repository: Repository<UserI>;
 
 	private readonly jwt: JwtService;

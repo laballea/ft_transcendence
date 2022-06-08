@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UserEntity, status } from '../user/models/user.entity';
+import { User, status } from '../user/models/user.entity';
 import { Repository, getConnection } from 'typeorm';
 import { RegisterDto, LoginDto } from './auth.dto';
 import { AuthHelper } from './auth.helper';
@@ -8,8 +8,8 @@ import { UserService } from 'src/user/user.service';
 
 @Injectable()
 export class AuthService {
-	@InjectRepository(UserEntity)
-	private readonly repository: Repository<UserEntity>;
+	@InjectRepository(User)
+	private readonly repository: Repository<User>;
 	@Inject(UserService)
 	private readonly userService: UserService;
 	@Inject(AuthHelper)
@@ -18,15 +18,15 @@ export class AuthService {
 	/*
 		create user in db, if username exist return HTTP C409 (CONFLICT)
 	*/
-	public async register(body: RegisterDto): Promise<UserEntity | never> {
+	public async register(body: RegisterDto): Promise<User | never> {
 		const { username }: RegisterDto = body;
-		let user: UserEntity = await this.repository.findOne({ where: { username } });
+		let user: User = await this.repository.findOne({ where: { username } });
 
 		if (user) {
 			throw new HttpException('Conflict', HttpStatus.CONFLICT);
 		}
 
-		user = new UserEntity();
+		user = new User();
 
 		user.username = username;
 		return this.repository.save(user);
@@ -37,7 +37,7 @@ export class AuthService {
 	*/
 	public async login(body: LoginDto): Promise<Object | never> {
 		const { username }: LoginDto = body;
-		var user: UserEntity = await this.repository.findOne({ where: { username } });
+		var user: User = await this.repository.findOne({ where: { username } });
 
 		if (!user) {
 			await this.register(body);
@@ -48,12 +48,12 @@ export class AuthService {
 		}
 		return {user:await this.userService.parseUserInfo(user), token:this.helper.generateToken(user)};
 	}
-	public createToken(user: UserEntity): string{
+	public createToken(user: User): string{
 		return this.helper.generateToken(user);
 	}
 
-	public async registerIntra(userData: any): Promise<UserEntity | never> {
-		var user: UserEntity = new UserEntity();
+	public async registerIntra(userData: any): Promise<User | never> {
+		var user: User = new User();
 		console.log(user)
 		user.username = userData.login;
 		user.intraID = userData.id;
@@ -62,7 +62,7 @@ export class AuthService {
 	}
 
 	public async loginIntra(userData: any): Promise<Object | never> {
-		var user: UserEntity = await this.userService.findUserByIntra(userData.id);
+		var user: User = await this.userService.findUserByIntra(userData.id);
 
 		console.log(user)
 		if (!user) {
@@ -73,7 +73,7 @@ export class AuthService {
 	public async validToken(jwt: string): Promise<boolean> {
 		return this.helper.validate(jwt);
 	}
-	public async refresh(user: UserEntity): Promise<string> {
+	public async refresh(user: User): Promise<string> {
 		return this.helper.generateToken(user);
 	}
 }
