@@ -17,16 +17,19 @@ import { useSelector, useDispatch } from 'react-redux';
 import { updateDB } from '../../../store/global/reducer';
 import Popup from 'reactjs-popup'; 
 import PopUpWindow from '../../commons/popup/PopUpWindow';
+import {io} from "socket.io-client";
 
 export default function Home() {
-	const socket = useContext(SocketContext);
+	const {socket, setSocket} = useContext(SocketContext);
 	const global = useSelector((state: any) => state.global)
 	const [popup, setPopup] = useState({open:false, error:true, message:""});
 	document.title = global.username;
 	const dispatch = useDispatch();
 
 	useEffect(() => {
-		socket.emit("CONNECT", {socketID: socket.id, id:global.id, username:global.username}); 
+		console.log(socket, "HERE")
+		socket.connect()
+		socket.emit("CONNECT", {socketID: socket.id, id:global.id, username:global.username});
 		socket.on("UPDATE_DB", (data) => {
 			dispatch(updateDB(data));
 		});

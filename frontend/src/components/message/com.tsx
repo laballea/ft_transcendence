@@ -10,7 +10,7 @@ interface IProps {
 }
 
 const Com: React.FC<IProps> = ({ msg, setMessage }) => {
-	const socket = useContext(SocketContext);
+	const {socket} = useContext(SocketContext);
 
 	const [input, setInput] = useState({
 		content: ""
@@ -39,7 +39,9 @@ const Com: React.FC<IProps> = ({ msg, setMessage }) => {
 	}
 
 	useEffect(() => {
+		console.log("LISTENNING")
 		socket.on('dmClient', (sender: string, message: string, delta: string) => {
+			console.log("HERE")
 			setMessage([
 				...msg,
 				{
