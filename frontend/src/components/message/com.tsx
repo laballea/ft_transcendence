@@ -10,7 +10,7 @@ interface IProps {
 }
 
 const Com: React.FC<IProps> = ({ msg, setMessage }) => {
-	const {socket} = useContext(SocketContext);
+	const socket = useContext(SocketContext);
 
 	const [input, setInput] = useState({
 		content: ""

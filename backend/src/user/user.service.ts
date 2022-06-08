@@ -132,14 +132,13 @@ export class UserService {
 	async getConversationByUser(userInfo:User):Promise<safeConv[]>{
 		var res: ConversationI[];
 		var _conv:safeConv[] = [];
-		const convUser = await this.userRepository.find({
-			relations: ['conversations'],
+		const convUser = await this.userRepository.findOne({
+			relations: ['conversations', 'conversations.messages'],
 			where: {
 				id: userInfo.id
 			}
 		})
-	
-		for (let conv of convUser[0].conversations) {
+		for (let conv of convUser.conversations) {
 			const msgConv:Message[] = await this.messageRepository.find({
 				where: {
 					conversation: conv.id
@@ -157,7 +156,6 @@ export class UserService {
 		return more readable user data for client
 	*/
 	async parseUserInfo(userInfo:User):Promise<UserSafeInfo> {
-		console.log('parse user info')
 		const userRepo = await this.userRepository.find()
 		var UserSafeInfo:UserSafeInfo = {
 			id: userInfo.id,
