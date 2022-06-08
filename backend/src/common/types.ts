@@ -20,17 +20,23 @@ export enum FRIEND_REQUEST_ACTIONS {
 }
 
 export interface FRIEND_REQUEST_DATA {
-	client_emit: string;
-	client_recv: string;
-	action: FRIEND_REQUEST_ACTIONS;
-	jwt: number;
+	client_emit:string;
+	client_recv:string;
+	action:FRIEND_REQUEST_ACTIONS;
+	jwt:number;
 }
+
+export enum HTTP_STATUS {
+	ALREADY_EXIST = 'User already exist.',
+	ALREADY_CONNECTED = 'User is already connected.',
+	LOGIN_FAILED = 'Login failed.',
+} 
 
 export interface MESSAGE_DATA {
 	client_emit: string;
 	client_recv: string;
 	content: string;
-	conversation: Conversation;
+	conversationID: number;
 	date: Date;
 	jwt: number;
 }
