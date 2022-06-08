@@ -149,20 +149,10 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		let conv : Conversation = await this.convRepository.findOne({ 
 			where: {
 				//id: data.conversation.id
-				 id: -1
+				id: 1
 				// users: [db_user_emit.id]
 			},
 		})
-
-		// Create new msg
-		let hour: Date = new Date()
-		let msg = new Message();
-		msg.content = data.content;
-		msg.conversation = conv;
-		msg.date = hour;
-		msg.idSend = db_user_emit.id;
-		msg.idRecv = db_user_recv.id;
-		this.messageRepository.save(msg);
 
 		if (!conv) {
 			console.log('ntm')
@@ -170,8 +160,19 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 			//conv.id = 68;
 			conv.users = [db_user_emit, db_user_recv];
 		}
-		conv.messages = [msg];
-		this.convRepository.save(conv);
+
+		// Create new msg
+		let hour: Date = new Date()
+		let msg = new Message();
+		msg.content = data.content;
+		msg.date = hour;
+		msg.idSend = db_user_emit.id;
+		msg.idRecv = db_user_recv.id;
+		msg.conversation = conv;
+		this.messageRepository.save(msg);
+
+		// conv.messages.push(msg);
+		// this.convRepository.save(conv);
 
 		// Get conv by User
 		const tmpEmit = await this.userRepository.find({
@@ -186,13 +187,15 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 				id: db_user_recv.id
 			}
 		})
-		const tmpTEST = await this.userRepository.find({
-			relations: ['conversations'],
+
+		const tmpTEST = await this.messageRepository.find({
 			where: {
-				id: 3
+				conversation: 1
 			}
 		})
-		console.log("EMIT: ", tmpEmit[0].conversations, "RECV: ", tmpRecv[0].conversations, "tmpTEST: ", tmpTEST[0].conversations);
+
+
+		console.log("EMIT: ", tmpEmit[0].conversations[0], "RECV: ", tmpRecv[0].conversations, "tmpTEST: ", tmpTEST);
 		if (user_emit && user_recv) {
 			user_emit.socket.emit('dmClient', data.client_emit, data.content, msg.date.toLocaleTimeString('fr-EU'))
 			user_recv.socket.emit('dmClient', data.client_emit, data.content, msg.date.toLocaleTimeString('fr-EU'))
