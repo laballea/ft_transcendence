@@ -139,6 +139,7 @@ export class UserService {
 		return more readable user data for client
 	*/
 	async parseUserInfo(userInfo:User):Promise<UserSafeInfo> {
+		console.log('parse user info')
 		const userRepo = await this.userRepository.find()
 		var UserSafeInfo:UserSafeInfo = {
 			id: userInfo.id,
