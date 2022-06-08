@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, getConnection } from 'typeorm';
 import { User, Message, Conversation, status } from './models/user.entity';
-import { ConversationI, UserI, UserSafeInfo, UserP } from './models/user.interface';
+import { ConversationI, UserI, UserSafeInfo, UserP, MessageI, safeConv } from './models/user.interface';
 
 @Injectable()
 export class UserService {
@@ -115,9 +115,23 @@ export class UserService {
 			.execute();
 	}
 
-	async getConversationByUser(userInfo:User):Promise<ConversationI>{
-		var res: ConversationI;
+	// function createUser(user: User): UserSafeInfo {
+	// 	return ({
+	// 		id: user.id,
+	// 		username: user.username,
+	// 	})
+	// }
 
+	// function createConv(conversation: Conversation): ConversationI {
+	// 	return ({
+	// 			id:conversation.id,
+	// 			users: [createUser(conversation.users[0]), createUser(conversation.user[1])]
+	// 	})
+	// }
+
+	async getConversationByUser(userInfo:User):Promise<safeConv[]>{
+		var res: ConversationI[];
+		var _conv:safeConv[] = [];
 		const convUser = await this.userRepository.find({
 			relations: ['conversations'],
 			where: {
@@ -125,31 +139,35 @@ export class UserService {
 			}
 		})
 	
-		// iter on conversations id
-		const msgConv = await this.messageRepository.find({
-			where: {
-				conversation: 1
-			}
-		})
-		//console.log("convUser: ", convUser[0].conversations[0], "msgConv: ", msgConv);
-		return res;
+		for (let conv of convUser[0].conversations) {
+			const msgConv:Message[] = await this.messageRepository.find({
+				where: {
+					conversation: conv.id
+				}
+			})
+			_conv.push({
+				id:conv.id,
+				msg:msgConv,
+			})
+		}
+		return _conv;
 	}
 
 	/*
 		return more readable user data for client
 	*/
 	async parseUserInfo(userInfo:User):Promise<UserSafeInfo> {
+		console.log('parse user info')
 		const userRepo = await this.userRepository.find()
 		var UserSafeInfo:UserSafeInfo = {
 			id: userInfo.id,
 			username: userInfo.username,
-			status:this.getUserStatus(userInfo.id),
+			status:this.getUserStatus(userInfo.id),//this.getStatus(userInfo.id),
 		};
 		UserSafeInfo.friends = userInfo.friends.map(id => ({ id: id, username: userRepo.find(el => el.id == id).username}));
 		UserSafeInfo.bloqued = userInfo.bloqued.map(id => ({ id: id, username: userRepo.find(el => el.id == id).username}));
 		UserSafeInfo.friendsRequest = userInfo.friendsRequest.map(id => ({ id: id, username: userRepo.find(el => el.id == id).username}));
-		
-		this.getConversationByUser(userInfo);
+		UserSafeInfo.conv = await this.getConversationByUser(userInfo);
 		
 		return UserSafeInfo;
 	}

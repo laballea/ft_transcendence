@@ -1,6 +1,6 @@
 import { status } from "./user.entity";
 import { Conversation } from "./user.entity";
-
+import { Message } from "./user.entity";
 export interface UserI {
 	id:number;
 
@@ -54,4 +54,11 @@ export interface UserSafeInfo {
 	bloqued?:{id:number, username:string}[];
 
 	friendsRequest?:{id:number, username:string}[];
+
+	conv?:safeConv[];
+}
+
+export interface safeConv {
+	id:number,
+	msg:Message[],
 }

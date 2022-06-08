@@ -20,6 +20,7 @@ export const globalSlice = createSlice({
 			state.token = data.payload.token
 			state.friendsRequest = data.payload.user.friendsRequest
 			state.userImage = data.payload.user.profilIntraUrl
+			console.log(data.payload.user.conv)
 		},
 		logout: (state: any) => {
 			state.username = undefined
