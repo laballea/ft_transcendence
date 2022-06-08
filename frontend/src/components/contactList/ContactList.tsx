@@ -25,6 +25,7 @@ const ContactList = () => {
 		
 		eventSource.onmessage = ({ data }) => {
 			const json = JSON.parse(data)
+			console.log(json)
 			setState(prevState => ({
 				...prevState,
 				contactList: json.contactList
@@ -80,7 +81,7 @@ const ContactList = () => {
 	): [];
 	return (
 		<div className="relative w-full bg-slate-800 sm:w-[400px] h-full p-[16px] mx-[16px] sm:mx-0 rounded sm:rounded-l overflow-scroll">
-			<AddFriendButton onClick={(username:string)=>{
+			<AddFriendButton onSubmit={(username:string)=>{
 				socket.emit("FRIEND_REQUEST", {
 					action: FRIEND_REQUEST_ACTIONS.ADD,
 					client_emit: global.username,

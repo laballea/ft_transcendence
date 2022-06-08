@@ -32,9 +32,6 @@ export class User {
 	@Column({nullable:true})
 	profilIntraUrl:string;
 
-	@Column({default:status.Disconnected})
-	status:status;
-
 	@Column("int", { array: true, default: '{}',nullable: true})
 	friends: number[];
 
@@ -72,7 +69,7 @@ export class Conversation {
 	@JoinTable()
 	users: User[];
 
-	@OneToMany(() => Message, message => message.conversation)
+	@OneToMany(() => Message, message => message.conversation, {cascade: ['insert', 'update']})
 	messages: Message[];
 }
 

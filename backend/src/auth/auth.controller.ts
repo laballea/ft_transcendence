@@ -6,6 +6,8 @@ import { AuthService } from './auth.service';
 import { Request } from 'express';
 import { UserService } from 'src/user/user.service';
 import { status } from '../user/models/user.entity';
+import { HTTP_STATUS } from 'src/common/types';
+
 @Controller('auth')
 export class AuthController {
 	@Inject(AuthService)
@@ -39,11 +41,10 @@ export class AuthController {
 	@Get('/login')
 	@UseGuards(IntraAuthGuard)
 	loginIntra(@Res() res, @Req() req): any {
-		const url = new URL("http://localhost:3000/home");
+		const url = new URL("http://localhost:3000/login");
 		url.searchParams.append('jwt', this.service.createToken(req.user));
 		res.redirect(url);
 	}
-
 
 	/*
 		Return user corresponding to authorization token
@@ -51,9 +52,8 @@ export class AuthController {
 	@Get('/user')
 	@UseGuards(JwtAuthGuard)
 	async getUser(@Res() res, @Req() req): Promise<any> {
-		if (req.user.status === status.Connected){
-			throw new HttpException('Already Connected', HttpStatus.CONFLICT);
-		}
-		res.status(HttpStatus.OK).send(this.userService.parseUserInfo(req.user));
+		if (this.userService.getUserStatus(req.user.id) != status.Disconnected)
+			throw new HttpException(HTTP_STATUS.ALREADY_CONNECTED, HttpStatus.CONFLICT);
+		res.status(HttpStatus.OK).send(req.user);
 	}
 }

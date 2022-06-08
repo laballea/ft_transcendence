@@ -1,10 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { from, Observable } from 'rxjs';
 import { Repository, getConnection } from 'typeorm';
 import { User, Message, Conversation, status } from './models/user.entity';
-import { ConversationI, UserI, UserSafeInfo } from './models/user.interface';
-import { friendEvent } from 'src/common/types';
+import { ConversationI, UserI, UserSafeInfo, UserP } from './models/user.interface';
 
 @Injectable()
 export class UserService {
@@ -17,11 +15,20 @@ export class UserService {
 		private messageRepository: Repository<Message>,
 	){}
 
+	public connectedUser: UserP[] = [];
+
 	/*
 		return list of user store in db
 	*/
 	findAll():Promise<UserI[]> {
 		return this.userRepository.find();
+	}
+
+	/*
+	return list of user store in db
+	*/
+	getConnected():any {
+		return this.connectedUser.map(data => ({id:data.id, status:data.status, username:data.username}));
 	}
 
 	/*
@@ -36,61 +43,76 @@ export class UserService {
 	findUserByIntra(intraID: number):Promise<UserI | undefined> {
 		return this.userRepository.findOne({ where:{intraID:intraID} });
 	}
+
 	/*
-		update user status to Disconnected
 	*/
-	async updateStatus(id: number, status:status):Promise<string> {
-		await getConnection()
-			.createQueryBuilder()
-			.update(User)
-			.set({ status: status })
-			.where("id = :id", { id: id })
-			.execute();
-		return "ok";
+	connectUser(data: {id:number,username:string,socket: any,status:status}) {
+		const user = this.connectedUser.find((user: any) => {return user.id === data.id})
+		if (!user){
+			this.connectedUser.push({
+				id:data.id,
+				username:data.username,
+				socket: data.socket,
+				status:status.Connected,
+			})
+		}
+		console.log(data.username, "connected");
 	}
 
 	/*
-		return list of user in db without current user
 	*/
-	async getContactList(username: string):Promise<{ id: number; username: string; }[]>{
-		const list = await this.userRepository.find();
-		const user: User = await this.userRepository.findOne({ where:{username:username} });
-		return user.friends.map(id => ({ id: id, username: list.find(el => el.id == id).username, status:list.find(el => el.id == id).status}));
-
-		/*list.splice(list.findIndex(object => {return object.username === username}), 1); // remove current user from list
-		return list.map(id => ({ id: id, username: userRepo.find(el => el.id == id).username}));*/
+	disconnectUser(socketID:number) {
+		const user = this.connectedUser.find((user: any) => {return user.socket.id === socketID})
+		if (user) {
+			this.connectedUser.splice(this.connectedUser.findIndex(v => v.id === user.id), 1);
+			console.log(user.username, "disconnected");
+		}
 	}
 
 	/*
-		add friend to user list
 	*/
-	async addFriend(data: friendEvent):Promise<string> {
-		const user: User = await this.userRepository.findOne({ where:{id:data.id} });
-		const user2: User = await this.userRepository.findOne({ where:{id:data.friend_id} });
-		user.friends.push(user2.id)
-		await getConnection()
-			.createQueryBuilder()
-			.update(User)
-			.set({ friends: user.friends })
-			.where("id = :id", { id: data.id })
-			.execute();
-		return "ok";
+	findConnectedUserById(id:number) {
+		const user = this.connectedUser.find((user: any) => {return user.id === id})
+		if (user)
+			return user;
+		return null
 	}
 
 	/*
-		remove friend from user list
 	*/
-	async removeFriend(data: friendEvent):Promise<string> {
-		const user: User = await this.userRepository.findOne({ where:{id:data.id} });
-		const user2: User = await this.userRepository.findOne({ where:{id:data.friend_id} });
-		user.friends.splice(user.friends.indexOf(user2.id))
+	findConnectedUserBySocketId(socketID:number):UserP {
+		const user = this.connectedUser.find((user: any) => {return user.socket.id === socketID})
+		if (user)
+			return user;
+		return null
+	}
+	/*
+	*/
+	findConnectedUserByUsername(username:string):UserP {
+		const user = this.connectedUser.find((user: any) => {return user.username === username})
+		if (user)
+			return user;
+		return null
+	}
+
+	/*
+	*/
+	getUserStatus(id:number):status {
+		const user = this.connectedUser.find((user: any) => {return user.id === id})
+		if (user)
+			return user.status;
+		return status.Disconnected
+	}
+
+	/*
+	*/
+	async updateUserDB(user:User) {
 		await getConnection()
 			.createQueryBuilder()
 			.update(User)
-			.set({ friends: user.friends })
-			.where("id = :id", { id: data.id })
+			.set(user)
+			.where("id = :id", { id: user.id })
 			.execute();
-		return "ok";
 	}
 
 	async getConversationByUser(userInfo:User):Promise<ConversationI>{
@@ -113,11 +135,15 @@ export class UserService {
 		return res;
 	}
 
+	/*
+		return more readable user data for client
+	*/
 	async parseUserInfo(userInfo:User):Promise<UserSafeInfo> {
 		const userRepo = await this.userRepository.find()
 		var UserSafeInfo:UserSafeInfo = {
 			id: userInfo.id,
-			username: userInfo.username
+			username: userInfo.username,
+			status:this.getUserStatus(userInfo.id),//this.getStatus(userInfo.id),
 		};
 		UserSafeInfo.friends = userInfo.friends.map(id => ({ id: id, username: userRepo.find(el => el.id == id).username}));
 		UserSafeInfo.bloqued = userInfo.bloqued.map(id => ({ id: id, username: userRepo.find(el => el.id == id).username}));

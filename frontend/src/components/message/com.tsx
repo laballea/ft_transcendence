@@ -30,6 +30,7 @@ const Com: React.FC<IProps> = ({ msg, setMessage }) => {
 			content: input.content,
 			client_emit: global.username,
 			client_recv: global.clientChat,
+			conversationID: -1,
 			jwt:global.token
 		});
 		setInput({

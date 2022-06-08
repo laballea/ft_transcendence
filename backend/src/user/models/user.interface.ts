@@ -10,8 +10,6 @@ export interface UserI {
 	
 	profilIntraUrl:string;
 
-	status:status;
-
 	friends:number[];
 
 	bloqued:number[];
@@ -41,6 +39,7 @@ export interface UserP {
 	id: number;
 	username:string;
 	socket: any;
+	status:status;
 }
 
 export interface UserSafeInfo {
