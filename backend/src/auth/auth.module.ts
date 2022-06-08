@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module , forwardRef} from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -12,11 +12,13 @@ import { UserService } from 'src/user/user.service';
 import { HttpModule } from '@nestjs/axios';
 import { IntraStrategy } from './intra.strategy';
 import { SessionSerializer } from './auth.serializer';
+import { UserModule } from 'src/user/user.module';
 
 @Module({
   imports: [
     PassportModule.register({ defaultStrategy: 'jwt', property: 'user' }),
     HttpModule,
+	forwardRef(() => UserModule),
 	JwtModule.registerAsync({
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
@@ -32,7 +34,6 @@ import { SessionSerializer } from './auth.serializer';
 	  AuthHelper,
 	  JwtStrategy,
 	  IntraStrategy,
-	  UserService,
 	  SessionSerializer],
 })
 export class AuthModule {}

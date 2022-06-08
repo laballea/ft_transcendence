@@ -6,16 +6,16 @@ import React, {useState} from 'react'
 import { FiPlus } from 'react-icons/fi'
 
 type AddFriendButtonProps = {
-	onClick : (username:string) => void
+	onSubmit : (username:string) => void
 }
 
-const AddFriendButton = ({ onClick } : AddFriendButtonProps) => {
+const AddFriendButton = ({ onSubmit } : AddFriendButtonProps) => {
 	const Icon = FiPlus;
 	const [username, setUsername] = useState("");
 	const handleSubmit = async (event: any) => {
 		// Prevent page reload
 		event.preventDefault();
-		onClick(username);
+		onSubmit(username);
 		setUsername("");
 	};
 	return (
@@ -48,7 +48,7 @@ const AddFriendButton = ({ onClick } : AddFriendButtonProps) => {
 }
 
 AddFriendButton.defaultProps = {
-	onClick: () => {
+	onSubmit: () => {
 		console.log("Default Click : no actions assigned")
 	},
 }

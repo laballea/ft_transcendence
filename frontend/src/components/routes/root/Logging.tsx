@@ -5,7 +5,7 @@ import BackgroundLogging from '../../commons/backgrounds/BackgroundLogging';
 import Footer from '../../commons/footer/Footer';
 // Hooks
 import { login } from '../../../store/global/reducer'
-import { Navigate, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import Popup from 'reactjs-popup'; 
 import { useDispatch, useSelector } from 'react-redux';
@@ -14,7 +14,8 @@ import PopUpWindow from '../../commons/popup/PopUpWindow';
 const Logging = () => {
 	const [username, setUsername] = useState("");
 	const global = useSelector((state: any) => state.global)
-	const dispatch = useDispatch();const [open, setOpen] = useState({open:false, message:""});
+	const dispatch = useDispatch();
+	const [popup, setPopup] = useState({open:false, error:true, message:""});
 	const navigate = useNavigate();
 	const url = new URL("http://localhost:5000/auth/login"); //url for intra auth
 	const [searchParams, setSearchParams] = useSearchParams();
@@ -22,12 +23,12 @@ const Logging = () => {
 	document.title = "login";
 
 	React.useEffect(() => {
-		if (open.open) {
+		if (popup.open) {
 			setTimeout(() => {
-				setOpen(current => {return {open:!current.open, message:""}})
+				setPopup(current => {return {open:!current.open, error:true, message:""}})
 			}, 2000);
 		}
-	  }, [open]);
+	  }, [popup]);
 	/*
 		POST username at auth/login, back respond with jwt token
 		and we redirect to home with jwt in query
@@ -50,7 +51,7 @@ const Logging = () => {
 			if (response.ok){
 				navigate(`/login?jwt=${resp.token}`)
 			} else {
-				setOpen({open:true, message:resp.message})
+				setPopup({open:true, error:true, message:resp.message})
 			}
 		})
 	};
@@ -75,7 +76,7 @@ const Logging = () => {
 					searchParams.delete("jwt");
 					setSearchParams(searchParams);
 				}
-				setOpen({open:true, message:resp.message})
+				setPopup({open:true, error:true, message:resp.message})
 			}
 		})
 	}
@@ -97,8 +98,8 @@ const Logging = () => {
 					onClick={event =>  window.location.href=url.toString()}> {/*on click redirect to backend auth/login*/}
 						Log in with 42 account
 				</button>
-				<Popup open={open.open} contentStyle={{position:'absolute', bottom:0, left:0}}>
-					<PopUpWindow content={open.message}/>
+				<Popup open={popup.open} contentStyle={{position:'absolute', bottom:0, left:0}}>
+					<PopUpWindow content={popup.message}/>
 				</Popup>
 			</div>
 			<Footer/>

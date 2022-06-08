@@ -53,6 +53,7 @@ export class UserService {
 				status:status.Connected,
 			})
 		}
+		console.log(this.connectedUser)
 		console.log(data.username, "connected");
 	}
 
@@ -94,8 +95,9 @@ export class UserService {
 
 	/*
 	*/
-	getUserStatus(socketID:number):status {
-		const user = this.connectedUser.find((user: any) => {return user.socket.id === socketID})
+	getUserStatus(id:number):status {
+		console.log(this.connectedUser)
+		const user = this.connectedUser.find((user: any) => {return user.id === id})
 		if (user)
 			return user.status;
 		return status.Disconnected

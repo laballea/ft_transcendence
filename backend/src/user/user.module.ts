@@ -13,6 +13,7 @@ import { UserGateway } from './user.gateway';
 		AuthModule
 	],
 	providers: [UserService, EventsService, UserGateway],
-	controllers: [UserController]
+	controllers: [UserController],
+	exports:[UserService]
 })
 export class UserModule {}

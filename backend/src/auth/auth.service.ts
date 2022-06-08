@@ -41,7 +41,8 @@ export class AuthService {
 			await this.register(body);
 			user = await this.repository.findOne({ where: { username } });
 		}
-		if (this.userService.getUserStatus(user.id) == status.Connected)
+		console.log(user.id, this.userService.connectedUser)
+		if (this.userService.getUserStatus(user.id) != status.Disconnected)
 			throw new HttpException(HTTP_STATUS.ALREADY_CONNECTED, HttpStatus.CONFLICT);
 		return {user:await this.userService.parseUserInfo(user), token:this.helper.generateToken(user)};
 	}

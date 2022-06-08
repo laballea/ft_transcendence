@@ -1,4 +1,4 @@
-import React, {useContext, useEffect} from 'react'
+import React, {useContext, useEffect, useState} from 'react'
 
 // Components
 import NavBar from '../../navbar/NavBar'
@@ -14,10 +14,13 @@ import { SocketContext } from '../../../context/socket';
 //Redux
 import { useSelector, useDispatch } from 'react-redux';
 import { updateDB } from '../../../store/global/reducer';
+import Popup from 'reactjs-popup'; 
+import PopUpWindow from '../../commons/popup/PopUpWindow';
 
 export default function Home() {
 	const socket = useContext(SocketContext);
 	const global = useSelector((state: any) => state.global)
+	const [popup, setPopup] = useState({open:false, error:true, message:""});
 	document.title = global.username;
 	const dispatch = useDispatch();
 
@@ -26,13 +29,23 @@ export default function Home() {
 		socket.on("UPDATE_DB", (data) => {
 			dispatch(updateDB(data));
 		});
+		socket.on("PopUp", (data) => {
+			setPopup({open:true, error:data.error, message:data.message})
+		});
 		return () => {
 			// before the component is destroyed
 			// unbind all event handlers used in this component
 			socket.off('CONNECT');
 			socket.off('RECEIVE_REQUEST');
 		};
-	}, [socket, dispatch]);
+	}, []);
+	React.useEffect(() => {
+		if (popup.open) {
+			setTimeout(() => {
+				setPopup(current => {return {open:!current.open, error:true, message:""}})
+			}, 2000);
+		}
+	}, [popup]);
 	return (
 		<div className="w-full h-screen relative bg-slate-900">
 			<NavBar/>
@@ -43,6 +56,9 @@ export default function Home() {
 				<ContactList/>
 			</div>
 			<Footer/>
+			<Popup open={popup.open} contentStyle={{position:'absolute', bottom:0, left:0}}>
+				<PopUpWindow content={popup.message} error={popup.error}/>
+			</Popup>
 		</div>
 	)
 }
