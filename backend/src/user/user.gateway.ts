@@ -1,5 +1,4 @@
-import { Logger } from '@nestjs/common';
-import { UserP } from './models/user.interface';
+import { UserSocket } from './models/user.interface';
 import {
 	MessageBody,
 	SubscribeMessage,
@@ -12,17 +11,15 @@ import {
 } from '@nestjs/websockets';
 import {
 	Repository,
-	getConnection,
-	getRepository
 } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Conversation, Message, User } from './models/user.entity';
 import { status } from './models/user.entity';
-import { FRIEND_REQUEST_ACTIONS, FRIEND_REQUEST_DATA, MESSAGE_DATA } from 'src/common/types';
+import { FRIEND_REQUEST_ACTIONS, FRIEND_REQUEST_DATA, MESSAGE_DATA, POPUP_DATA } from 'src/common/types';
 import { UserService } from './user.service';
-import { Inject } from '@nestjs/common';
 import { truncateString } from 'src/common/utils';
-import { Socket, Server } from 'socket.io';
+import { Server } from 'socket.io';
+import { FriendsService } from 'src/friends/friends.service';
 
 @WebSocketGateway({
 	cors: {
@@ -39,10 +36,12 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		private messageRepository: Repository<Message>,
 		@InjectRepository(Conversation)
 		private convRepository: Repository<Conversation>,
-		private userService:UserService
+
+		private userService:UserService,
+		private friendsService:FriendsService,
 	){}
 
-	public connectedUser: UserP[] = [];
+	public connectedUser: UserSocket[] = [];
 
 	@WebSocketServer()
 	server: Server;
@@ -71,44 +70,45 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 	async addFriend(@MessageBody() data: FRIEND_REQUEST_DATA) {
 		try {
 			/* Find if clients are connected*/
-			const user_emit = this.userService.findConnectedUserByUsername(data.client_emit);
-			const user_recv = this.userService.findConnectedUserByUsername(data.client_recv);
+			const user_send:UserSocket = this.userService.findConnectedUserByUsername(data.client_send);
+			const user_recv:UserSocket = this.userService.findConnectedUserByUsername(data.client_recv);
 
 			/* find user in db */
-			const db_user_emit = await this.userRepository.findOne({ where:{username:data.client_emit} })
+			const db_user_send = await this.userRepository.findOne({ where:{username:data.client_send} })
 			const db_user_recv = await this.userRepository.findOne({ where:{username:data.client_recv} })
 
+			/*
+				_send = user who emit on server
+				_recv = to who _send emit
+			*/
 			if (!db_user_recv){
-				return this.emitPopUp([user_emit], true, `User ${truncateString(data.client_recv, 10)} does not exist.`);
+				return this.emitPopUp([user_send], {error:true, message: `User ${truncateString(data.client_recv, 10)} does not exist.`});
 			}
 			switch (data.action){
 				case FRIEND_REQUEST_ACTIONS.ADD: {
-					if ((db_user_recv.friendsRequest.length == 0 || !db_user_recv.friendsRequest.includes(db_user_emit.id)) && !db_user_recv.friends.includes(db_user_emit.id))
-						db_user_recv.friendsRequest.push(db_user_emit.id);
-					
-					this.emitPopUp([user_emit], false, `Friend request send to ${truncateString(data.client_recv, 10)}.`);
+					this.emitPopUp([user_send], this.friendsService.add(db_user_send, db_user_recv));
 					break ;
 				}
 				case FRIEND_REQUEST_ACTIONS.ACCEPT: {
-					if (db_user_recv.friends.length == 0 || !db_user_recv.friends.includes(db_user_emit.id))
-						db_user_recv.friends.push(db_user_emit.id);
-					if (db_user_emit.friends.length == 0 || !db_user_emit.friends.includes(db_user_recv.id))
-						db_user_emit.friends.push(db_user_recv.id);
-					if (db_user_emit.friendsRequest.includes(db_user_recv.id))
-						db_user_emit.friendsRequest.splice(db_user_emit.friendsRequest.indexOf(db_user_recv.id));
+					this.friendsService.accept(db_user_send, db_user_recv);
+					break;
 				}
 				case FRIEND_REQUEST_ACTIONS.DECLINE: {
-					if (db_user_emit.friendsRequest.includes(db_user_recv.id))
-						db_user_emit.friendsRequest.splice(db_user_emit.friendsRequest.indexOf(db_user_recv.id));
+					this.friendsService.decline(db_user_send, db_user_recv);
+					break;
+				}
+				case FRIEND_REQUEST_ACTIONS.REMOVE: {
+					this.emitPopUp([user_send], this.friendsService.remove(db_user_send, db_user_recv));
+					break;
 				}
 			}
 			/* update both user db */
 			this.userService.updateUserDB(db_user_recv);
-			this.userService.updateUserDB(db_user_emit);
+			this.userService.updateUserDB(db_user_send);
 			if (user_recv)
 				user_recv.socket.emit('UPDATE_DB', await this.userService.parseUserInfo(db_user_recv))
-			if (user_emit)
-				user_emit.socket.emit('UPDATE_DB', await this.userService.parseUserInfo(db_user_emit))
+			if (user_send)
+				user_send.socket.emit('UPDATE_DB', await this.userService.parseUserInfo(db_user_send))
 		}
 		catch (e){
 			console.log(e);
@@ -125,45 +125,54 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		return user.friends.map(id => ({ id: id, username: list.find(el => el.id == id).username, status:this.userService.getUserStatus(list.find(el => el.id == id).id)}));
 	}
 
-	emitPopUp(users:UserP[], error:boolean, message:string):void{
+	emitPopUp(users:UserSocket[], data:POPUP_DATA):void{
 		for (let user of users) {
-			user.socket.emit("PopUp", {message:message, error:error});
+			user.socket.emit("PopUp", {message:data.message, error:data.error});
 		}
 	}
 	@SubscribeMessage('dmServer')
 	async handleDM(@MessageBody() data: MESSAGE_DATA) {
-		// Find socket user
-		const user_emit = this.userService.findConnectedUserByUsername(data.client_emit);
-		const user_recv = this.userService.findConnectedUserByUsername(data.client_recv);
-
-		// Find user info
-		const db_user_emit :User = await this.userRepository.findOne({ where:{username:data.client_emit} })
-		const db_user_recv :User = await this.userRepository.findOne({ where:{username:data.client_recv} })
+		const user_send:UserSocket = this.userService.findConnectedUserByUsername(data.client_send);
+		const db_user_send:User = await this.userRepository.findOne({ where:{username:data.client_send} })
 		
-		let conv : Conversation = await this.convRepository.findOne({ 
+		if (data.client_recv == undefined && data.conversationID && data.conversationID <= 0)
+			return this.emitPopUp([user_send], {error:true, message: `Message can't be sent.`});
+			
+		const db_user_recv:User = await this.userRepository.findOne({ where:{username:data.client_recv} })
+		const user_recv:UserSocket = this.userService.findConnectedUserByUsername(data.client_recv);
+		
+		/* does conversation exist else create it */
+		let conv : Conversation = await this.convRepository.findOne({
+			relations:["users"],
 			where: {
 				id: data.conversationID
 			},
 		})
-		if (!conv){
+		if (!conv && db_user_recv != undefined){
 			conv = new Conversation();
-			conv.users = [db_user_emit, db_user_recv];
+			conv.users = [db_user_send, db_user_recv];
+			conv.name = db_user_recv.username
 			await this.convRepository.save(conv);
-		}
+		} else if (!conv && db_user_recv == undefined)
+			return this.emitPopUp([user_send], {error:true, message: `User ${data.client_recv} does not exist.`});
 
-		// Create new msg
+		/* create new message, save it, update conv */
 		let msg = new Message();
 		msg.content = data.content;
 		msg.date = new Date();
-		msg.idSend = db_user_emit.id;
-		msg.idRecv = db_user_recv.id;
+		msg.idSend = db_user_send.id;
+		//msg.idRecv = db_user_recv.id;
 		msg.conversation = conv;
 		await this.messageRepository.save(msg);
 		await this.convRepository.save(conv);
-
-		if (user_emit && user_recv) {
-			user_emit.socket.emit('dmClient', data.client_emit, data.content, msg.date.toLocaleTimeString('fr-EU'))
-			user_recv.socket.emit('dmClient', data.client_emit, data.content, msg.date.toLocaleTimeString('fr-EU'))
+		console.log(conv.users)
+		for (let user in conv.users){
+			console.log("user", user)
+			//this.userService.findConnectedUserByUsername(user.username);
 		}
+		if (user_recv)
+			user_recv.socket.emit('UPDATE_DB', await this.userService.parseUserInfo(db_user_recv))
+		if (user_send)
+			user_send.socket.emit('UPDATE_DB', await this.userService.parseUserInfo(db_user_send))
 	}
 }

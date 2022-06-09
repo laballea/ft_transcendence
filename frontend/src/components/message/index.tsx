@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import Chat from './chat'
 import Com from './com'
+import { useSelector } from 'react-redux'
 
 export interface IState {
 	msg: {
@@ -11,14 +12,13 @@ export interface IState {
 }
 
 function Message() {
-
-	const [msg, setMessage] = useState<IState["msg"]>([])
-
+	const global = useSelector((state: any) => state.global)
+	const conv = global.conv.find((conv:any) => conv.id == global.convID)
 	return (
 		<div className="chat">
-			<h3 style={{color:'white', padding:'200px'}}>WhatsApp</h3>
-			<Chat msg={msg}/>
-			<Com msg={msg} setMessage={setMessage}/>
+			<h3 style={{color:'white', padding:'200px'}}>Chat /{conv.name}</h3>
+			<Chat msg={conv.msg}/>
+			<Com conv={conv} />
 		</div>
 	)
 }

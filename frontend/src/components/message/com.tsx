@@ -1,22 +1,20 @@
 import React, { useState, useContext, useEffect } from "react";
-import { IState as Props } from "./index";
 import { io, Socket } from 'socket.io-client'
 import { useSelector } from 'react-redux'
 import { SocketContext } from '../../context/socket';
 
 interface IProps {
-	msg: Props["msg"]
-	setMessage: React.Dispatch<React.SetStateAction<Props["msg"]>>
+	conv: any
 }
 
-const Com: React.FC<IProps> = ({ msg, setMessage }) => {
+const Com: React.FC<IProps> = ({ conv }) => {
 	const socket = useContext(SocketContext);
+	const global = useSelector((state: any) => state.global)
 
 	const [input, setInput] = useState({
 		content: ""
 	})
 
-	const global = useSelector((state: any) => state.global)
 
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
 		setInput({
@@ -26,32 +24,18 @@ const Com: React.FC<IProps> = ({ msg, setMessage }) => {
 	}
 
 	const sendMessage = (): void => {
+		console.log(global.clientChat)
 		socket.emit('dmServer', {
 			content: input.content,
-			client_emit: global.username,
+			client_send: global.username,
 			client_recv: global.clientChat,
-			conversationID: -1,
+			conversationID: conv.id,
 			jwt:global.token
 		});
 		setInput({
 			content: ""
 		})
 	}
-
-	useEffect(() => {
-		console.log("LISTENNING")
-		socket.on('dmClient', (sender: string, message: string, delta: string) => {
-			console.log("HERE")
-			setMessage([
-				...msg,
-				{
-					author: sender,
-					content: message,
-					date: delta,
-				}
-			]);
-		})
-	}, []);
 
 	return (
 		<div className="Com">

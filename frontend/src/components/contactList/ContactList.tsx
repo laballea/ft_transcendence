@@ -11,7 +11,8 @@ import { FRIEND_REQUEST_ACTIONS, status } from '../../common/types';
 
 //
 import { SocketContext } from '../../context/socket';
-import { setClientChat } from '../../store/global/reducer';
+import { setCurrentConv } from '../../store/global/reducer';
+
 const ContactList = () => {
 	const global = useSelector((state: any) => state.global)
 	const [state, setState] = useState({contactList:[]})
@@ -28,24 +29,37 @@ const ContactList = () => {
 			setState(prevState => ({
 				...prevState,
 				contactList: json.contactList
-			}));}
+			}))}
+		return () => {
+			eventSource.close()
+		};
 	}, []);
-	const listItems = state.contactList.length > 0 ? state.contactList.map((contact: any) =>  
-		<div key={contact.username} style={{flex:1,display:"flex",flexDirection:"row", color:contact.status === status.Connected ? "#2CDA9D" : "#C41E3D"}}>
-			<div style={{flex:3, padding:10}}>
-				<p>
-					<button
-						onClick={() => {
-							dispatch(setClientChat(contact.username))
-						}}
-					>
-						{contact.username}
-					</button>
-				</p>
-			</div>
+	const friendsList = state.contactList.length > 0 ? state.contactList.map((contact: any) =>  
+		<div key={contact.username} style={{flex:1, overflow:"hidden",display:"flex",flexDirection:"row", color:contact.status === status.Connected ? "#2CDA9D" : "#C41E3D"}}>
+			<p>
+				<button
+					onClick={() => {
+						dispatch(setCurrentConv({username:contact.username}))
+					}}
+				>
+					{contact.username}
+				</button>
+				<button
+					onClick={() => {
+						socket.emit("FRIEND_REQUEST", {
+							action: FRIEND_REQUEST_ACTIONS.REMOVE,
+							client_send: global.username,
+							client_recv: contact.username,
+							jwt:global.token
+						})
+					}}
+				>
+					<FiX style={ {color: "#C41E3D", fontSize: "1.5em"} }/>
+				</button>
+			</p>
 		</div>
 	): [];
-	const listFriendRequest = global.friendsRequest.length > 0 ? global.friendsRequest.map((user: {id:number, username:string}) =>  
+	const friendsRequestList = global.friendsRequest.length > 0 ? global.friendsRequest.map((user: {id:number, username:string}) =>  
 		<div className="bg-slate-700" key={user.id} style={{flex:1,display:"flex",flexDirection:"row", justifyContent:"center", alignItems:"center"}}>
 			<div style={{flex:3, padding:10, color:"#2CDA9D"}}>
 				<p>{user.username}</p>
@@ -55,7 +69,7 @@ const ContactList = () => {
 					onClick={() => {
 						socket.emit("FRIEND_REQUEST", {
 							action: FRIEND_REQUEST_ACTIONS.ACCEPT,
-							client_emit: global.username,
+							client_send: global.username,
 							client_recv: user.username,
 							jwt:global.token
 						})
@@ -67,7 +81,7 @@ const ContactList = () => {
 					onClick={() => {
 						socket.emit("FRIEND_REQUEST", {
 							action: FRIEND_REQUEST_ACTIONS.DECLINE,
-							client_emit: global.username,
+							client_send: global.username,
 							client_recv: user.username,
 							jwt:global.token
 						})
@@ -79,22 +93,22 @@ const ContactList = () => {
 		</div>
 	): [];
 	return (
-		<div className="relative w-full bg-slate-800 sm:w-[400px] h-full p-[16px] mx-[16px] sm:mx-0 rounded sm:rounded-l overflow-scroll">
+		<div className="relative overflow-scroll flex-initial w-full bg-slate-800 sm:w-[400px] h-full p-[16px] mx-[16px] sm:mx-0 rounded sm:rounded-l ">
 			<AddFriendButton onSubmit={(username:string)=>{
 				socket.emit("FRIEND_REQUEST", {
 					action: FRIEND_REQUEST_ACTIONS.ADD,
-					client_emit: global.username,
+					client_send: global.username,
 					client_recv: username,
 					jwt:global.token
 				})}}
 			/>
 			<div className="relative w-full h-full mt-[60px]">
-				{listFriendRequest}
+				{friendsRequestList}
 				{
 					state.contactList.length > 0 
 					?
 					<div>
-						{listItems}
+						{friendsList}
 					</div>
 					:
 					<EmptyStateContactList/>

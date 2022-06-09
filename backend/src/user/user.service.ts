@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, getConnection } from 'typeorm';
 import { User, Message, Conversation, status } from './models/user.entity';
-import { ConversationI, UserI, UserSafeInfo, UserP, MessageI, safeConv } from './models/user.interface';
+import { ConversationI, UserI, UserSafeInfo, UserSocket, MessageI, safeConv } from './models/user.interface';
 
 @Injectable()
 export class UserService {
@@ -15,7 +15,7 @@ export class UserService {
 		private messageRepository: Repository<Message>,
 	){}
 
-	public connectedUser: UserP[] = [];
+	public connectedUser: UserSocket[] = [];
 
 	/*
 		return list of user store in db
@@ -27,8 +27,16 @@ export class UserService {
 	/*
 	return list of user store in db
 	*/
-	getConnected():any {
-		return this.connectedUser.map(data => ({id:data.id, status:data.status, username:data.username}));
+	async getConnected():Promise<JSON> {
+		let res:any = await Promise.all(this.connectedUser.map(async data => {
+			let userdb = await this.userRepository.findOne({
+				where: {
+					id: data.id
+				}})
+			let res = await this.parseUserInfo(userdb)
+			return res
+		}))
+		return  res
 	}
 
 	/*
@@ -80,7 +88,7 @@ export class UserService {
 
 	/*
 	*/
-	findConnectedUserBySocketId(socketID:number):UserP {
+	findConnectedUserBySocketId(socketID:number):UserSocket {
 		const user = this.connectedUser.find((user: any) => {return user.socket.id === socketID})
 		if (user)
 			return user;
@@ -88,7 +96,7 @@ export class UserService {
 	}
 	/*
 	*/
-	findConnectedUserByUsername(username:string):UserP {
+	findConnectedUserByUsername(username:string):UserSocket {
 		const user = this.connectedUser.find((user: any) => {return user.username === username})
 		if (user)
 			return user;
@@ -115,43 +123,26 @@ export class UserService {
 			.execute();
 	}
 
-	// function createUser(user: User): UserSafeInfo {
-	// 	return ({
-	// 		id: user.id,
-	// 		username: user.username,
-	// 	})
-	// }
-
-	// function createConv(conversation: Conversation): ConversationI {
-	// 	return ({
-	// 			id:conversation.id,
-	// 			users: [createUser(conversation.users[0]), createUser(conversation.user[1])]
-	// 	})
-	// }
-
-	async getConversationByUser(userInfo:User):Promise<safeConv[]>{
-		var res: ConversationI[];
+	async getConversationByUserId(id:number):Promise<safeConv[]>{
 		var _conv:safeConv[] = [];
-		const convUser = await this.userRepository.findOne({
-			relations: ['conversations', 'conversations.messages'],
+		const user = await this.userRepository.findOne({
+			relations: ['conversations', 'conversations.messages', 'conversations.users'],
 			where: {
-				id: userInfo.id
+				id: id
 			}
 		})
-		for (let conv of convUser.conversations) {
-			const msgConv:Message[] = await this.messageRepository.find({
-				where: {
-					conversation: conv.id
-				}
-			})
-			_conv.push({
-				id:conv.id,
-				msg:msgConv,
-			})
+		if (user){
+			for (let conv of user.conversations) {
+				_conv.push({
+					id:conv.id,
+					name:conv.name,
+					msg:conv.messages,
+					users:conv.users.map(user => ({id:user.id, username:user.username}))
+				})
+			}
 		}
 		return _conv;
 	}
-
 	/*
 		return more readable user data for client
 	*/
@@ -165,7 +156,7 @@ export class UserService {
 		UserSafeInfo.friends = userInfo.friends.map(id => ({ id: id, username: userRepo.find(el => el.id == id).username}));
 		UserSafeInfo.bloqued = userInfo.bloqued.map(id => ({ id: id, username: userRepo.find(el => el.id == id).username}));
 		UserSafeInfo.friendsRequest = userInfo.friendsRequest.map(id => ({ id: id, username: userRepo.find(el => el.id == id).username}));
-		UserSafeInfo.conv = await this.getConversationByUser(userInfo);
+		UserSafeInfo.conv = await this.getConversationByUserId(userInfo.id);
 		
 		return UserSafeInfo;
 	}

@@ -12,6 +12,8 @@ export interface user {
 	friendsRequest?:Array<number>;
 	friends?:Array<number>;
 	clientChat:string;
+	convID?:number;
+	conv?:Conv[];
 }
 
 export enum FRIEND_REQUEST_ACTIONS {
@@ -22,8 +24,8 @@ export enum FRIEND_REQUEST_ACTIONS {
 }
 
 export interface FRIEND_REQUEST_DATA {
-	client_emit_id:number;
-	client_recv_id:number;
+	client_send:number;
+	client_recv:number;
 	action:FRIEND_REQUEST_ACTIONS;
 	jwt:number;
 }
@@ -32,4 +34,20 @@ export enum HTTP_STATUS {
 	ALREADY_EXIST = 'ALREADY_EXIST',
 	ALREADY_CONNECTED = 'ALREADY_CONNECTED',
 	LOGIN_FAILED = 'LOGIN_FAILED',
-} 
+}
+
+export interface Message {
+	content: string;
+	date: string;
+	id: number
+	idRecv: number;
+	idSend: number;
+}
+
+export interface Conv {
+	id:number,
+	msg:Message[],
+	name:string,
+	users:{id:number, username:string}[]
+}
+
