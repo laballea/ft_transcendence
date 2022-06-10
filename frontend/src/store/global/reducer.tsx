@@ -41,7 +41,11 @@ export const globalSlice = createSlice({
 		},
 		setCurrentConv: (state:any, data:any) => {
 			var {id, username} = data.payload
-			if (id == undefined) {
+			if (id == undefined && username == undefined){
+				state.convID = undefined
+				state.clientChat = undefined
+			}
+			else if (id == undefined) {
 				let conv = state.conv.find((conv:any) => {
 					return conv.users.length == 2 && conv.users.findIndex((user:any) => user.username == username) >= 0
 				})
@@ -52,7 +56,8 @@ export const globalSlice = createSlice({
 				else	
 					state.convID = conv.id
 				
-			} else
+			}
+			else
 				state.convID = id
 		},
 	},
