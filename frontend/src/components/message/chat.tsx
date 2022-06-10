@@ -1,22 +1,24 @@
 import React from "react";
-import { IState as IProps } from './index';
+import { MessageI } from './index';
+import Message from './message'
 
-const Chat: React.FC<IProps> = ({ msg }) => {
+type ChatProps = {
+	username: string,
+	msg:MessageI[]
+}
 
-	const renderList = (): JSX.Element[] => {
+const Chat = ({ msg, username}:ChatProps) => {
+
+	const messagesList = (): JSX.Element[] => {
 		return msg.map((message) => {
 			return (
-				<li className="Chat">
-					<div className="Chat-header">
-						<p style={{color:'white', paddingTop:'10px', paddingLeft: '200px'}}>{message.date} {message.author}: {message.content}</p>
-					</div>
-				</li>
+				<Message message={message} own={message.author == username}/>
 			)
 		})
 	}
 	return (
 		<ul>
-			{renderList()}
+			{messagesList()}
 		</ul>
 	)
 }

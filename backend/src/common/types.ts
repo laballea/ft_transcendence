@@ -1,4 +1,4 @@
-import { Conversation } from "src/user/models/user.entity";
+import { Conversation, User } from "src/user/models/user.entity";
 
 export interface MessageEvent {
 	data: string | object;
@@ -20,7 +20,7 @@ export enum FRIEND_REQUEST_ACTIONS {
 }
 
 export interface FRIEND_REQUEST_DATA {
-	client_emit:string;
+	client_send:string;
 	client_recv:string;
 	action:FRIEND_REQUEST_ACTIONS;
 	jwt:number;
@@ -33,10 +33,14 @@ export enum HTTP_STATUS {
 } 
 
 export interface MESSAGE_DATA {
-	client_emit: string;
+	client_send: string;
 	client_recv: string;
 	content: string;
 	conversationID: number;
-	date: Date;
 	jwt: number;
+}
+
+export interface POPUP_DATA {
+	error:boolean,
+	message:string,
 }

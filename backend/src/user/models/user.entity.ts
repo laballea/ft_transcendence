@@ -65,6 +65,9 @@ export class Conversation {
 	@PrimaryGeneratedColumn()
 	id: number;
 
+	@Column()
+	name: string;
+
 	@ManyToMany(() => User, user => user.conversations)
 	@JoinTable()
 	users: User[];
@@ -82,13 +85,13 @@ export class Message {
 	idSend: number;
 
 	@Column()
-	idRecv: number;
+	author: string;
 
 	@Column()
 	content: string;
 
-	@Column()
-	date: Date;
+	@Column({nullable:true})
+	date: string;
 
 	@ManyToOne(() => Conversation, conversation => conversation.messages)
 	conversation: Conversation;

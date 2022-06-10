@@ -35,7 +35,7 @@ export interface ConversationI {
 	messages: MessageI[];
 }
 
-export interface UserP {
+export interface UserSocket {
 	id: number;
 	username:string;
 	socket: any;
@@ -61,4 +61,6 @@ export interface UserSafeInfo {
 export interface safeConv {
 	id:number,
 	msg:Message[],
+	name:string,
+	users:{id:number, username:string}[]
 }
