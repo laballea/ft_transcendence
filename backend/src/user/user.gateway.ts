@@ -130,17 +130,17 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 			user.socket.emit("PopUp", {message:data.message, error:data.error});
 		}
 	}
+
 	@SubscribeMessage('dmServer')
 	async handleDM(@MessageBody() data: MESSAGE_DATA) {
 		const user_send:UserSocket = this.userService.findConnectedUserByUsername(data.client_send);
-		const db_user_send:User = await this.userRepository.findOne({ where:{username:data.client_send} })
+		const db_user_send:User = await this.userRepository.findOne({ where:{username:data.client_send}})
 		
-		if (data.client_recv == undefined && data.conversationID && data.conversationID <= 0)
+		if (data.client_recv == undefined && data.conversationID && data.conversationID < 0)
 			return this.emitPopUp([user_send], {error:true, message: `Message can't be sent.`});
 			
 		const db_user_recv:User = await this.userRepository.findOne({ where:{username:data.client_recv} })
-		const user_recv:UserSocket = this.userService.findConnectedUserByUsername(data.client_recv);
-		
+
 		/* does conversation exist else create it */
 		let conv : Conversation = await this.convRepository.findOne({
 			relations:["users"],
@@ -159,20 +159,17 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		/* create new message, save it, update conv */
 		let msg = new Message();
 		msg.content = data.content;
-		msg.date = new Date();
+		msg.date = new Date().toUTCString();
 		msg.idSend = db_user_send.id;
-		//msg.idRecv = db_user_recv.id;
+		msg.author = db_user_send.username;
 		msg.conversation = conv;
 		await this.messageRepository.save(msg);
 		await this.convRepository.save(conv);
-		console.log(conv.users)
-		for (let user in conv.users){
-			console.log("user", user)
-			//this.userService.findConnectedUserByUsername(user.username);
+
+		for (let idx in conv.users){
+			let userSocket = this.userService.findConnectedUserByUsername(conv.users[idx].username)
+			if (userSocket)
+				userSocket.socket.emit('UPDATE_DB', await this.userService.parseUserInfo(conv.users[idx]))
 		}
-		if (user_recv)
-			user_recv.socket.emit('UPDATE_DB', await this.userService.parseUserInfo(db_user_recv))
-		if (user_send)
-			user_send.socket.emit('UPDATE_DB', await this.userService.parseUserInfo(db_user_send))
 	}
 }

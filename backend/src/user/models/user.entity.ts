@@ -84,14 +84,14 @@ export class Message {
 	@Column()
 	idSend: number;
 
-	//@Column()
-	//idRecv: number;
+	@Column()
+	author: string;
 
 	@Column()
 	content: string;
 
-	@Column()
-	date: Date;
+	@Column({nullable:true})
+	date: string;
 
 	@ManyToOne(() => Conversation, conversation => conversation.messages)
 	conversation: Conversation;

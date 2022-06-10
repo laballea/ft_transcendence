@@ -15,7 +15,6 @@ const Com: React.FC<IProps> = ({ conv }) => {
 		content: ""
 	})
 
-
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
 		setInput({
 			...input,
@@ -24,7 +23,6 @@ const Com: React.FC<IProps> = ({ conv }) => {
 	}
 
 	const sendMessage = (): void => {
-		console.log(global.clientChat)
 		socket.emit('dmServer', {
 			content: input.content,
 			client_send: global.username,
@@ -38,7 +36,7 @@ const Com: React.FC<IProps> = ({ conv }) => {
 	}
 
 	return (
-		<div className="Com">
+		<div className="Com" style={{marginLeft:10}}>
 			<input
 				className="add-chat"
 				type="text"
@@ -46,12 +44,12 @@ const Com: React.FC<IProps> = ({ conv }) => {
 				value={input.content}
 				onChange={handleChange}
 				name="content"
-				style={{marginLeft: '200px', paddingLeft: '100px'}}
+				
 			/>
 			<button
 				className="add-chat"
 				onClick={sendMessage}
-				style={{color:'white', padding: '100px'}}
+				style={{color:'white', marginLeft: '25px'}}
 			>
 				Send
 			</button>

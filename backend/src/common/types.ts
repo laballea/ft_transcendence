@@ -1,4 +1,4 @@
-import { Conversation } from "src/user/models/user.entity";
+import { Conversation, User } from "src/user/models/user.entity";
 
 export interface MessageEvent {
 	data: string | object;
@@ -37,7 +37,6 @@ export interface MESSAGE_DATA {
 	client_recv: string;
 	content: string;
 	conversationID: number;
-	date: Date;
 	jwt: number;
 }
 
