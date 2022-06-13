@@ -14,12 +14,13 @@ import {
 } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Conversation, Message, User } from './models/user.entity';
-import { status } from './models/user.entity';
-import { FRIEND_REQUEST_ACTIONS, FRIEND_REQUEST_DATA, MESSAGE_DATA, POPUP_DATA } from 'src/common/types';
+import { status } from 'src/common/types';
+import { FIND_GAME_DATA, FRIEND_REQUEST_ACTIONS, FRIEND_REQUEST_DATA, MESSAGE_DATA, POPUP_DATA } from 'src/common/types';
 import { UserService } from './user.service';
 import { truncateString } from 'src/common/utils';
 import { Server } from 'socket.io';
 import { FriendsService } from 'src/friends/friends.service';
+import { GameService } from 'src/game/game.service';
 
 @WebSocketGateway({
 	cors: {
@@ -39,6 +40,7 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 
 		private userService:UserService,
 		private friendsService:FriendsService,
+		private gameService:GameService,
 	){}
 
 	public connectedUser: UserSocket[] = [];
@@ -52,6 +54,7 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 	afterInit(server: any) {}
 
 	async handleDisconnect(client: any, ...args: any[]) {
+		this.gameService.removeFromQueue(client.id)
 		this.userService.disconnectUser(client.id) // client.id = socket.id
 	}
 	@SubscribeMessage('CONNECT')
@@ -170,6 +173,27 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 			let userSocket = this.userService.findConnectedUserByUsername(conv.users[idx].username)
 			if (userSocket)
 				userSocket.socket.emit('UPDATE_DB', await this.userService.parseUserInfo(conv.users[idx]))
+		}
+	}
+
+	@SubscribeMessage('FIND_GAME')
+	async findGame(@MessageBody() data: FIND_GAME_DATA) {
+		const user_send:UserSocket = this.userService.findConnectedUserByUsername(data.client_send);
+		if (user_send != undefined){
+			if (!this.gameService.addToQueue(user_send))
+				return this.emitPopUp([user_send], {error:true, message: `${data.client_send} already in queue.`});
+			this.emitPopUp([user_send], {error:false, message: `Succesfully added ${data.client_send} to queue.`});
+			user_send.status = status.InQueue
+			let otherID = this.gameService.findOtherPlayer(user_send)
+			if (otherID != -1){
+				const otherUser:UserSocket = this.userService.findConnectedUserById(otherID);
+				if (otherUser){
+					let gameID = this.gameService.createGame([user_send, otherUser])
+					console.log("FINDGAME ", gameID)
+					this.emitPopUp([user_send,otherUser], {error:false, message: `Game founded.`});
+					this.server.to(gameID).emit("GAME_FOUND", {gameID:gameID})
+				}
+			}
 		}
 	}
 }

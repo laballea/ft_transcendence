@@ -93,7 +93,7 @@ const ContactList = () => {
 		</div>
 	): [];
 	return (
-		<div className="relative overflow-scroll flex-initial w-full bg-slate-800 sm:w-[400px] h-full p-[16px] mx-[16px] sm:mx-0 rounded sm:rounded-l ">
+		<div className="relative overflow-scroll flex-initial w-full bg-slate-800 sm:w-[400px] flex-1 p-[16px] mx-[16px] sm:mx-0 rounded sm:rounded-l ">
 			<AddFriendButton onSubmit={(username:string)=>{
 				socket.emit("FRIEND_REQUEST", {
 					action: FRIEND_REQUEST_ACTIONS.ADD,

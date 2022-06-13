@@ -2,6 +2,7 @@ export enum status {
 	Connected = 'Connected',
 	Disconnected = 'Disconnected',
 	InGame = 'InGame',
+	InQueue = 'InQueue',
 }
 
 export interface user {
@@ -14,6 +15,7 @@ export interface user {
 	clientChat:string;
 	convID?:number;
 	conv?:Conv[];
+	gameID?:string
 }
 
 export enum FRIEND_REQUEST_ACTIONS {
@@ -49,5 +51,22 @@ export interface Conv {
 	msg:Message[],
 	name:string,
 	users:{id:number, username:string}[]
+}
+
+export interface GameUserI {
+	id:number,
+	username:string,
+	posx:number,
+	posy:number,
+	point:number,
+	you:boolean
+}
+
+export interface GameI {
+	users:GameUserI[],
+	ball:{
+		posx:number,
+		posy:number
+	}
 }
 

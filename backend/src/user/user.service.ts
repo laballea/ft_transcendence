@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { MESSAGE_DATA } from 'src/common/types';
+import { status } from 'src/common/types';
 import { Repository, getConnection } from 'typeorm';
-import { User, Message, Conversation, status } from './models/user.entity';
-import { ConversationI, UserI, UserSafeInfo, UserSocket, MessageI, safeConv } from './models/user.interface';
+import { User, Message, Conversation } from './models/user.entity';
+import { UserI, UserSafeInfo, UserSocket, safeConv } from './models/user.interface';
 
 @Injectable()
 export class UserService {

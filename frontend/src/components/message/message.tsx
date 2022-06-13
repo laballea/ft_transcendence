@@ -11,7 +11,7 @@ const Message = ({ message, own }:MessageProps) => {
 	let date = new Date(message.date)
 
 	return (
-		<div key={date.getTime()}>
+		<div>
 			{!own ?
 				<div style={{color:'white', padding:'5px', display:"flex",
 				flexDirection:"column",alignItems:"flex-end"}}>

@@ -5,8 +5,7 @@ import { JwtAuthGuard, IntraAuthGuard } from './auth.guard';
 import { AuthService } from './auth.service';
 import { Request } from 'express';
 import { UserService } from 'src/user/user.service';
-import { status } from '../user/models/user.entity';
-import { HTTP_STATUS } from 'src/common/types';
+import { HTTP_STATUS, status } from 'src/common/types';
 
 @Controller('auth')
 export class AuthController {

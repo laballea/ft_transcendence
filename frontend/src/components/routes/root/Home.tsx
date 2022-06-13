@@ -17,8 +17,10 @@ import { useSelector, useDispatch } from 'react-redux';
 import { logout, updateDB } from '../../../store/global/reducer';
 import Popup from 'reactjs-popup'; 
 import PopUpWindow from '../../commons/popup/PopUpWindow';
-import {io} from "socket.io-client";
-import ChatBar from '../../chat/chatBar';
+import ChatBar from '../../message/chatBar';
+import Game from '../../game/Game';
+import { status } from '../../../common/types';
+import { gameFound } from '../../../store/global/reducer';
 
 export default function Home() {
 	const socket = useContext(SocketContext);
@@ -28,20 +30,24 @@ export default function Home() {
 	const dispatch = useDispatch();
 
 	useEffect( () => {
-		if (socket.connected == false)
+		if (socket.connected === false)
 			socket.connect()
-		socket.on("connect", () => {
-			socket.emit("CONNECT", {socketID: socket.id, id:global.id, username:global.username});
-			socket.on("UPDATE_DB", (data) => {
-				dispatch(updateDB(data))
+			socket.on("connect", () => {
+				socket.emit("CONNECT", {socketID: socket.id, id:global.id, username:global.username});
+				socket.on("UPDATE_DB", (data) => {
+					dispatch(updateDB(data))
+				});
+				socket.on("PopUp", (data) => {
+					setPopup({open:true, error:data.error, message:data.message})
+				});
+				socket.on("disconnect", (data) => {
+					dispatch(logout())
+				});
+				socket.on("GAME_FOUND", (data) => {
+					console.log(data)
+					dispatch(gameFound(data))
+				});
 			});
-			socket.on("PopUp", (data) => {
-				setPopup({open:true, error:data.error, message:data.message})
-			});
-			socket.on("disconnect", (data) => {
-				dispatch(logout())
-			});
-		});
 		
 		return () => {
 			// before the component is destroyed
@@ -60,19 +66,22 @@ export default function Home() {
 			}, 2000);
 		}
 	}, [popup]);
+
 	return (
 		<div className="w-full h-screen relative bg-slate-900">
 			<NavBar/>
 			<div className="absolute flex justify-between
 							w-full top-[80px] sm:top-[112px] bottom-0 sm:bottom-[48px]">
-				<div className="hidden w-[calc(100%-400px)] h-full flex sm:block justify-between bg-slate-600 z-50">
-					<div className="relative h-[calc(100%-30px)] w-full flex justify-between bg-slate-600 ">
-						{global.convID != undefined && <Message/>}
-						{/*game*/}
+				<div className="hidden w-[calc(100%-400px)] h-full flex sm:block justify-between bg-slate-700 z-50">
+					<div className="relative h-[calc(100%-30px)] w-full flex justify-between bg-slate-700 ">
+						{(global.status === status.InGame || global.status === status.InQueue) && <Game/>}
 					</div>
 					<ChatBar/>
 				</div>
-				<ContactList/>
+				<div className="relative flex-initial flex w-full bg-slate-800 sm:w-[400px] flex-col h-full">
+					<ContactList/>
+					{global.convID !== undefined && <Message/>}
+				</div>
 			</div>
 
 			<Footer/>

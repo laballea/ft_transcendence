@@ -1,4 +1,4 @@
-import { status } from "./user.entity";
+import { status } from "src/common/types";
 import { Conversation } from "./user.entity";
 import { Message } from "./user.entity";
 export interface UserI {
@@ -38,6 +38,7 @@ export interface ConversationI {
 export interface UserSocket {
 	id: number;
 	username:string;
+	gameID?:string,
 	socket: any;
 	status:status;
 }

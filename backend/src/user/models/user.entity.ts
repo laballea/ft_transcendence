@@ -11,12 +11,6 @@ import {
 	ManyToOne
 } from "typeorm";
 
-export enum status {
-	Connected = 'Connected',
-	Disconnected = 'Disconnected',
-	InGame = 'InGame',
-}
-
 @Entity()
 export class User {
 

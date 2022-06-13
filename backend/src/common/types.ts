@@ -1,4 +1,12 @@
 import { Conversation, User } from "src/user/models/user.entity";
+import { UserSocket } from "src/user/models/user.interface";
+
+export enum status {
+	Connected = 'Connected',
+	Disconnected = 'Disconnected',
+	InGame = 'InGame',
+	InQueue = 'InQueue',
+}
 
 export interface MessageEvent {
 	data: string | object;
@@ -40,7 +48,42 @@ export interface MESSAGE_DATA {
 	jwt: number;
 }
 
+export interface FIND_GAME_DATA {
+	client_send: string;
+	jwt: number;
+}
+
 export interface POPUP_DATA {
 	error:boolean,
 	message:string,
+}
+
+export interface GameUserI {
+	id:number,
+	username:string,
+	posx:number,
+	posy:number,
+	point:number,
+	you?:boolean
+}
+
+export enum GAME_STATUS {
+	LOBBY = 'LOBBY',
+	PAUSE = "PAUSE",
+	RUNNING = "RUNNING"
+}
+
+export interface GameI {
+	users:GameUserI[],
+	status:GAME_STATUS,
+	ball:{
+		posx:number,
+		posy:number
+	}
+}
+
+export interface GAMES_SOCKET {
+	id:string,
+	usersID:number[],
+	game:GameI,
 }
