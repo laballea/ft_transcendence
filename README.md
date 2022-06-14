@@ -16,5 +16,5 @@ run `npm run` to run server locally
   http://localhost:5050 => postgres admin
 
 		email: admin@admin.com
-		pw:	root
+		pw:	admin
 
