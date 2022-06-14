@@ -40,7 +40,7 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 
 		private userService:UserService,
 		private friendsService:FriendsService,
-		private gameService:GameService,
+		private gameService:GameService
 	){}
 
 	public connectedUser: UserSocket[] = [];
@@ -54,7 +54,8 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 	afterInit(server: any) {}
 
 	async handleDisconnect(client: any, ...args: any[]) {
-		this.gameService.removeFromQueue(client.id)
+		console.log(client.id, this.userService.findConnectedUserBySocketId(client.id).id)
+		this.gameService.removeFromQueue(this.userService.findConnectedUserBySocketId(client.id).id)
 		this.userService.disconnectUser(client.id) // client.id = socket.id
 	}
 	@SubscribeMessage('CONNECT')
@@ -189,9 +190,11 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 				const otherUser:UserSocket = this.userService.findConnectedUserById(otherID);
 				if (otherUser){
 					let gameID = this.gameService.createGame([user_send, otherUser])
-					console.log("FINDGAME ", gameID)
 					this.emitPopUp([user_send,otherUser], {error:false, message: `Game founded.`});
 					this.server.to(gameID).emit("GAME_FOUND", {gameID:gameID})
+					this.gameService.findGame(gameID).game.game()
+					this.gameService.removeFromQueue(user_send.id)
+					this.gameService.removeFromQueue(otherUser.id)
 				}
 			}
 		}

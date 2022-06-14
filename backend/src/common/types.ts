@@ -1,5 +1,6 @@
 import { Conversation, User } from "src/user/models/user.entity";
 import { UserSocket } from "src/user/models/user.interface";
+import { PongInstance } from "src/game/pongInstance"
 
 export enum status {
 	Connected = 'Connected',
@@ -70,7 +71,8 @@ export interface GameUserI {
 export enum GAME_STATUS {
 	LOBBY = 'LOBBY',
 	PAUSE = "PAUSE",
-	RUNNING = "RUNNING"
+	RUNNING = "RUNNING",
+	ENDED = "ENDED"
 }
 
 export interface GameI {
@@ -85,5 +87,5 @@ export interface GameI {
 export interface GAMES_SOCKET {
 	id:string,
 	usersID:number[],
-	game:GameI,
+	game:PongInstance,
 }

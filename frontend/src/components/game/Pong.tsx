@@ -44,10 +44,8 @@ const Pong = () => {
 
 		eventSource.onmessage = async ({ data }) => {
 			const json = await JSON.parse(data)
-			setGame(prevState => ({
-				...prevState,
-				game: json.game
-			}))
+			console.log(data)
+			setGame(json.game)
 		}
 		window.addEventListener('keydown', keypress, true);
 		return () => {

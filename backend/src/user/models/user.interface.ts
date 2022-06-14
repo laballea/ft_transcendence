@@ -57,6 +57,8 @@ export interface UserSafeInfo {
 	friendsRequest?:{id:number, username:string}[];
 
 	conv?:safeConv[];
+	
+	profilIntraUrl:string,
 }
 
 export interface safeConv {

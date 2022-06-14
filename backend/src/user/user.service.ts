@@ -152,7 +152,8 @@ export class UserService {
 		var UserSafeInfo:UserSafeInfo = {
 			id: userInfo.id,
 			username: userInfo.username,
-			status:this.getUserStatus(userInfo.id),//this.getStatus(userInfo.id),
+			status:this.getUserStatus(userInfo.id),
+			profilIntraUrl: userInfo.profilIntraUrl
 		};
 		UserSafeInfo.friends = userInfo.friends.map(id => ({ id: id, username: userRepo.find(el => el.id == id).username}));
 		UserSafeInfo.bloqued = userInfo.bloqued.map(id => ({ id: id, username: userRepo.find(el => el.id == id).username}));

@@ -3,6 +3,7 @@ import { GAMES_SOCKET, GAME_STATUS } from 'src/common/types';
 import { User } from 'src/user/models/user.entity';
 import { UserSocket } from 'src/user/models/user.interface';
 import { UserService } from 'src/user/user.service';
+import { PongInstance } from './pongInstance';
 
 let s4 = () => {
 	return Math.floor((1 + Math.random()) * 0x10000)
@@ -14,7 +15,6 @@ let s4 = () => {
 export class GameService {
 	constructor(
 		private userService:UserService,
-		
 	){}
 	public Games: GAMES_SOCKET[] = [];
 	public Queue: number[] = [];
@@ -28,7 +28,7 @@ export class GameService {
 	}
 	removeFromQueue(userID:number):boolean{
 		if (this.Queue.includes(userID)){
-			this.Queue.splice(userID, 1)
+			this.Queue.splice(this.Queue.indexOf(userID), 1)
 			return true
 		}
 		return false
@@ -43,7 +43,6 @@ export class GameService {
 
 	findGame(id:string):GAMES_SOCKET{
 		let res = this.Games.find(game => {return game.id == id})
-		console.log("res", res)
 		return res
 	}
 	createGame(users:UserSocket[]):string{
@@ -55,7 +54,7 @@ export class GameService {
 		this.Games.push({
 				id:gameID,
 				usersID:users.map(user => {return user.id}),
-				game:{
+				game:new PongInstance ({
 					users:users.map((user)=> {
 						return {
 							id:user.id,
@@ -70,7 +69,7 @@ export class GameService {
 						posy:0
 					},
 					status:GAME_STATUS.LOBBY,
-				}
+				})
 			}
 		)
 		for (let idx in users){

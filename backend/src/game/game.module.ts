@@ -9,8 +9,7 @@ import { UserModule } from 'src/user/user.module';
 	imports: [
 		//forwardRef(() => UserGateway)
 		forwardRef(() => UserModule),
-		TypeOrmModule.forFeature([User]),
-
+		TypeOrmModule.forFeature([User])
 	],
 	controllers: [GameController],
 	providers: [GameService],
