@@ -29,13 +29,26 @@ const Pong = () => {
 	const [height, setHeight] = useState(100);
 	var eventSource:EventSource;
 
-	const keypress = (event:KeyboardEvent) => {
+	const keyDown = (event:KeyboardEvent) => {
 		const key = event.key; // "ArrowRight", "ArrowLeft", "ArrowUp", or "ArrowDown"
-		socket.emit("GAME", {
-			action: "keypress",
+		console.log("PRESS")
+		socket.emit("KEYPRESS", {
 			dir:key,
 			id:global.id,
-			gameID:global.gameID
+			gameID:global.gameID,
+			on:true,
+			jwt: global.token
+		})
+	}
+	const keyUp = (event:KeyboardEvent) => {
+		const key = event.key;
+		console.log("RELEASE")
+		socket.emit("KEYPRESS", {
+			dir:key,
+			id:global.id,
+			gameID:global.gameID,
+			on:false,
+			jwt: global.token
 		})
 	}
 	useEffect(() => {
@@ -44,26 +57,27 @@ const Pong = () => {
 
 		eventSource.onmessage = async ({ data }) => {
 			const json = await JSON.parse(data)
-			console.log(data)
 			setGame(json.game)
 		}
-		window.addEventListener('keydown', keypress, true);
+		window.addEventListener('keydown',keyDown, true);
+		window.addEventListener('keyup', keyUp, true);
 		return () => {
-			window.removeEventListener('keydown', keypress, true)
+			window.removeEventListener('keydown', keyDown, true)
+			window.removeEventListener('keyup', keyUp, true)
 			eventSource.close()
 		};
 	}, []);
 
 	useEffect(() => {
 		const resizeObserver = new ResizeObserver((event) => {
-			setWidth(event[0].contentBoxSize[0].inlineSize);
-			setHeight(event[0].contentBoxSize[0].blockSize);
+			setWidth(event[0].contentBoxSize[0].inlineSize * 0.9);
+			setHeight(event[0].contentBoxSize[0].inlineSize * 0.9 / (1.9));
 		});
 		resizeObserver.observe(document.getElementById("Game")!);
 	})
 	return (
 		<div className="relative flex-1 justify-center" id="Game">
-			<Canvas width={width} height={height} game={game}/>
+			<Canvas width={width} height={height} game={game} ratio={width / 1900}/>
 		</div>
 	)
 }

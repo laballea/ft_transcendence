@@ -65,7 +65,8 @@ export interface GameUserI {
 	posx:number,
 	posy:number,
 	point:number,
-	you?:boolean
+	keyPress:number,
+	speed:number
 }
 
 export enum GAME_STATUS {
@@ -75,13 +76,18 @@ export enum GAME_STATUS {
 	ENDED = "ENDED"
 }
 
+export interface GameBallI {
+	posx:number,
+	posy:number,
+	speed:number,
+	d:{x:number, y:number}
+	size:number // rayon
+}
+
 export interface GameI {
 	users:GameUserI[],
 	status:GAME_STATUS,
-	ball:{
-		posx:number,
-		posy:number
-	}
+	ball:GameBallI
 }
 
 export interface GAMES_SOCKET {

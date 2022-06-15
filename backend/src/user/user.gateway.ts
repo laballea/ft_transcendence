@@ -199,4 +199,9 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 			}
 		}
 	}
+
+	@SubscribeMessage('KEYPRESS')
+	async keyPress(@MessageBody() data: {dir:string,id:number, on:boolean,gameID:string,jwt:string}) {
+		this.gameService.findGame(data.gameID).game.keyPress(data.id, data.dir == "ArrowUp" ? -1 : 1, data.on)
+	}
 }

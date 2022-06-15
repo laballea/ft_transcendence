@@ -55,18 +55,24 @@ export class GameService {
 				id:gameID,
 				usersID:users.map(user => {return user.id}),
 				game:new PongInstance ({
-					users:users.map((user)=> {
+					users:users.map((user, index)=> {
 						return {
 							id:user.id,
 							username:user.username,
-							posx:0,
-							posy:0,
+							posx:[50, 1900 - 55][index],
+							posy:1000/2 - 300,
 							point:0,
+							speed:33,
+							keyPress: 0//0=none, -1=up, 1=down
+
 						}
 					}),
 					ball:{
-						posx:0,
-						posy:0
+						posx:1900 / 2,
+						posy: 1000 / 2,
+						speed:3,
+						d:{x:Math.random()* 2 - 1, y:Math.random()* 2 - 1},
+						size:30 //rayon
 					},
 					status:GAME_STATUS.LOBBY,
 				})

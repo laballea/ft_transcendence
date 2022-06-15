@@ -44,7 +44,6 @@ export default function Home() {
 					dispatch(logout())
 				});
 				socket.on("GAME_FOUND", (data) => {
-					console.log(data)
 					dispatch(gameFound(data))
 				});
 			});
