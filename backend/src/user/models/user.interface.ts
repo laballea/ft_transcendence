@@ -1,5 +1,5 @@
 import { status } from "./user.entity";
-import { Conversation } from "./user.entity";
+import { Conversation, Room } from "./user.entity";
 import { Message } from "./user.entity";
 export interface UserI {
 	id:number;
@@ -16,6 +16,8 @@ export interface UserI {
 
 	conversations: Conversation[];
 
+	rooms: Room[];
+
 	friendsRequest:number[];
 	nullChecks():Promise<void>;
 
@@ -27,6 +29,15 @@ export interface MessageI {
 	idRecv: number;
 	content: string;
 	date: Date;
+}
+
+export interface RoomI {
+	id: number;
+	name: string;
+	password: string;
+	adminId: number;
+	users: UserI[];
+	messages: MessageI[];
 }
 
 export interface ConversationI {

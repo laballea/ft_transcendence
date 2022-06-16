@@ -13,9 +13,9 @@ import {
 	Repository,
 } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Conversation, Message, User } from './models/user.entity';
+import { Conversation, Message, User, Room } from './models/user.entity';
 import { status } from './models/user.entity';
-import { FRIEND_REQUEST_ACTIONS, FRIEND_REQUEST_DATA, MESSAGE_DATA, POPUP_DATA } from 'src/common/types';
+import { FRIEND_REQUEST_ACTIONS, FRIEND_REQUEST_DATA, MESSAGE_DATA, POPUP_DATA, ROOM_DATA } from 'src/common/types';
 import { UserService } from './user.service';
 import { truncateString } from 'src/common/utils';
 import { Server } from 'socket.io';
@@ -36,6 +36,8 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		private messageRepository: Repository<Message>,
 		@InjectRepository(Conversation)
 		private convRepository: Repository<Conversation>,
+		@InjectRepository(Room)
+		private roomRepository: Repository<Room>,
 
 		private userService:UserService,
 		private friendsService:FriendsService,
@@ -134,7 +136,7 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 	@SubscribeMessage('dmServer')
 	async handleDM(@MessageBody() data: MESSAGE_DATA) {
 		const user_send:UserSocket = this.userService.findConnectedUserByUsername(data.client_send);
-		const db_user_send:User = await this.userRepository.findOne({ where:{username:data.client_send}})
+		const db_user_send:User = await this.userRepository.findOne({ where:{username:data.client_send} })
 		
 		if (data.client_recv == undefined && data.conversationID && data.conversationID < 0)
 			return this.emitPopUp([user_send], {error:true, message: `Message can't be sent.`});
@@ -172,4 +174,28 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 				userSocket.socket.emit('UPDATE_DB', await this.userService.parseUserInfo(conv.users[idx]))
 		}
 	}
+
+	@SubscribeMessage('newChatRoom')
+	async handleRoom(@MessageBody() data: ROOM_DATA) {
+		const user_send: UserSocket = this.userService.findConnectedUserByUsername(data.admin);
+		const db_user_send: User = await this.userRepository.findOne({ where:{username:data.admin} })
+		console.log("NEW CHAT ROOM")
+		/* does Room exist else create it */
+		let room : Room = await this.roomRepository.findOne({ where:{name: data.name} })
+
+		if (!room) {
+			room = new Room();
+			room.name = data.name;
+			room.password = data.password;
+			room.adminId = db_user_send.id;
+			room.users = [db_user_send];
+			await this.roomRepository.save(room);
+			user_send.socket.emit('UPDATE_DB', await this.userService.parseUserInfo(db_user_send))
+			console.log('create !')
+		}
+		else {
+			return this.emitPopUp([user_send], {error:true, message: `Room name ${data.name} already exist.`});
+		}
+	}
+
 }

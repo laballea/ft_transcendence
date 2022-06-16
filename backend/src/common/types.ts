@@ -40,6 +40,12 @@ export interface MESSAGE_DATA {
 	jwt: number;
 }
 
+export interface ROOM_DATA {
+	admin: string;
+	name: string;
+	password: string;
+}
+
 export interface POPUP_DATA {
 	error:boolean,
 	message:string,

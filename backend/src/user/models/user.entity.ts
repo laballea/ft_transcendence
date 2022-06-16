@@ -19,7 +19,6 @@ export enum status {
 
 @Entity()
 export class User {
-
 	@PrimaryGeneratedColumn()
 	id:number;
 
@@ -41,6 +40,9 @@ export class User {
 	@Column("int", { array: true, default: '{}', nullable:true})
 	friendsRequest: number[];
 
+	@ManyToMany(() => Room, room => room.users)
+	rooms: Room[];
+
 	@ManyToMany(() => Conversation, conversation => conversation.users)
 	conversations: Conversation[];
 
@@ -58,6 +60,28 @@ export class User {
 			this.bloqued = []
 		}
 	}
+}
+
+@Entity()
+export class Room {
+	@PrimaryGeneratedColumn()
+	id:number;
+
+	@Column()
+	name: string;
+
+	@Column()
+	password: string;
+
+	@Column()
+	adminId: number;
+
+	@ManyToMany(() => User, user => user.rooms)
+	@JoinTable()
+	users: User[];
+
+	@OneToMany(() => Message, message => message.conversation, {cascade: ['insert', 'update']})
+	messages: Message[];
 }
 
 @Entity()
@@ -95,5 +119,4 @@ export class Message {
 
 	@ManyToOne(() => Conversation, conversation => conversation.messages)
 	conversation: Conversation;
-
 }

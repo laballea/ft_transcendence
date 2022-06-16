@@ -5,6 +5,7 @@ import NavBar from '../../navbar/NavBar'
 import ContactList from '../../contactList/ContactList';
 import Message from '../../message/index';
 import Footer from '../../commons/footer/Footer';
+import ChatRooms from './ChatRooms';
 
 // CSS
 import '../../../assets/fonts/fonts.css';
@@ -72,9 +73,9 @@ export default function Home() {
 					</div>
 					<ChatBar/>
 				</div>
+				<ChatRooms/>
 				<ContactList/>
 			</div>
-
 			<Footer/>
 			<Popup open={popup.open} contentStyle={{position:'absolute', bottom:0, left:0}}>
 				<PopUpWindow content={popup.message} error={popup.error}/>
