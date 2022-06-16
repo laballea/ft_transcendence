@@ -54,7 +54,6 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 	afterInit(server: any) {}
 
 	async handleDisconnect(client: any, ...args: any[]) {
-		console.log(client.id, this.userService.findConnectedUserBySocketId(client.id).id)
 		this.gameService.removeFromQueue(this.userService.findConnectedUserBySocketId(client.id).id)
 		this.userService.disconnectUser(client.id) // client.id = socket.id
 	}

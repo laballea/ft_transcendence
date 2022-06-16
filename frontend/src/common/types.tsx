@@ -67,6 +67,15 @@ export interface GameI {
 	ball:{
 		posx:number,
 		posy:number
-	}
+	},
+	status:GAME_STATUS,
+	time:number,
+	countDown:number
 }
 
+export enum GAME_STATUS {
+	COUNTDOWN = 'COUNTDOWN',
+	PAUSE = "PAUSE",
+	RUNNING = "RUNNING",
+	ENDED = "ENDED"
+}

@@ -70,7 +70,7 @@ export interface GameUserI {
 }
 
 export enum GAME_STATUS {
-	LOBBY = 'LOBBY',
+	COUNTDOWN = 'COUNTDOWN',
 	PAUSE = "PAUSE",
 	RUNNING = "RUNNING",
 	ENDED = "ENDED"
@@ -87,7 +87,10 @@ export interface GameBallI {
 export interface GameI {
 	users:GameUserI[],
 	status:GAME_STATUS,
-	ball:GameBallI
+	ball:GameBallI,
+	time:number,
+	countDown:number
+
 }
 
 export interface GAMES_SOCKET {

@@ -1,4 +1,5 @@
 import React, { useRef, useEffect } from 'react'
+import { GAME_STATUS } from '../../common/types'
 
 const Canvas = (props:any) => {
 	const {height, width, game, ratio} = props
@@ -28,6 +29,11 @@ const Canvas = (props:any) => {
 			context.strokeRect(0, 0, width, height - 1);
 			drawBall(context)
 			drawPlayers(context)
+			if (game.status == GAME_STATUS.COUNTDOWN){
+				context.font = "30px Arial";
+				context.fillText(Math.trunc(game.countDown), width / 2, height / 2);
+			}
+			context.fillText(game.users[0].point + " - " + game.users[1].point, width / 2, 50);
 		}
 		render()
 		

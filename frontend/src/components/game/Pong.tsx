@@ -2,36 +2,23 @@
 
 // Hooks
 import React, {useState, useEffect, useContext, useRef} from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 
 //
 import { SocketContext } from '../../context/socket';
 import Canvas from './Canvas';
 import { GameI } from '../../common/types';
 
-let tmp:GameI = {
-	users:[
-		{id:0, username:"lol", posx:10, posy:10, point:0, you:true},
-		{id:1, username:"test", posx:50, posy:50, point:0, you:false}
-	],
-	ball:{
-		posx:25,
-		posy:25
-	}
-}
-
 const Pong = () => {
 	const global = useSelector((state: any) => state.global)
 	const socket = useContext(SocketContext);
-	const [game, setGame] = useState(tmp)
-	const dispatch = useDispatch()
+	const [game, setGame] = useState(null)
 	const [width, setWidth] = useState(100);
 	const [height, setHeight] = useState(100);
 	var eventSource:EventSource;
 
 	const keyDown = (event:KeyboardEvent) => {
 		const key = event.key; // "ArrowRight", "ArrowLeft", "ArrowUp", or "ArrowDown"
-		console.log("PRESS")
 		socket.emit("KEYPRESS", {
 			dir:key,
 			id:global.id,
@@ -42,7 +29,6 @@ const Pong = () => {
 	}
 	const keyUp = (event:KeyboardEvent) => {
 		const key = event.key;
-		console.log("RELEASE")
 		socket.emit("KEYPRESS", {
 			dir:key,
 			id:global.id,
@@ -77,7 +63,7 @@ const Pong = () => {
 	})
 	return (
 		<div className="relative flex-1 justify-center" id="Game">
-			<Canvas width={width} height={height} game={game} ratio={width / 1900}/>
+			{game != null && <Canvas width={width} height={height} game={game} ratio={width / 1900}/>}
 		</div>
 	)
 }

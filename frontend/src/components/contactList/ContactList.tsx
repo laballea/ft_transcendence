@@ -35,7 +35,7 @@ const ContactList = () => {
 		};
 	}, []);
 	const friendsList = state.contactList.length > 0 ? state.contactList.map((contact: any) =>  
-		<div key={contact.username} style={{flex:1, overflow:"hidden",display:"flex",flexDirection:"row", color:contact.status === status.Connected ? "#2CDA9D" : "#C41E3D"}}>
+		<div key={contact.username} style={{flex:1, overflow:"hidden",display:"flex",flexDirection:"row", color:contact.status !== status.Disconnected ? "#2CDA9D" : "#C41E3D"}}>
 			<p>
 				<button
 					onClick={() => {

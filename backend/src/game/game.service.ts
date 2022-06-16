@@ -46,10 +46,10 @@ export class GameService {
 		return res
 	}
 	createGame(users:UserSocket[]):string{
-		let gameID = s4()
+		let gameID = "game_" + s4()
 		if (this.Games.length){
 			while (this.Games.find((game) => {return game.id === gameID}))
-				gameID = s4()
+				gameID = "game_" + s4()
 		}
 		this.Games.push({
 				id:gameID,
@@ -64,17 +64,18 @@ export class GameService {
 							point:0,
 							speed:33,
 							keyPress: 0//0=none, -1=up, 1=down
-
 						}
 					}),
 					ball:{
 						posx:1900 / 2,
 						posy: 1000 / 2,
-						speed:3,
-						d:{x:Math.random()* 2 - 1, y:Math.random()* 2 - 1},
+						speed:8,
+						d:{x:0, y:0},
 						size:30 //rayon
 					},
-					status:GAME_STATUS.LOBBY,
+					status:GAME_STATUS.COUNTDOWN,
+					time:Date.now(),
+					countDown:5
 				})
 			}
 		)
