@@ -54,19 +54,22 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 	afterInit(server: any) {}
 
 	async handleDisconnect(client: any, ...args: any[]) {
-		this.gameService.removeFromQueue(this.userService.findConnectedUserBySocketId(client.id).id)
+		this.gameService.disconnectUser(this.userService.findConnectedUserBySocketId(client.id))
 		this.userService.disconnectUser(client.id) // client.id = socket.id
 	}
 	@SubscribeMessage('CONNECT')
 	async connect(@MessageBody() data: {socketID:string, id:number, username:string}, @ConnectedSocket() client: any) {
+		let gameID = this.gameService.reconnect(data.id)
 		this.userService.connectUser(
 			{
 				id:data.id,
 				username:data.username,
 				socket: client,
 				status:status.Connected,
+				gameID
 			}
 		)
+		client.emit("UPDATE_DB", await this.userService.parseUserInfo(data.id))
 	}
 
 	@SubscribeMessage('FRIEND_REQUEST')
@@ -109,9 +112,9 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 			this.userService.updateUserDB(db_user_recv);
 			this.userService.updateUserDB(db_user_send);
 			if (user_recv)
-				user_recv.socket.emit('UPDATE_DB', await this.userService.parseUserInfo(db_user_recv))
+				user_recv.socket.emit('UPDATE_DB', await this.userService.parseUserInfo(db_user_recv.id))
 			if (user_send)
-				user_send.socket.emit('UPDATE_DB', await this.userService.parseUserInfo(db_user_send))
+				user_send.socket.emit('UPDATE_DB', await this.userService.parseUserInfo(db_user_send.id))
 		}
 		catch (e){
 			console.log(e);
@@ -172,7 +175,7 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		for (let idx in conv.users){
 			let userSocket = this.userService.findConnectedUserByUsername(conv.users[idx].username)
 			if (userSocket)
-				userSocket.socket.emit('UPDATE_DB', await this.userService.parseUserInfo(conv.users[idx]))
+				userSocket.socket.emit('UPDATE_DB', await this.userService.parseUserInfo(conv.users[idx].id))
 		}
 	}
 

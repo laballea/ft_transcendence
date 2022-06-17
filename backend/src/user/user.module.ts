@@ -7,7 +7,6 @@ import { AuthModule } from '../auth/auth.module';
 import { EventsService } from './events.service';
 import { UserGateway } from './user.gateway';
 import { FriendsService } from 'src/friends/friends.service';
-import { GameService } from 'src/game/game.service';
 import { GameModule } from 'src/game/game.module';
 
 @Module({

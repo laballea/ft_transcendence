@@ -70,12 +70,14 @@ export interface GameI {
 	},
 	status:GAME_STATUS,
 	time:number,
-	countDown:number
+	countDown:number,
+	winner:string
 }
 
 export enum GAME_STATUS {
 	COUNTDOWN = 'COUNTDOWN',
 	PAUSE = "PAUSE",
 	RUNNING = "RUNNING",
+	WINNER = "WINNER",
 	ENDED = "ENDED"
 }

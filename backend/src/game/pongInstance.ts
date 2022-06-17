@@ -2,7 +2,9 @@ import { GameI, GameUserI, GameBallI, GAME_STATUS } from 'src/common/types';
 
 export class PongInstance {
 	constructor(
-		game:GameI
+		game:GameI,
+		gameEnd:any,
+		gameID:string
 	) {
 		this.users = game.users
 		this.status = game.status
@@ -11,6 +13,9 @@ export class PongInstance {
 		this.map = {width:1900, height:1000}
 		this.timeBegin = game.time
 		this.countDown = game.countDown
+		this.winner = game.winner
+		this.gameEnd = gameEnd
+		this.gameID = gameID
 	}
 	private users:GameUserI[]
 	private status:GAME_STATUS
@@ -18,17 +23,22 @@ export class PongInstance {
 	private map: {width:number, height:number}
 	private timeBegin: number
 	private countDown: number
+	private winner: string
+	private gameEnd:any
+	private gameID:string
 
 	between(x:number, min:number, max:number) {
 		return x >= min && x <= max;
 	}
-
+	randomNumber(min, max) { 
+		return Math.random() * (max - min) + min;
+	} 
 	randomDir(winner:number){
-		let dir = winner != 0 ? -winner : Math.floor(Math.random()) == 0 ? -1 : 1
+		let dir = winner != 0 ? -winner : Math.round(Math.random()) == 0 ? -1 : 1
 		return (
 			{
-				x:Math.random() * dir,
-				y:Math.random() * (Math.random() * 2 - 1)
+				x:this.randomNumber(0.5, 1) * dir,
+				y:this.randomNumber(0.5, 1) * Math.round(Math.random()) == 0 ? -1 : 1
 			}
 		)
 	}
@@ -50,6 +60,13 @@ export class PongInstance {
 			}
 			this.ballTrajectory();
 		}
+		if (this.status == GAME_STATUS.WINNER){
+			this.countDown -= 0.015;
+			if (this.countDown <= 0) {
+				this.status = GAME_STATUS.ENDED;
+				this.gameEnd(this.gameID)
+			}
+		}
 		if (this.status != GAME_STATUS.ENDED) {
 			setTimeout(function () {this.game()}.bind(this), 15)
 		}
@@ -68,6 +85,12 @@ export class PongInstance {
 			else
 				this.users[0].point += 1
 			this.status = GAME_STATUS.COUNTDOWN
+			if (this.users[0].point >= 5 || this.users[1].point >= 5) {
+				this.status = GAME_STATUS.WINNER
+				this.winner = this.users[0].point >= 10 ? this.users[0].username : this.users[1].username
+			}
+			for (let user of this.users)
+				user.posy = 1000 / 2 - 150;
 			newPosx = this.map.width / 2
 			newPosy = this.map.height / 2
 			this.ball.speed = 8
@@ -92,7 +115,8 @@ export class PongInstance {
 			status: this.status,
 			ball: this.ball,
 			time:this.timeBegin,
-			countDown:this.countDown
+			countDown:this.countDown,
+			winner:this.winner
 		}
 	}
 
@@ -102,6 +126,15 @@ export class PongInstance {
 			user.keyPress = dir
 		} else if (user.keyPress == dir) {
 			user.keyPress = 0
+		}
+	}
+
+	pause(status:boolean){
+		if (status)
+			this.status = GAME_STATUS.PAUSE
+		else {
+			this.countDown = 5
+			this.status = GAME_STATUS.COUNTDOWN
 		}
 	}
 }

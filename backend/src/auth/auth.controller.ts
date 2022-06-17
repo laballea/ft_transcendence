@@ -53,6 +53,6 @@ export class AuthController {
 	async getUser(@Res() res, @Req() req): Promise<any> {
 		if (this.userService.getUserStatus(req.user.id) != status.Disconnected)
 			throw new HttpException(HTTP_STATUS.ALREADY_CONNECTED, HttpStatus.CONFLICT);
-		res.status(HttpStatus.OK).send(await this.userService.parseUserInfo(req.user));
+		res.status(HttpStatus.OK).send(await this.userService.parseUserInfo(req.user.id));
 	}
 }

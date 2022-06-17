@@ -34,7 +34,7 @@ const NavBar = () => {
 				<div className="hidden sm:block">
 					<NavBarButtonHome />
 				</div>
-				<NavBarButtonPrimary cta="Play Now" icon={FiZap} onClick={()=>{
+				<NavBarButtonPrimary cta="Play Now" disable={global.status === status.InQueue || global.status === status.InGame} icon={FiZap} onClick={()=>{
 					socket.emit("FIND_GAME", {
 						client_send: global.username,
 						jwt:global.token

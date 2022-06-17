@@ -1,13 +1,12 @@
 // Components
 
 // Hooks
-import React, {useState, useEffect, useContext, useRef} from 'react'
+import React, {useState, useEffect, useContext} from 'react'
 import { useSelector } from 'react-redux'
 
 //
 import { SocketContext } from '../../context/socket';
 import Canvas from './Canvas';
-import { GameI } from '../../common/types';
 
 const Pong = () => {
 	const global = useSelector((state: any) => state.global)
@@ -63,7 +62,7 @@ const Pong = () => {
 	})
 	return (
 		<div className="relative flex-1 justify-center" id="Game">
-			{game != null && <Canvas width={width} height={height} game={game} ratio={width / 1900}/>}
+			{game != null && <Canvas width={width} height={height} game={game} username={global.username} ratio={width / 1900}/>}
 		</div>
 	)
 }

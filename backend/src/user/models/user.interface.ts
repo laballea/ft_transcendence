@@ -59,6 +59,7 @@ export interface UserSafeInfo {
 	conv?:safeConv[];
 	
 	profilIntraUrl:string,
+	gameID:string
 }
 
 export interface safeConv {

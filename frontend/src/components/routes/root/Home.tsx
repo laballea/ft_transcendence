@@ -20,7 +20,7 @@ import PopUpWindow from '../../commons/popup/PopUpWindow';
 import ChatBar from '../../message/chatBar';
 import Game from '../../game/Game';
 import { status } from '../../../common/types';
-import { gameFound } from '../../../store/global/reducer';
+import { gameFound, gameEnd } from '../../../store/global/reducer';
 
 export default function Home() {
 	const socket = useContext(SocketContext);
@@ -46,6 +46,9 @@ export default function Home() {
 				socket.on("GAME_FOUND", (data) => {
 					dispatch(gameFound(data))
 				});
+				socket.on("GAME_END", () => {
+					dispatch(gameEnd())
+				});
 			});
 		
 		return () => {
@@ -55,17 +58,22 @@ export default function Home() {
 			socket.off('disconnect')
 			socket.off('CONNECT')
 			socket.off('RECEIVE_REQUEST')
+			socket.off("GAME_FOUND")
+			socket.off("GAME_END")
+			socket.off("PopUp")
+			socket.off("UPDATE_DB")
 			socket.disconnect()
 		};
 	}, []);
 	React.useEffect(() => {
 		if (popup.open) {
+			let msg = popup.message
 			setTimeout(() => {
-				setPopup(current => {return {open:!current.open, error:true, message:""}})
+				if (msg === popup.message)
+					setPopup(current => {return {open:false, error:true, message:""}})
 			}, 2000);
 		}
 	}, [popup]);
-
 	return (
 		<div className="w-full h-screen relative bg-slate-900">
 			<NavBar/>

@@ -26,6 +26,8 @@ export const globalSlice = createSlice({
 			state.friendsRequest = data.payload.user.friendsRequest
 			state.userImage = data.payload.user.profilIntraUrl
 			state.conv = data.payload.user.conv
+			console.log(data.payload.user.gameID)
+			state.gameID = data.payload.user.gameID
 		},
 		logout: (state: any) => {
 			Object.assign(state, InitialState)
@@ -36,6 +38,9 @@ export const globalSlice = createSlice({
 			state.friends = data.payload.friends
 			state.bloqued = data.payload.bloqued
 			state.conv = data.payload.conv
+			state.gameID = data.payload.gameID
+			console.log(data.payload.gameID)
+
 			if (state.convID === -1){
 				state.convID = state.conv.find((conv:any) => {
 					return conv.users.length === 2 && conv.users.findIndex((user:any) => user.username === state.clientChat) >= 0
@@ -68,11 +73,15 @@ export const globalSlice = createSlice({
 		gameFound: (state:any, data:any) => {
 			state.gameID = data.payload.gameID
 			state.status = status.InGame
+		},
+		gameEnd: (state:any) => {
+			state.gameID = undefined
+			state.status = status.Connected
 		}
 	},
 })
 
 // Action creators are generated for each case reducer function
-export const { login, setGameStatus, logout, updateDB, setCurrentConv, gameFound } = globalSlice.actions
+export const { login, setGameStatus, logout, updateDB, setCurrentConv, gameFound, gameEnd } = globalSlice.actions
 
 export default globalSlice.reducer
