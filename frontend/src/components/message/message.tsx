@@ -14,7 +14,7 @@ const Message = ({ message, own }:MessageProps) => {
 		<div>
 			{!own ?
 				<div style={{color:'white', padding:'5px', display:"flex",
-				flexDirection:"column",alignItems:"flex-end"}}>
+				flexDirection:"column",alignItems:"flex-start"}}>
 					<p >
 						{message.author} {date.getHours()}:{date.getMinutes()}
 					</p>
@@ -24,7 +24,7 @@ const Message = ({ message, own }:MessageProps) => {
 				</div>
 				:
 				<div style={{color:'white', padding:'5px', display:"flex",
-				flexDirection:"column",alignItems:"flex-start"}}>
+				flexDirection:"column",alignItems:"flex-end"}}>
 					<p >
 						{date.getHours()}:{date.getMinutes()} {message.author}
 					</p>
