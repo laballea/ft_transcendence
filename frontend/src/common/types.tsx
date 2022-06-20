@@ -13,7 +13,9 @@ export interface user {
 	friends?:Array<number>;
 	clientChat:string;
 	convID?:number;
+	roomID?:number;
 	conv?:Conv[];
+	room?:Room[];
 }
 
 export enum FRIEND_REQUEST_ACTIONS {
@@ -51,3 +53,11 @@ export interface Conv {
 	users:{id:number, username:string}[]
 }
 
+export interface Room {
+	id: number,
+	name: string,
+	password: string,
+	adminId: number,
+	users:{id:number, username:string}[]
+	msg: Message[],
+}

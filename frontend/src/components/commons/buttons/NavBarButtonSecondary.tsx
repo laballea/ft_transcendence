@@ -29,7 +29,9 @@ const NavBarButtonSecondary = ({cta, onClick, icon } : NavBarButtonSecondaryProp
 
 NavBarButtonSecondary.defaultProps = {
 	cta: "Default",
-	onClick: () => { console.log("Default Click : no actions assigned")},
+	onClick: () => {
+		console.log("GO MESSAGE PAGE")
+	},
 	icon: {FiSmile}
 }
 

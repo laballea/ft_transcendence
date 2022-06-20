@@ -1,6 +1,7 @@
 import React, { useState, useContext, useEffect } from "react";
 import { useSelector } from 'react-redux'
-import { socket } from "../../../context/socket";
+import { socket } from "../../context/socket";
+import Room from "./roomBar";
 
 const ChatRooms = () => {
 	const [form, createRoom] = React.useState(false);
@@ -39,8 +40,8 @@ const ChatRooms = () => {
 	}
 
 	return (
-		
 		<div>
+			<div>
 			<button
 				className="add-chat"
 				onClick={() => createRoom(!form)}
@@ -85,6 +86,10 @@ const ChatRooms = () => {
 					: 
 					null
 			}
+			</div>
+			<div>
+				<Room/>
+			</div>
 		</div>
 	)
 }

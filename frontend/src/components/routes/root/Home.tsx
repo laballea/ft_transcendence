@@ -5,7 +5,6 @@ import NavBar from '../../navbar/NavBar'
 import ContactList from '../../contactList/ContactList';
 import Message from '../../message/index';
 import Footer from '../../commons/footer/Footer';
-import ChatRooms from './ChatRooms';
 
 // CSS
 import '../../../assets/fonts/fonts.css';
@@ -73,7 +72,6 @@ export default function Home() {
 					</div>
 					<ChatBar/>
 				</div>
-				<ChatRooms/>
 				<ContactList/>
 			</div>
 			<Footer/>

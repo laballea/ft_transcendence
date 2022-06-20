@@ -31,11 +31,11 @@ const NavBar = () => {
 
 			<div className="flex items-center">
 				<div className="hidden sm:block">
-					<NavBarButtonHome />
+					<NavBarButtonHome onClick={() => {navigate('/home')}} />
 				</div>
 				<NavBarButtonPrimary cta="Play Now" icon={FiZap}/>
 				<div className="hidden sm:block">
-					<NavBarButtonSecondary cta="Message" icon={FiMessageCircle} />
+					<NavBarButtonSecondary onClick={() => {navigate('/home/groupe')}} cta="Message" icon={FiMessageCircle} />
 				</div>
 			</div>
 
@@ -45,8 +45,9 @@ const NavBar = () => {
 					userImage={global.userImage || undefined}
 					// onClickSettings={navigate('settings')}
 					onClickLogOut={() => {socket.disconnect();dispatch(logout())}}
-					onClickProfile={() => {navigate('profile')}}
-					onClickHome={() => {navigate('/')}}
+					onClickProfile={() => {navigate('/profile')}}
+					onClickHome={() => {navigate('/home')}}
+					onClickMessage={() => {navigate('/home/groupe')}}
 				/>
 				{/* <button onClick={() => {navigate('profile')}}>{global.username}</button> */}
 				{/* <button onClick={() => {dispatch(logout())}}>Log out</button> */}

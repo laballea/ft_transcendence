@@ -2,6 +2,7 @@ import React from 'react'
 
 // Components
 import Profile from './components/routes/root/Profile';
+import Groupe from './components/routes/root/Groupe';
 import Root from './components/routes/root/Root';
 import Logging from './components/routes/root/Logging';
 import { useSelector } from 'react-redux';
@@ -25,6 +26,7 @@ function App() {
 					<Route path="/login" element={<Logging/>}/>
 					<Route path="/home" element={<Root/>}/>
 					<Route path="/home/profile" element={<Profile/>}/>
+					<Route path="/home/groupe" element={<Groupe/>}/>
 				</Routes>
 			</div>
 		</Router>

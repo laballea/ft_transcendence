@@ -1,7 +1,7 @@
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { setCurrentConv } from '../../store/global/reducer'
-import ChatRooms from '../routes/root/ChatRooms'
+
 const ChatBar = () => {
 	const global = useSelector((state: any) => state.global)
 	const dispatch = useDispatch()

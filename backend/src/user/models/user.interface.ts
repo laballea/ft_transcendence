@@ -67,11 +67,22 @@ export interface UserSafeInfo {
 	friendsRequest?:{id:number, username:string}[];
 
 	conv?:safeConv[];
+
+	room?:safeRoom[];
 }
 
 export interface safeConv {
 	id:number,
 	msg:Message[],
 	name:string,
+	users:{id:number, username:string}[]
+}
+
+export interface safeRoom {
+	id:number,
+	name:string,
+	password:string,
+	adminId: number,
+	msg:Message[],
 	users:{id:number, username:string}[]
 }

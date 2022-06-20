@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { MESSAGE_DATA } from 'src/common/types';
 import { Repository, getConnection } from 'typeorm';
 import { User, Message, Conversation, status } from './models/user.entity';
-import { ConversationI, UserI, UserSafeInfo, UserSocket, MessageI, safeConv } from './models/user.interface';
+import { ConversationI, UserI, UserSafeInfo, UserSocket, MessageI, safeConv, safeRoom } from './models/user.interface';
 
 @Injectable()
 export class UserService {
@@ -144,6 +144,29 @@ export class UserService {
 		}
 		return _conv;
 	}
+
+	async getRoomByUserId(id:number):Promise<safeRoom[]>{
+		var _room:safeRoom[] = [];
+		const user = await this.userRepository.findOne({
+			relations: ['rooms', 'rooms.users'],
+			where: {
+				id: id
+			}
+		})
+		if (user){
+			for (let room of user.rooms) {
+				_room.push({
+					id: room.id,
+					name: room.name,
+					password: room.password,
+					adminId: room.adminId,
+					msg: room.messages,
+					users: room.users.map(user => ({id:user.id, username:user.username}))
+				})
+			}
+		}
+		return _room;
+	}
 	/*
 		return more readable user data for client
 	*/
@@ -158,7 +181,7 @@ export class UserService {
 		UserSafeInfo.bloqued = userInfo.bloqued.map(id => ({ id: id, username: userRepo.find(el => el.id == id).username}));
 		UserSafeInfo.friendsRequest = userInfo.friendsRequest.map(id => ({ id: id, username: userRepo.find(el => el.id == id).username}));
 		UserSafeInfo.conv = await this.getConversationByUserId(userInfo.id);
-		
+		UserSafeInfo.room = await this.getRoomByUserId(userInfo.id);
 		return UserSafeInfo;
 	}
 
