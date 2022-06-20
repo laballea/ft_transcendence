@@ -98,5 +98,5 @@ export interface GameI {
 export interface GAMES_SOCKET {
 	id:string,
 	usersID:number[],
-	game:PongInstance,
+	pong:PongInstance,
 }

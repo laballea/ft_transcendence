@@ -8,6 +8,8 @@ const Canvas = (props:any) => {
 		ctx.fillStyle = '#000000'
 		ctx.beginPath()
 		ctx.arc(game.ball.posx * ratio, game.ball.posy * ratio, game.ball.size * ratio, 0, 2*Math.PI)
+		ctx.font = "15px Arial";
+		ctx.fillText((game.ball.speed * 0.00026 / 0.025).toFixed(2) + "m/s", 5, 15);
 		ctx.fill()
 	}
 	const drawPlayers = (ctx:any) => {
@@ -33,7 +35,7 @@ const Canvas = (props:any) => {
 			drawPlayers(context)
 			if (game.status === GAME_STATUS.COUNTDOWN){
 				context.font = "30px Arial";
-				context.fillText(Math.trunc(game.countDown), width / 2, height / 2);
+				context.fillText(Math.ceil(game.countDown), width / 2, height / 2);
 			}
 			if (game.status === GAME_STATUS.WINNER){
 				context.font = "30px Arial";

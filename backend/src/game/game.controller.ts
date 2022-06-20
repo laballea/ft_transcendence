@@ -14,7 +14,7 @@ export class GameController {
 	getGames():any {
 		return this.gameService.Games.map(game => {return {
 			id:game.id,
-			game:game.game
+			game:game.pong
 		}});
 	}
 
@@ -23,8 +23,8 @@ export class GameController {
 	*/
 	@Sse(':id')
 	sse(@Query() query, @Param() param): Observable<any> {
-		return interval(15).pipe(
-			mergeMap( async (_) => {return {data : { game: this.gameService.findGame(param.id).game.getGameInfo()}}}
+		return interval(30).pipe(
+			mergeMap( async (_) => {return {data : { game: this.gameService.findGame(param.id).pong.getGameInfo()}}}
 		));
 	}
 }

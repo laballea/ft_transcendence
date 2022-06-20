@@ -55,8 +55,8 @@ const Pong = () => {
 
 	useEffect(() => {
 		const resizeObserver = new ResizeObserver((event) => {
-			setWidth(event[0].contentBoxSize[0].inlineSize * 0.9);
-			setHeight(event[0].contentBoxSize[0].inlineSize * 0.9 / (1.9));
+			setWidth(event[0].contentBoxSize[0].inlineSize);
+			setHeight(event[0].contentBoxSize[0].inlineSize / (1.9));
 		});
 		resizeObserver.observe(document.getElementById("Game")!);
 	})

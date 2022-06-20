@@ -1,5 +1,5 @@
-import { Injectable } from '@nestjs/common';
-import { GAMES_SOCKET, GAME_STATUS, status } from 'src/common/types';
+import { Injectable, Inject } from '@nestjs/common';
+import { GameI, GAMES_SOCKET, GAME_STATUS, status } from 'src/common/types';
 import { User } from 'src/user/models/user.entity';
 import { UserSocket } from 'src/user/models/user.interface';
 import { UserService } from 'src/user/user.service';
@@ -26,12 +26,11 @@ export class GameService {
 		}
 		return false
 	}
-	removeFromQueue(userID:number):boolean{
-		if (this.Queue.includes(userID)){
-			this.Queue.splice(this.Queue.indexOf(userID), 1)
-			return true
+	removeFromQueue(userID:number[]){
+		for (let id of userID){
+			if (this.Queue.includes(id))
+				this.Queue.splice(this.Queue.indexOf(id), 1)
 		}
-		return false
 	}
 	removeGame(gameID:string):boolean{
 		if (this.Games.find((game)=>game.id==gameID)){
@@ -56,58 +55,61 @@ export class GameService {
 	reconnect(userID:number):string{
 		let game = this.Games.find((game)=>game.usersID.includes(userID))
 		if (game){
-			game.game.pause(false);
+			if (this.userService.getUserStatus(game.usersID[0]) != status.Disconnected &&
+				this.userService.getUserStatus(game.usersID[1]) != status.Disconnected)
+				game.pong.pause(false);
 			return game.id
 		}
 		return undefined
 	}
+
 	disconnectUser(user:UserSocket){
-		this.removeFromQueue(user.id)
+		this.removeFromQueue([user.id])
 		if (user.gameID){
 			let game:GAMES_SOCKET = this.findGame(user.gameID)
-			game.game.pause(true);
+			game.pong.pause(true);
 		}
 	}
-	createGame(users:UserSocket[]):string{
+	createGame(users:UserSocket[]):GAMES_SOCKET{
 		let gameID = "game_" + s4()
 		if (this.Games.length){
 			while (this.Games.find((game) => {return game.id === gameID}))
 				gameID = "game_" + s4()
 		}
-		this.Games.push({
-				id:gameID,
-				usersID:users.map(user => {return user.id}),
-				game:new PongInstance ({
-					users:users.map((user, index)=> {
-						return {
-							id:user.id,
-							username:user.username,
-							posx:[50, 1900 - 55][index],
-							posy:1000/2 - 150,
-							point:0,
-							speed:33,
-							keyPress: 0//0=none, -1=up, 1=down
-						}
-					}),
-					ball:{
-						posx:1900 / 2,
-						posy: 1000 / 2,
-						speed:8,
-						d:{x:0, y:0},
-						size:30 //rayon
-					},
-					status:GAME_STATUS.COUNTDOWN,
-					time:Date.now(),
-					countDown:5,
-					winner:undefined
-				}, this.gameEnd.bind(this), gameID)
-			}
-		)
+		let game:GAMES_SOCKET = {
+			id:gameID,
+			usersID:users.map(user => {return user.id}),
+			pong:new PongInstance ({
+				users:users.map((user, index)=> {
+					return {
+						id:user.id,
+						username:user.username,
+						posx:[50, 1900 - 55][index],
+						posy:1000/2 - 150,
+						point:0,
+						speed:33,
+						keyPress: 0//0=none, -1=up, 1=down
+					}
+				}),
+				ball:{
+					posx:1900 / 2,
+					posy: 1000 / 2,
+					speed:30,
+					d:{x:0, y:0},
+					size:30 //rayon
+				},
+				status:GAME_STATUS.COUNTDOWN,
+				time:Date.now(),
+				countDown:5,
+				winner:undefined
+			}, this.gameEnd.bind(this), gameID)
+		}
+		this.Games.push(game)
 		for (let idx in users){
 			users[idx].gameID = gameID
 			users[idx].socket.join(gameID)
 		}
-		return gameID
+		return game
 	}
 
 	gameEnd(gameID:string){

@@ -43,8 +43,6 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		private gameService:GameService
 	){}
 
-	public connectedUser: UserSocket[] = [];
-
 	@WebSocketServer()
 	server: Server;
 
@@ -59,16 +57,18 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 	}
 	@SubscribeMessage('CONNECT')
 	async connect(@MessageBody() data: {socketID:string, id:number, username:string}, @ConnectedSocket() client: any) {
-		let gameID = this.gameService.reconnect(data.id)
 		this.userService.connectUser(
 			{
 				id:data.id,
 				username:data.username,
 				socket: client,
 				status:status.Connected,
-				gameID
+				gameID:undefined
 			}
 		)
+		let user = this.userService.findConnectedUserById(data.id)
+		user.gameID = this.gameService.reconnect(data.id)
+		user.status = user.gameID ? status.InGame : user.status
 		client.emit("UPDATE_DB", await this.userService.parseUserInfo(data.id))
 	}
 
@@ -109,8 +109,7 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 				}
 			}
 			/* update both user db */
-			this.userService.updateUserDB(db_user_recv);
-			this.userService.updateUserDB(db_user_send);
+			this.userService.updateUserDB([db_user_recv, db_user_send]);
 			if (user_recv)
 				user_recv.socket.emit('UPDATE_DB', await this.userService.parseUserInfo(db_user_recv.id))
 			if (user_send)
@@ -142,7 +141,7 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		const user_send:UserSocket = this.userService.findConnectedUserByUsername(data.client_send);
 		const db_user_send:User = await this.userRepository.findOne({ where:{username:data.client_send}})
 		
-		if (data.client_recv == undefined && data.conversationID && data.conversationID < 0)
+		if (data.client_recv == undefined && (!data.conversationID || data.conversationID < 0))
 			return this.emitPopUp([user_send], {error:true, message: `Message can't be sent.`});
 			
 		const db_user_recv:User = await this.userRepository.findOne({ where:{username:data.client_recv} })
@@ -179,31 +178,37 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		}
 	}
 
+
+	/*
+		add user to queue
+		try to find another user
+		create & launch game if finded
+	*/
 	@SubscribeMessage('FIND_GAME')
 	async findGame(@MessageBody() data: FIND_GAME_DATA) {
-		const user_send:UserSocket = this.userService.findConnectedUserByUsername(data.client_send);
-		if (user_send != undefined){
-			if (!this.gameService.addToQueue(user_send))
-				return this.emitPopUp([user_send], {error:true, message: `${data.client_send} already in queue.`});
-			this.emitPopUp([user_send], {error:false, message: `Succesfully added ${data.client_send} to queue.`});
-			user_send.status = status.InQueue
-			let otherID = this.gameService.findOtherPlayer(user_send)
-			if (otherID != -1){
-				const otherUser:UserSocket = this.userService.findConnectedUserById(otherID);
+		try {
+			const user_send:UserSocket = this.userService.findConnectedUserByUsername(data.client_send);
+			if (user_send != undefined){
+				if (!this.gameService.addToQueue(user_send)) // add User to queue
+					return this.emitPopUp([user_send], {error:true, message: `${data.client_send} already in queue.`});
+				this.emitPopUp([user_send], {error:false, message: `Succesfully added ${data.client_send} to queue.`});
+				user_send.status = status.InQueue
+				const otherUser:UserSocket = this.userService.findConnectedUserById(this.gameService.findOtherPlayer(user_send));
 				if (otherUser){
-					let gameID = this.gameService.createGame([user_send, otherUser])
+					let game = this.gameService.createGame([user_send, otherUser])
 					this.emitPopUp([user_send,otherUser], {error:false, message: `Game founded.`});
-					this.server.to(gameID).emit("GAME_FOUND", {gameID:gameID})
-					this.gameService.findGame(gameID).game.game()
-					this.gameService.removeFromQueue(user_send.id)
-					this.gameService.removeFromQueue(otherUser.id)
+					this.server.to(game.id).emit("GAME_FOUND", {gameID:game.id})
+					game.pong.run()
+					this.gameService.removeFromQueue([user_send.id, otherUser.id])
 				}
 			}
+		} catch (e){
+			console.log(e)
 		}
 	}
 
 	@SubscribeMessage('KEYPRESS')
 	async keyPress(@MessageBody() data: {dir:string,id:number, on:boolean,gameID:string,jwt:string}) {
-		this.gameService.findGame(data.gameID).game.keyPress(data.id, data.dir == "ArrowUp" ? -1 : 1, data.on)
+		this.gameService.findGame(data.gameID).pong.keyPress(data.id, data.dir == "ArrowUp" ? -1 : 1, data.on)
 	}
 }
