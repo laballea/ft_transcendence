@@ -198,4 +198,9 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		}
 	}
 
+	@SubscribeMessage('addMember')
+	async addMember(@MessageBody() data: {id:number, user: string}) {
+		
+	}
+
 }

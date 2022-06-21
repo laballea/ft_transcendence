@@ -29,7 +29,6 @@ const ChatRooms = () => {
 				password: input.password,
 				admin: global.username,
 			});
-			// createRoom(!form);
 		}
 		setInput({
 			roomName: "",

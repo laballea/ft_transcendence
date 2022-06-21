@@ -7,7 +7,7 @@ type ChatProps = {
 	msg:MessageI[]
 }
 
-const Chat = ({ msg, username}:ChatProps) => {
+const Chat = ({ msg, username }:ChatProps) => {
 
 	const messagesList = (): JSX.Element[] => {
 		return msg.map((message) => {
@@ -16,6 +16,7 @@ const Chat = ({ msg, username}:ChatProps) => {
 			)
 		})
 	}
+
 	return (
 		<ul>
 			{messagesList()}
