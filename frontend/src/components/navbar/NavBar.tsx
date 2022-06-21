@@ -45,7 +45,7 @@ const NavBar = () => {
 					userImage={global.userImage || undefined}
 					// onClickSettings={navigate('settings')}
 					onClickLogOut={() => {socket.disconnect();dispatch(logout())}}
-					onClickProfile={() => {navigate('/profile')}}
+					onClickProfile={() => {navigate('/home/profile')}}
 					onClickHome={() => {navigate('/home')}}
 					onClickMessage={() => {navigate('/home/groupe')}}
 				/>

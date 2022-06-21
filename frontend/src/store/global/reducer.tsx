@@ -42,6 +42,11 @@ export const globalSlice = createSlice({
 				}).id
 			}
 			state.room = data.payload.room
+			if (state.roomID == -1){
+				state.roomID = state.room.find((room:any) => {
+					return room.users.length == 1 && room.users.findIndex((user:any) => user.username == state.clientChat) >= 0
+				}).id
+			}
 		},
 		setCurrentConv: (state:any, data:any) => {
 			var {id, username} = data.payload
@@ -63,7 +68,7 @@ export const globalSlice = createSlice({
 			var {id, username} = data.payload
 			if (id == undefined) {
 				let room = state.room.find((room:any) => {
-					return room.users.length == 2 && room.users.findIndex((user:any) => user.username == username) >= 0
+					return room.users.length == 1 && room.users.findIndex((user:any) => user.username == username) >= 0
 				})
 				if (room == undefined){
 					state.clientChat = username

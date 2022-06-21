@@ -21,9 +21,10 @@ function Room() {
 				}
 				:
 				global.room.find((room:any) => room.id == global.roomID)
+	console.log("room: ", room)
 	return (
 		<div className="chat" style={{margin:50, width:400, height:500, display:'flex', flexDirection:'column', justifyContent:"center"}}>
-			<h3 style={{color:'white', flex:1}}>Chat /{room.users.length > 2 ? room.name : room.users.find((user:any) => user.username != global.username).username}</h3>
+			{/* <h3 style={{color:'white', flex:1}}>Chat /{room.users.length > 2 ? room.name : room.users.find((user:any) => user.username != global.username).username}</h3> */}
 			<div>
 				<input type="text" />
 				<button>

@@ -19,6 +19,10 @@ import Popup from 'reactjs-popup';
 import PopUpWindow from '../../commons/popup/PopUpWindow';
 import {io} from "socket.io-client";
 import ChatBar from '../../chat/chatBar';
+import ChatRooms from '../../room/ChatRooms';
+import RoomBar from '../../room/roomBar';
+import Room from "../../room/index";
+
 
 export default function Home() {
 	const socket = useContext(SocketContext);
@@ -69,6 +73,9 @@ export default function Home() {
 					<div className="relative h-[calc(100%-30px)] w-full flex justify-between bg-slate-600 ">
 						{global.convID != undefined && <Message/>}
 						{/*game*/}
+						<ChatRooms/>
+						<RoomBar/>
+						{global.roomID != undefined && <Room/>}
 					</div>
 					<ChatBar/>
 				</div>

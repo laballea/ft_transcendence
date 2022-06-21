@@ -165,6 +165,7 @@ export class UserService {
 				})
 			}
 		}
+		console.log(_room)
 		return _room;
 	}
 	/*

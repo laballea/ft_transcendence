@@ -21,7 +21,7 @@ const Groupe = () => {
 							w-full top-[80px] sm:top-[112px] bottom-0 sm:bottom-[48px]">
 				<ChatRooms/>
 			</div>
-			<RoomBar/>
+			{/* <RoomBar/> */}
 		</div>
 	)
 }
