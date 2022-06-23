@@ -3,6 +3,7 @@ import Chat from '../message/chat'
 import Com from '../message/com'
 import { useSelector } from 'react-redux'
 import { socket } from "../../context/socket";
+import Member from './member';
 
 export interface MessageI {
 		author: string
@@ -23,8 +24,6 @@ function Room() {
 				:
 				global.room.find((room:any) => room.id == global.roomID)
 
-	console.log("room: ", room)
-
 	const [input, setInput] = useState({
 		member: "",
 	})
@@ -37,14 +36,23 @@ function Room() {
 	}
 
 	const addMember = () => {
-		console.log('add member')
+		console.log('add member', room.id, input.member, global.username)
 		socket.emit('addMember', {
-			id: room.id,
+			roomId: room.id,
 			user: input.member,
+			admin: global.username,
 		});
 		setInput({
 			member: "",
 		})
+	}
+
+	const deleteRoom = () => {
+		console.log('delete room', room.id, global.username)
+		socket.emit('deleteRoom', {
+			roomId: room.id,
+			user: global.username,
+		});
 	}
 
 	return (
@@ -64,6 +72,16 @@ function Room() {
 				>
 					Add member
 				</button>
+			</div>
+			<div>
+				<button
+					onClick={deleteRoom}
+				>
+					Delete
+				</button>
+			</div>
+			<div>
+				<Member/>
 			</div>
 			<div style={{overflow:"hidden", overflowY:"scroll", flex:10}}>
 				{/* <Chat msg={room.msg} username={global.username}/> */}

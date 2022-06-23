@@ -46,7 +46,13 @@ export interface ROOM_DATA {
 	password: string;
 }
 
+export interface NEW_MEMBER {
+	roomId: number;
+	user: string;
+	admin: string;
+}
+
 export interface POPUP_DATA {
-	error:boolean,
-	message:string,
+	error: boolean;
+	message: string;
 }

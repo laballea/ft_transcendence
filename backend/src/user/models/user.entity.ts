@@ -119,4 +119,7 @@ export class Message {
 
 	@ManyToOne(() => Conversation, conversation => conversation.messages)
 	conversation: Conversation;
+
+	@ManyToOne(() => Room, Room => Room.messages)
+	Room: Room;
 }
