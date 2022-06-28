@@ -46,7 +46,7 @@ export default function Home() {
 				dispatch(logout())
 			});
 		});
-		
+
 		return () => {
 			// before the component is destroyed
 			// unbind all event handlers used in this component

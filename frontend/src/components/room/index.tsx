@@ -81,7 +81,12 @@ function Room() {
 				</button>
 			</div>
 			<div>
-				<Member/>
+				{
+					room != null ? 
+						<Member room={room}/>
+					:
+						null
+				}
 			</div>
 			<div style={{overflow:"hidden", overflowY:"scroll", flex:10}}>
 				{/* <Chat msg={room.msg} username={global.username}/> */}

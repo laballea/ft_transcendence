@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { user, status } from '../../common/types'
+import { user, status, Room } from '../../common/types'
 
 const InitialState: user = {
 	logged:false,

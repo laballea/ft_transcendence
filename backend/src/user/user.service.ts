@@ -37,7 +37,7 @@ export class UserService {
 			let res = await this.parseUserInfo(userdb)
 			return res
 		}))
-		return  res
+		return res
 	}
 
 	/*
@@ -165,7 +165,6 @@ export class UserService {
 				})
 			}
 		}
-		console.log(_room)
 		return _room;
 	}
 	/*

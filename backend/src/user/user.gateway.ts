@@ -222,18 +222,19 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		await this.roomRepository.save(room);
 		admin.socket.emit('UPDATE_DB', await this.userService.parseUserInfo(db_admin))
 		const newSocket: UserSocket = this.userService.findConnectedUserByUsername(data.user);
-		newSocket.socket.emit('UPDATE_DB', await this.userService.parseUserInfo(newUser))
+		if (newSocket)
+			newSocket.socket.emit('UPDATE_DB', await this.userService.parseUserInfo(newUser))
 	}
 
 	@SubscribeMessage('deleteRoom')
 	async deleteRoom(@MessageBody() data: {roomId: number, user: string}) {
 		const user: UserSocket = this.userService.findConnectedUserByUsername(data.user);
 		const db_user: User = await this.userRepository.findOne({ where:{username:data.user} })
-		let room : Room = await this.roomRepository.findOne({
-			where:{id: data.roomId},
-			relations:['users', 'users.rooms'],
-		})
-		console.log('delete room', room)
+		// let room : Room = await this.roomRepository.findOne({
+		// 	where:{id: data.roomId},
+		// 	relations:['users', 'users.rooms'],
+		// })
+		// console.log('delete room', room)
 		await getConnection()
 		.createQueryBuilder()
 		.delete()
@@ -242,6 +243,44 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		.andWhere("adminId = :adminId", {adminId: db_user.id})
 		.execute();
 		user.socket.emit('UPDATE_DB', await this.userService.parseUserInfo(db_user))
+	}
+
+	@SubscribeMessage('joinRoom')
+	async joinRoom(@MessageBody() data: {joinRoom:string, passRoom:string, user:string}) {
+		console.log("joinRoom", data.joinRoom, data.passRoom, data.user)
+		const user: UserSocket = this.userService.findConnectedUserByUsername(data.user);
+		const newUser: User = await this.userRepository.findOne({ where:{username:data.user} })
+		let room : Room = await this.roomRepository.findOne({
+			where:{name: data.joinRoom},
+			relations:['users', 'users.rooms'],
+		})
+		if (!room)
+			return this.emitPopUp([user], {error:true, message: `Room doesn't exist !`});
+		else if (room.password != data.passRoom)
+			return this.emitPopUp([user], {error:true, message: `Password doesn't match with the room !`});
+		room.users.push(newUser)
+		await this.roomRepository.save(room);
+		user.socket.emit('UPDATE_DB', await this.userService.parseUserInfo(newUser))
+	}
+
+	@SubscribeMessage('deleteMember')
+	async deleteMember(@MessageBody() data: {roomId: number, userId: number, admin: string}) {
+		const admin: UserSocket = this.userService.findConnectedUserByUsername(data.admin);
+		const db_admin: User = await this.userRepository.findOne({ where:{username:data.admin} })
+		// let room : Room = await this.roomRepository.findOne({
+		// 	where:{id: data.roomId},
+		// 	relations:['users', 'users.rooms'],
+		// })
+		console.log('delete Member', data.roomId, data.userId, data.admin)
+		await getConnection()
+		.createQueryBuilder()
+		// .from(Room)
+		// .where("id = :id", { id: data.roomId })
+		// .andWhere("adminId = :adminId", {adminId: db_admin.id})
+		.relation(Room, "users")
+		.of(data.userId)
+		.remove(data.userId)
+		admin.socket.emit('UPDATE_DB', await this.userService.parseUserInfo(db_admin))
 	}
 
 }
