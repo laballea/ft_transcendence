@@ -2,7 +2,6 @@ import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { user, status, Room } from '../../common/types'
 import { socket } from '../../context/socket'
-// import { setCurrentMember } from '../../store/global/reducer'
 
 interface IProps {
 	room: any
@@ -15,7 +14,7 @@ const Member: React.FC<IProps> = ({ room }) => {
 		console.log('delete member', userId)
 		socket.emit('deleteMember', {
 			roomId: room.id,
-			user: userId,
+			userId: userId,
 			admin: global.username,
 		});
 	}
@@ -25,12 +24,12 @@ const Member: React.FC<IProps> = ({ room }) => {
 		<div>
 			<p className="bg-slate-700 m-[2px] w-[80px] rounded">
 				{user.username}
-			</p>
-			<button className="bg-slate-700 m-[2px] rounded"
+			<button
 				onClick={() => deleteMember(user.id)}
 			>
 				X
 			</button>
+			</p>
 		</div>
 	)
 	return (

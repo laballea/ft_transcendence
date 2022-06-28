@@ -230,11 +230,7 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 	async deleteRoom(@MessageBody() data: {roomId: number, user: string}) {
 		const user: UserSocket = this.userService.findConnectedUserByUsername(data.user);
 		const db_user: User = await this.userRepository.findOne({ where:{username:data.user} })
-		// let room : Room = await this.roomRepository.findOne({
-		// 	where:{id: data.roomId},
-		// 	relations:['users', 'users.rooms'],
-		// })
-		// console.log('delete room', room)
+		console.log('delete room')
 		await getConnection()
 		.createQueryBuilder()
 		.delete()
@@ -267,20 +263,17 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 	async deleteMember(@MessageBody() data: {roomId: number, userId: number, admin: string}) {
 		const admin: UserSocket = this.userService.findConnectedUserByUsername(data.admin);
 		const db_admin: User = await this.userRepository.findOne({ where:{username:data.admin} })
-		// let room : Room = await this.roomRepository.findOne({
-		// 	where:{id: data.roomId},
-		// 	relations:['users', 'users.rooms'],
-		// })
 		console.log('delete Member', data.roomId, data.userId, data.admin)
-		await getConnection()
-		.createQueryBuilder()
-		// .from(Room)
-		// .where("id = :id", { id: data.roomId })
-		// .andWhere("adminId = :adminId", {adminId: db_admin.id})
-		.relation(Room, "users")
-		.of(data.userId)
-		.remove(data.userId)
-		admin.socket.emit('UPDATE_DB', await this.userService.parseUserInfo(db_admin))
+		if (data.userId == db_admin.id)
+			this.deleteRoom({roomId: data.roomId, user: data.admin})
+		else {
+			await getConnection()
+			.createQueryBuilder()
+			.relation(Room, "users")
+			.of(data.roomId)
+			.remove(data.userId)
+			admin.socket.emit('UPDATE_DB', await this.userService.parseUserInfo(db_admin))
+		}
 	}
 
 }
