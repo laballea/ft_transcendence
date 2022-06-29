@@ -13,9 +13,10 @@ export class PongInstance {
 		this.map = {width:1900, height:1000}
 		this.timeBegin = game.time
 		this.countDown = game.countDown
-		this.winner = game.winner
+		this.winner = {username:undefined, id:-1}
 		this.gameEnd = gameEnd
 		this.gameID = gameID
+		this.maxBallSpeed = 0
 	}
 	private users:GameUserI[]
 	private status:GAME_STATUS
@@ -23,9 +24,10 @@ export class PongInstance {
 	private map: {width:number, height:number}
 	private timeBegin: number
 	private countDown: number
-	private winner: string
+	private winner: {username:string,id:number}
 	private gameEnd:any
 	private gameID:string
+	private maxBallSpeed:number
 
 	between(x:number, min:number, max:number) {
 		return x >= min && x <= max;
@@ -96,6 +98,8 @@ export class PongInstance {
 					if (this.between(newPosx + Math.sign(this.ball.d.x) * this.ball.size, idx ? user.posx : user.posx + 5, idx ? user.posx + 15: user.posx + 20)){
 						this.ball.d.x *= -1
 						this.ball.speed += 1
+						if (this.ball.speed > this.maxBallSpeed)
+							this.maxBallSpeed = this.ball.speed
 						bounce = true
 					}
 				}
@@ -110,7 +114,10 @@ export class PongInstance {
 				this.status = GAME_STATUS.COUNTDOWN
 				if (this.users[(hit.left ? 1 : 0)].point >= 5) {
 					this.status = GAME_STATUS.WINNER
-					this.winner = this.users[(hit.left ? 1 : 0)].username
+					this.winner = {
+						username:this.users[(hit.left ? 1 : 0)].username,
+						id:this.users[(hit.left ? 1 : 0)].id
+					}
 				}
 				for (let user of this.users)
 					user.posy = 1000 / 2 - 150;
@@ -154,5 +161,21 @@ export class PongInstance {
 			this.countDown = 5
 			this.status = GAME_STATUS.COUNTDOWN
 		}
+	}
+
+	getWinner(){
+		return this.winner
+	}
+
+	getDuration(){
+		return Date.now() - this.timeBegin
+	}
+
+	getMaxBallSpeed(){
+		return this.maxBallSpeed
+	}
+
+	getScore(){
+		return [this.users[0].point, this.users[1].point]
 	}
 }

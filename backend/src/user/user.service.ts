@@ -1,9 +1,8 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { GAME_STATUS, status } from 'src/common/types';
-import { GameService } from 'src/game/game.service';
+import { GAMES_SOCKET, status } from 'src/common/types';
 import { Repository, getConnection } from 'typeorm';
-import { User, Message, Conversation } from './models/user.entity';
+import { User, Message, Conversation, GameData } from './models/user.entity';
 import { UserI, UserSafeInfo, UserSocket, safeConv } from './models/user.interface';
 
 @Injectable()
@@ -13,6 +12,8 @@ export class UserService {
 		private userRepository: Repository<User>,
 		@InjectRepository(Conversation)
 		private convRepository: Repository<Conversation>,
+		@InjectRepository(GameData)
+		private gameRepository: Repository<GameData>,
 		@InjectRepository(Message)
 		private messageRepository: Repository<Message>,
 
@@ -125,6 +126,17 @@ export class UserService {
 		}
 	}
 
+	async saveGame(_game:GAMES_SOCKET){
+		const usersRepo:User[] = await this.userRepository.find()
+		let game = new GameData();
+		game.users = _game.usersID.map(id => usersRepo.find(el => el.id == id))
+		game.winner = _game.pong.getWinner().id
+		game.duration = _game.pong.getDuration()
+		game.maxSpeed = _game.pong.getMaxBallSpeed()
+		game.score = _game.pong.getScore()
+		await this.gameRepository.save(game)
+	}
+
 	async getConversationByUserId(user:User):Promise<safeConv[]>{
 		var _conv:safeConv[] = [];
 
@@ -154,7 +166,6 @@ export class UserService {
 			status: userInfo ? userInfo.status : status.Disconnected,
 			profilIntraUrl: userRepo.profilIntraUrl,
 			gameID: userInfo ? userInfo.gameID : undefined,
-
 		};
 		UserSafeInfo.friends = userRepo.friends.map(id => ({ id: id, username: usersRepo.find(el => el.id == id).username}));
 		UserSafeInfo.bloqued = userRepo.bloqued.map(id => ({ id: id, username: usersRepo.find(el => el.id == id).username}));
@@ -162,5 +173,4 @@ export class UserService {
 		UserSafeInfo.conv = await this.getConversationByUserId(userRepo);
 		return UserSafeInfo;
 	}
-
 }

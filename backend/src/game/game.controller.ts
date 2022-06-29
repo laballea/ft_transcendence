@@ -18,7 +18,6 @@ export class GameController {
 		}});
 	}
 
-
 	/*
 	*/
 	@Sse(':id')

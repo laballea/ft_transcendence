@@ -101,7 +101,6 @@ export class GameService {
 				status:GAME_STATUS.COUNTDOWN,
 				time:Date.now(),
 				countDown:5,
-				winner:undefined
 			}, this.gameEnd.bind(this), gameID)
 		}
 		this.Games.push(game)
@@ -114,6 +113,7 @@ export class GameService {
 
 	gameEnd(gameID:string){
 		let game:GAMES_SOCKET = this.findGame(gameID)
+		this.userService.saveGame(game)
 		for (let id of game.usersID){
 			let user:UserSocket = this.userService.findConnectedUserById(id)
 			if (user){

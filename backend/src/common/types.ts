@@ -91,8 +91,7 @@ export interface GameI {
 	ball:GameBallI,
 	time:number,
 	countDown:number,
-	winner:string
-
+	winner?:{username:string,id:number}
 }
 
 export interface GAMES_SOCKET {

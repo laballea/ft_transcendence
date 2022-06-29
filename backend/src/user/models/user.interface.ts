@@ -1,6 +1,5 @@
 import { status } from "src/common/types";
-import { Conversation } from "./user.entity";
-import { Message } from "./user.entity";
+import { Conversation, GameData, Message } from "./user.entity";
 export interface UserI {
 	id:number;
 
@@ -16,9 +15,10 @@ export interface UserI {
 
 	conversations: Conversation[];
 
+	gameData: GameData[];
+
 	friendsRequest:number[];
 	nullChecks():Promise<void>;
-
 }
 
 export interface MessageI {

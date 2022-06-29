@@ -1,7 +1,7 @@
 // Components
 
 // Hooks
-import React, {useState, useEffect, useContext} from 'react'
+import React, {useState, useEffect, useRef, useContext} from 'react'
 import { useSelector } from 'react-redux'
 
 //
@@ -53,15 +53,20 @@ const Pong = () => {
 		};
 	}, []);
 
+	const overlayEl = useRef<HTMLDivElement>(null);
 	useEffect(() => {
 		const resizeObserver = new ResizeObserver((event) => {
-			setWidth(event[0].contentBoxSize[0].inlineSize);
-			setHeight(event[0].contentBoxSize[0].inlineSize / (1.9));
+			if (overlayEl.current != null) {
+					let width = overlayEl.current.clientHeight * 1.9 > (window.innerWidth - 400) ? window.innerWidth - 400 : overlayEl.current.clientHeight * 1.9;
+					let height = overlayEl.current.clientHeight * 1.9 > (window.innerWidth - 400) ? (window.innerWidth - 400)/ 1.9 : overlayEl.current.clientHeight;
+					setWidth(width);
+					setHeight(height);
+				}
 		});
-		resizeObserver.observe(document.getElementById("Game")!);
+		resizeObserver.observe(document.getElementById("GameDiv")!);
 	})
 	return (
-		<div className="relative flex-1 justify-center" id="Game">
+		<div ref={overlayEl} className="relative flex-1 h-full justify-center" id="GameDiv">
 			{game != null && <Canvas width={width} height={height} game={game} username={global.username} ratio={width / 1900}/>}
 		</div>
 	)
