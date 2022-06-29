@@ -148,7 +148,7 @@ export class UserService {
 	async getRoomByUserId(id:number):Promise<safeRoom[]>{
 		var _room:safeRoom[] = [];
 		const user = await this.userRepository.findOne({
-			relations: ['rooms', 'rooms.users'],
+			relations: ['rooms', 'rooms.users', 'rooms.messages'],
 			where: {
 				id: id
 			}
@@ -160,8 +160,8 @@ export class UserService {
 					name: room.name,
 					password: room.password,
 					adminId: room.adminId,
+					users: room.users.map(user => ({id:user.id, username:user.username})),
 					msg: room.messages,
-					users: room.users.map(user => ({id:user.id, username:user.username}))
 				})
 			}
 		}

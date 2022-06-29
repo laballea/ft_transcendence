@@ -19,7 +19,6 @@ const Member: React.FC<IProps> = ({ room }) => {
 		});
 	}
 
-	console.log(global.room)
 	const memberList = room.users.map((user: any) => 
 		<div>
 			<p className="bg-slate-700 m-[2px] w-[80px] rounded">

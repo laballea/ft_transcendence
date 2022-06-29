@@ -276,4 +276,36 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		}
 	}
 
+	@SubscribeMessage('roomMsg')
+	async handleRoomMsg(@MessageBody() data: MESSAGE_DATA) {
+		console.log(data.client_send, data.content)
+		const user_send:UserSocket = this.userService.findConnectedUserByUsername(data.client_send);
+		const db_user_send:User = await this.userRepository.findOne({ where:{username:data.client_send} })
+
+		/* does conversation exist else create it */
+		let room : Room = await this.roomRepository.findOne({
+			relations:["users"],
+			where: {
+				id: data.conversationID
+			},
+		})
+
+		/* create new message, save it, update room */
+		let msg = new Message();
+		msg.content = data.content;
+		msg.date = new Date().toUTCString();
+		msg.idSend = db_user_send.id;
+		msg.author = db_user_send.username;
+		msg.room = room;
+		await this.messageRepository.save(msg);
+		await this.roomRepository.save(room);
+
+		for (let idx in room.users){
+			console.log(room.users[idx].username)
+			let userSocket = this.userService.findConnectedUserByUsername(room.users[idx].username)
+			if (userSocket)
+				userSocket.socket.emit('UPDATE_DB', await this.userService.parseUserInfo(room.users[idx]))
+		}
+	}
+
 }

@@ -23,13 +23,25 @@ const Com: React.FC<IProps> = ({ conv }) => {
 	}
 
 	const sendMessage = (): void => {
-		socket.emit('dmServer', {
-			content: input.content,
-			client_send: global.username,
-			client_recv: global.clientChat,
-			conversationID: conv.id,
-			jwt:global.token
-		});
+		console.log("Send msg")
+		if (!global.clientChat) {
+			socket.emit('roomMsg', {
+				content: input.content,
+				client_send: global.username,
+				client_recv: global.clientChat,
+				conversationID: conv.id,
+				jwt:global.token
+			})
+		}
+		else {
+			socket.emit('dmServer', {
+				content: input.content,
+				client_send: global.username,
+				client_recv: global.clientChat,
+				conversationID: conv.id,
+				jwt:global.token
+			});
+		}
 		setInput({
 			content: ""
 		})
