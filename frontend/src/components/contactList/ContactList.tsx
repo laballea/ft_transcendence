@@ -2,23 +2,29 @@
 import EmptyStateContactList from './EmptyStateContactList';
 import AddFriendButton from '../commons/buttons/AddFriendButton';
 import { FiCheck, FiX} from "react-icons/fi";
+import Contact from './Contact'
+import FriendRequestIn from './FriendRequestIn'
+import FriendRequestOut from './FriendRequestOut'
+
 
 // Hooks
 import React, {useState, useEffect, useContext} from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { FRIEND_REQUEST_ACTIONS, status } from '../../common/types';
 
-//
+// SocketIo
 import { SocketContext } from '../../context/socket';
 import { setCurrentConv } from '../../store/global/reducer';
 
-const ContactList = () => {
+const ContactList = () => { 
 	const global = useSelector((state: any) => state.global)
 	const [state, setState] = useState({contactList:[]})
 	const socket = useContext(SocketContext);
 	const dispatch = useDispatch()
 
 	var eventSource:EventSource;
+
+	// Getting Contact List
 	useEffect(() => {
 		// eslint-disable-next-line
 		eventSource = new EventSource('http://localhost:5000/users/contactList?username=' + global.username);
@@ -34,29 +40,32 @@ const ContactList = () => {
 		};
 	}, []);
 	const friendsList = state.contactList.length > 0 ? state.contactList.map((contact: any) =>  
-		<div key={contact.username} style={{flex:1, overflow:"hidden",display:"flex",flexDirection:"row", color:contact.status === status.Connected ? "#2CDA9D" : "#C41E3D"}}>
-			<p>
-				<button
-					onClick={() => {
-						dispatch(setCurrentConv({username:contact.username}))
-					}}
-				>
-					{contact.username}
-				</button>
-				<button
-					onClick={() => {
-						socket.emit("FRIEND_REQUEST", {
-							action: FRIEND_REQUEST_ACTIONS.REMOVE,
-							client_send: global.username,
-							client_recv: contact.username,
-							jwt:global.token
-						})
-					}}
-				>
-					<FiX style={ {color: "#C41E3D", fontSize: "1.5em"} }/>
-				</button>
-			</p>
-		</div>
+		<>
+			<Contact username={contact.username} />
+			<div key={contact.username} style={{flex:1, overflow:"hidden",display:"flex",flexDirection:"row", color:contact.status === status.Connected ? "#2CDA9D" : "#C41E3D"}}>
+				<p>
+					<button
+						onClick={() => {
+							dispatch(setCurrentConv({username:contact.username}))
+						}}
+					>
+						{contact.username}
+					</button>
+					<button
+						onClick={() => {
+							socket.emit("FRIEND_REQUEST", {
+								action: FRIEND_REQUEST_ACTIONS.REMOVE,
+								client_send: global.username,
+								client_recv: contact.username,
+								jwt:global.token
+							})
+						}}
+					>
+						<FiX style={ {color: "#C41E3D", fontSize: "1.5em"} }/>
+					</button>
+				</p>
+			</div>	
+		</>
 	): [];
 	const friendsRequestList = global.friendsRequest.length > 0 ? global.friendsRequest.map((user: {id:number, username:string}) =>  
 		<div className="bg-slate-700" key={user.id} style={{flex:1,display:"flex",flexDirection:"row", justifyContent:"center", alignItems:"center"}}>
@@ -102,12 +111,16 @@ const ContactList = () => {
 				})}}
 			/>
 			<div className="relative w-full h-full mt-[60px]">
-				{friendsRequestList}
+				{ friendsRequestList }
+				<FriendRequestIn username="Mahmoud69"/>
+				<Contact username="Giovanni Macaroni"/>
+				<FriendRequestOut username="Patrick the Star"/>
+
 				{
 					state.contactList.length > 0 
 					?
 					<div>
-						{friendsList}
+						{ friendsList }
 					</div>
 					:
 					<EmptyStateContactList/>
