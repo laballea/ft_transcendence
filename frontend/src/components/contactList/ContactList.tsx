@@ -1,5 +1,4 @@
 // Components
-
 import EmptyStateContactList from './EmptyStateContactList';
 import AddFriendButton from '../commons/buttons/AddFriendButton';
 import { FiCheck, FiX} from "react-icons/fi";

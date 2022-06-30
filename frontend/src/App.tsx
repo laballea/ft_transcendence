@@ -1,4 +1,5 @@
-import React from 'react'
+import React from 'react';
+import { Helmet } from "react-helmet";
 
 // Components
 import Profile from './components/routes/root/Profile';
@@ -18,6 +19,11 @@ function App() {
 
 	return (
 		<Router>
+			{/* Helmet package allows us to insert code inside of the <head> of HTML document */}
+			<Helmet>
+				<meta name="viewport" content="width=device-width, initial-scale=1.0"></meta>
+			</Helmet>
+
 			<div className="bg-slate-900 w-screen h-screen">
 				<Routes>
 				<Route path="/" element={<Navigate to="/login" replace />}/>
