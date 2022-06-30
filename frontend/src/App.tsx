@@ -14,17 +14,13 @@ import {
 } from "react-router-dom";
 
 function App() {
-	const global = useSelector((state: any) => state.global)
-
 	return (
 		<Router>
 			<div className="bg-slate-900 w-screen h-screen">
 				<Routes>
-				<Route path="/" element={<Navigate to="/login" replace />}/>
-
+					<Route path="/" element={<Navigate to="/login" replace />}/>
 					<Route path="/login" element={<Logging/>}/>
-					<Route path="/home" element={<Root/>}/>
-					<Route path="/home/profile" element={<Profile/>}/>
+					<Route path="/home/*" element={<Root/>}/>
 				</Routes>
 			</div>
 		</Router>

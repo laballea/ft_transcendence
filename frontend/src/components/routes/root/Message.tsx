@@ -6,18 +6,18 @@ import React, {useContext} from 'react'
 import { useNavigate } from "react-router-dom";
 import { SocketContext } from '../../../context/socket';
 
-const Profile = () => {
+const Message = () => {
 	let navigate = useNavigate();
 	const socket = useContext(SocketContext);
 
 	return (
 		<>
 			<div style={{justifyContent:'center', color:'white'}}>
-				<p>PROFILE</p>
+				<p>MESSAGE</p>
 				<button onClick={() => {navigate('/home')}}>Go back</button>
 			</div>
 		</>
 	)
 }
 
-export default Profile
+export default Message

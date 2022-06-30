@@ -1,6 +1,6 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { GAMES_SOCKET, status } from 'src/common/types';
+import { GAMES_SOCKET, status } from '../common/types';
 import { Repository, getConnection } from 'typeorm';
 import { User, Message, Conversation, GameData } from './models/user.entity';
 import { UserI, UserSafeInfo, UserSocket, safeConv } from './models/user.interface';

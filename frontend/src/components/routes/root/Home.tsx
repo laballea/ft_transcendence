@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from 'react'
+import React from 'react'
 
 // Components
 import NavBar from '../../navbar/NavBar'
@@ -9,71 +9,16 @@ import Footer from '../../commons/footer/Footer';
 // CSS
 import '../../../assets/fonts/fonts.css';
 
-//Socket
-import { SocketContext } from '../../../context/socket';
-
 //Redux
-import { useSelector, useDispatch } from 'react-redux';
-import { logout, updateDB } from '../../../store/global/reducer';
-import Popup from 'reactjs-popup'; 
-import PopUpWindow from '../../commons/popup/PopUpWindow';
+import { useSelector } from 'react-redux';
 import ChatBar from '../../message/chatBar';
 import Game from '../../game/Game';
 import { status } from '../../../common/types';
-import { gameFound, gameEnd } from '../../../store/global/reducer';
 
 export default function Home() {
-	const socket = useContext(SocketContext);
 	const global = useSelector((state: any) => state.global)
-	const [popup, setPopup] = useState({open:false, error:true, message:""});
 	document.title = global.username;
-	const dispatch = useDispatch();
 
-	useEffect( () => {
-		if (socket.connected === false)
-			socket.connect()
-			socket.on("connect", () => {
-				socket.emit("CONNECT", {socketID: socket.id, id:global.id, username:global.username});
-				socket.on("UPDATE_DB", (data) => {
-					dispatch(updateDB(data))
-				});
-				socket.on("PopUp", (data) => {
-					setPopup({open:true, error:data.error, message:data.message})
-				});
-				socket.on("disconnect", (data) => {
-					dispatch(logout())
-				});
-				socket.on("GAME_FOUND", (data) => {
-					dispatch(gameFound(data))
-				});
-				socket.on("GAME_END", () => {
-					dispatch(gameEnd())
-				});
-			});
-		
-		return () => {
-			// before the component is destroyed
-			// unbind all event handlers used in this component
-			socket.off('connect')
-			socket.off('disconnect')
-			socket.off('CONNECT')
-			socket.off('RECEIVE_REQUEST')
-			socket.off("GAME_FOUND")
-			socket.off("GAME_END")
-			socket.off("PopUp")
-			socket.off("UPDATE_DB")
-			socket.disconnect()
-		};
-	}, []);
-	React.useEffect(() => {
-		if (popup.open) {
-			let msg = popup.message
-			setTimeout(() => {
-				if (msg === popup.message)
-					setPopup(current => {return {open:false, error:true, message:""}})
-			}, 2000);
-		}
-	}, [popup]);
 	return (
 		<div className="w-full h-screen relative bg-slate-900">
 			<NavBar/>
@@ -90,11 +35,7 @@ export default function Home() {
 					{global.convID !== undefined && <Message/>}
 				</div>
 			</div>
-
 			<Footer/>
-			<Popup open={popup.open} contentStyle={{position:'absolute', bottom:0, left:0}}>
-				<PopUpWindow content={popup.message} error={popup.error}/>
-			</Popup>
 		</div>
 	)
 }
