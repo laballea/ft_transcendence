@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from 'react'
 
 // Components
 import Home from './Home';
+
 // Hooks
 import {useDispatch, useSelector } from 'react-redux';
 import { logout, updateDB, gameFound, gameEnd } from '../../../store/global/reducer';
@@ -13,6 +14,7 @@ import Profile from './Profile';
 import Popup from 'reactjs-popup'; 
 import PopUpWindow from '../../commons/popup/PopUpWindow';
 import Message from './Message';
+
 const SocketConnection = (props:any) => {
 	const socket = useContext(SocketContext);
 	const dispatch = useDispatch();
@@ -60,6 +62,7 @@ const SocketConnection = (props:any) => {
 			socket.off("UPDATE_DB")
 			socket.disconnect()
 		};
+	// eslint-disable-next-line
 	}, []);
 	return (
 		<>

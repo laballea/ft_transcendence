@@ -1,9 +1,4 @@
-import React, {useState} from 'react'
-
-// Types
-
-// Components
-import { FiPlus } from 'react-icons/fi'
+import React from 'react'
 
 type PopUpWindowProps = {
 	content : string,
@@ -11,7 +6,7 @@ type PopUpWindowProps = {
 }
 
 const PopUpWindow = ({ content, error } : PopUpWindowProps) => {
-	const Icon = FiPlus;
+
 	return (
 		<div className=" absolute bottom-0 left-0 p-[12px] w-fit ">
 				<p	
