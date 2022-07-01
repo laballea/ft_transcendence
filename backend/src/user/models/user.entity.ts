@@ -11,12 +11,6 @@ import {
 	ManyToOne
 } from "typeorm";
 
-export enum status {
-	Connected = 'Connected',
-	Disconnected = 'Disconnected',
-	InGame = 'InGame',
-}
-
 @Entity()
 export class User {
 
@@ -43,6 +37,9 @@ export class User {
 
 	@ManyToMany(() => Conversation, conversation => conversation.users)
 	conversations: Conversation[];
+
+	@ManyToMany(() => GameData, GameData => GameData.users)
+	gameData: GameData[];
 
 	@AfterLoad()
 	@AfterInsert()
@@ -74,6 +71,28 @@ export class Conversation {
 
 	@OneToMany(() => Message, message => message.conversation, {cascade: ['insert', 'update']})
 	messages: Message[];
+}
+
+@Entity()
+export class GameData {
+	@PrimaryGeneratedColumn()
+	id: number;
+
+	@ManyToMany(() => User, user => user.gameData)
+	@JoinTable()
+	users: User[];
+
+	@Column()
+	winner: number;
+
+	@Column()
+	duration: number;
+
+	@Column()
+	maxSpeed: number;
+
+	@Column("int", { array: true, default: '{}', nullable:true})
+	score: number[];
 }
 
 @Entity()

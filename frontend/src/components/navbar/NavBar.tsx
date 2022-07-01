@@ -12,11 +12,12 @@ import { FiZap, FiMessageCircle} from 'react-icons/fi'
 
 // Hooks
 import { useSelector, useDispatch } from 'react-redux'
-import { logout } from '../../store/global/reducer'
+import { logout, setGameStatus } from '../../store/global/reducer'
 import { useNavigate } from "react-router-dom";
 
 //socket
 import { SocketContext } from '../../context/socket';
+import { status } from '../../common/types'
 
 const NavBar = () => {
 	let navigate = useNavigate();
@@ -33,9 +34,16 @@ const NavBar = () => {
 				<div className="hidden sm:block">
 					<NavBarButtonHome />
 				</div>
-				<NavBarButtonPrimary cta="Play Now" icon={FiZap}/>
+				<NavBarButtonPrimary cta="Play Now" disable={global.status === status.InQueue || global.status === status.InGame} icon={FiZap} onClick={()=>{
+					socket.emit("FIND_GAME", {
+						client_send: global.username,
+						jwt:global.token
+					})
+					dispatch(setGameStatus(status.InQueue))
+				}					
+				}/>
 				<div className="hidden sm:block">
-					<NavBarButtonSecondary cta="Message" icon={FiMessageCircle} />
+					<NavBarButtonSecondary cta="Message" icon={FiMessageCircle} onClick={()=>{navigate('message')}}/>
 				</div>
 			</div>
 

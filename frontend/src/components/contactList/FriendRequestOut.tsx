@@ -1,17 +1,12 @@
 // Hooks
-import React, {useState} from 'react'
-
-// Components
-import IconButton from '../commons/buttons/IconButton'
+import React from 'react'
 
 // Assets
 import defaultUserImage from '../../assets/images/default-user.png'
-import {FiCheck, FiX} from 'react-icons/fi'
 
 type FriendRequestOutProps = {
 	username: string,
 }
-
 
 const FriendRequestOut = ({username} : FriendRequestOutProps) => {
 

@@ -1,19 +1,29 @@
 // Hooks
-import React, {useState} from 'react'
+import React from 'react'
 
 // Components
 import IconButton from '../commons/buttons/IconButton'
 
 // Assets
 import defaultUserImage from '../../assets/images/default-user.png'
-import {FiEye, FiLock, FiMessageCircle} from 'react-icons/fi'
+import {FiEye, FiMessageCircle} from 'react-icons/fi'
+
+import { useDispatch } from 'react-redux'
+import { status } from '../../common/types';
+import { setCurrentConv } from '../../store/global/reducer';
 
 type ContactProps = {
-	username: string,
-	userImage: string,
+	contact: {
+		username:string,
+		id:number,
+		status:status,
+		
+	},
+	userImage:string
 }
 
-const Contact = ({username, userImage} : ContactProps) => {
+const Contact = ({contact, userImage} : ContactProps) => {
+	const dispatch = useDispatch()
 	
 	return (
 		<>
@@ -25,16 +35,16 @@ const Contact = ({username, userImage} : ContactProps) => {
 						<img src={userImage} width="40" height="40" alt="userimage" className='rounded-full'></img>
 					</div>
 					<div className="ml-[16px]">
-						<p className='absolute mt-[-8px] text-slate-400 font-space text-[10px]'>Current Status</p>
+						<p className='absolute mt-[-8px] text-slate-400 font-space text-[10px]'>{contact.status}</p>
 						<p className='font-space text-slate-400 text-[20px]'>
-							{username}
+							{contact.username}
 						</p>
 					</div>
 				</div>
 				<div className='flex items-center'>
 					{/* { if user is online rende challenge buttong, else render FiEye Button  } */}
-					<IconButton icon={FiEye}/>
-					<IconButton icon={FiMessageCircle}/>
+					<IconButton icon={FiEye} />
+					<IconButton icon={FiMessageCircle} onClick={() => dispatch(setCurrentConv({username:contact.username}))}/>
 				</div>
 			</div>
 

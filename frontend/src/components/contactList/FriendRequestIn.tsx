@@ -1,5 +1,5 @@
 // Hooks
-import React, {useState} from 'react'
+import React from 'react'
 
 // Components
 import IconButton from '../commons/buttons/IconButton'
@@ -8,15 +8,18 @@ import IconButton from '../commons/buttons/IconButton'
 import defaultUserImage from '../../assets/images/default-user.png'
 import {FiCheck, FiX} from 'react-icons/fi'
 
+import { acceptFriendRequest, declineFriendRequest } from '../../context/socket';
+import { useSelector } from 'react-redux'
+
 type FriendRequestInProps = {
 	username: string,
 }
-
 
 const FriendRequestIn = ({username} :  FriendRequestInProps) => {
 
 	// Get user image: 
 	let userImage: string = defaultUserImage;
+	const global = useSelector((state: any) => state.global)
 
 	return (
 		<>
@@ -36,8 +39,8 @@ const FriendRequestIn = ({username} :  FriendRequestInProps) => {
 					</div>
 				</div>
 				<div className='flex items-center'>
-					<IconButton icon={FiCheck}	color='green'/>
-					<IconButton icon={FiX}		color='red'	/>
+					<IconButton icon={FiCheck}	color='green'	onClick={()=>acceptFriendRequest(global,username)}/>
+					<IconButton icon={FiX}		color='red'		onClick={()=>declineFriendRequest(global,username)}/>
 				</div>
 			</div>
 

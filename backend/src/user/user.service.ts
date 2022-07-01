@@ -1,9 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { MESSAGE_DATA } from 'src/common/types';
+import { GAMES_SOCKET, status } from '../common/types';
 import { Repository, getConnection } from 'typeorm';
-import { User, Message, Conversation, status } from './models/user.entity';
-import { ConversationI, UserI, UserSafeInfo, UserSocket, MessageI, safeConv } from './models/user.interface';
+import { User, Message, Conversation, GameData } from './models/user.entity';
+import { UserI, UserSafeInfo, UserSocket, safeConv } from './models/user.interface';
 
 @Injectable()
 export class UserService {
@@ -12,8 +12,11 @@ export class UserService {
 		private userRepository: Repository<User>,
 		@InjectRepository(Conversation)
 		private convRepository: Repository<Conversation>,
+		@InjectRepository(GameData)
+		private gameRepository: Repository<GameData>,
 		@InjectRepository(Message)
 		private messageRepository: Repository<Message>,
+
 	){}
 
 	public connectedUser: UserSocket[] = [];
@@ -30,11 +33,7 @@ export class UserService {
 	*/
 	async getConnected():Promise<JSON> {
 		let res:any = await Promise.all(this.connectedUser.map(async data => {
-			let userdb = await this.userRepository.findOne({
-				where: {
-					id: data.id
-				}})
-			let res = await this.parseUserInfo(userdb)
+			let res = await this.parseUserInfo(data.id)
 			return res
 		}))
 		return  res
@@ -55,14 +54,15 @@ export class UserService {
 
 	/*
 	*/
-	connectUser(data: {id:number,username:string,socket: any,status:status}) {
-		const user = this.connectedUser.find((user: any) => {return user.id === data.id})
+	connectUser(data: {id:number,username:string,socket: any,status:status, gameID:string}) {
+		let user = this.connectedUser.find((user: any) => {return user.id === data.id})
 		if (!user){
 			this.connectedUser.push({
 				id:data.id,
 				username:data.username,
 				socket: data.socket,
 				status:status.Connected,
+				gameID:data.gameID
 			})
 		}
 		console.log(data.username, "connected");
@@ -115,23 +115,31 @@ export class UserService {
 
 	/*
 	*/
-	async updateUserDB(user:User) {
-		await getConnection()
-			.createQueryBuilder()
-			.update(User)
-			.set(user)
-			.where("id = :id", { id: user.id })
-			.execute();
+	async updateUserDB(users:User[]) {
+		for (let user of users){
+			await getConnection()
+				.createQueryBuilder()
+				.update(User)
+				.set(user)
+				.where("id = :id", { id: user.id })
+				.execute();
+		}
 	}
 
-	async getConversationByUserId(id:number):Promise<safeConv[]>{
+	async saveGame(_game:GAMES_SOCKET){
+		const usersRepo:User[] = await this.userRepository.find()
+		let game = new GameData();
+		game.users = _game.usersID.map(id => usersRepo.find(el => el.id == id))
+		game.winner = _game.pong.getWinner().id
+		game.duration = _game.pong.getDuration()
+		game.maxSpeed = _game.pong.getMaxBallSpeed()
+		game.score = _game.pong.getScore()
+		await this.gameRepository.save(game)
+	}
+
+	async getConversationByUserId(user:User):Promise<safeConv[]>{
 		var _conv:safeConv[] = [];
-		const user = await this.userRepository.findOne({
-			relations: ['conversations', 'conversations.messages', 'conversations.users'],
-			where: {
-				id: id
-			}
-		})
+
 		if (user){
 			for (let conv of user.conversations) {
 				_conv.push({
@@ -147,19 +155,22 @@ export class UserService {
 	/*
 		return more readable user data for client
 	*/
-	async parseUserInfo(userInfo:User):Promise<UserSafeInfo> {
-		const userRepo = await this.userRepository.find()
+	async parseUserInfo(userID:number):Promise<UserSafeInfo> {
+		const usersRepo:User[] = await this.userRepository.find()
+		const userRepo: User = await this.userRepository.findOne({ where:{id:userID}, relations: ['conversations', 'conversations.messages', 'conversations.users']})
+		const userInfo:UserSocket = this.connectedUser.find((user: any) => {return user.id === userID})
+
 		var UserSafeInfo:UserSafeInfo = {
-			id: userInfo.id,
-			username: userInfo.username,
-			status:this.getUserStatus(userInfo.id),//this.getStatus(userInfo.id),
+			id: userRepo.id,
+			username: userRepo.username,
+			status: userInfo ? userInfo.status : status.Disconnected,
+			profilIntraUrl: userRepo.profilIntraUrl,
+			gameID: userInfo ? userInfo.gameID : undefined,
 		};
-		UserSafeInfo.friends = userInfo.friends.map(id => ({ id: id, username: userRepo.find(el => el.id == id).username}));
-		UserSafeInfo.bloqued = userInfo.bloqued.map(id => ({ id: id, username: userRepo.find(el => el.id == id).username}));
-		UserSafeInfo.friendsRequest = userInfo.friendsRequest.map(id => ({ id: id, username: userRepo.find(el => el.id == id).username}));
-		UserSafeInfo.conv = await this.getConversationByUserId(userInfo.id);
-		
+		UserSafeInfo.friends = userRepo.friends.map(id => ({ id: id, username: usersRepo.find(el => el.id == id).username}));
+		UserSafeInfo.bloqued = userRepo.bloqued.map(id => ({ id: id, username: usersRepo.find(el => el.id == id).username}));
+		UserSafeInfo.friendsRequest = userRepo.friendsRequest.map(id => ({ id: id, username: usersRepo.find(el => el.id == id).username}));
+		UserSafeInfo.conv = await this.getConversationByUserId(userRepo);
 		return UserSafeInfo;
 	}
-
 }
