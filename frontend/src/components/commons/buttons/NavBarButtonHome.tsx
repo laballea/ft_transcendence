@@ -16,7 +16,7 @@ const NavBarButtonHome = ({onClick} : NavBarButtonHomeProps) => {
 					<p className="font-pilowlava text-[20px] text-slate-transparent hover:text-slate-200
 							transition-all duration-300 ease-in-out
 							flex justify-center items-center">
-						Home
+						Trans
 					</p>
 			</button>
 		</>

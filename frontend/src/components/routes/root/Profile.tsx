@@ -1,9 +1,12 @@
 import React from 'react'
 
 // Components
-import NavBar from '../../navbar/NavBar'
-import Footer from '../../commons/footer/Footer';
-import ContactList from '../../contactList/ContactList';
+import NavBar from			'../../navbar/NavBar'
+import Footer from			'../../commons/footer/Footer';
+import ContactList from		'../../contactList/ContactList';
+import ProfileInfos from	'../../profile/ProfileInfos';
+import ProfileHistory from	'../../profile/ProfileHistory';
+import ProfileStats from	'../../profile/ProfileStats';
 
 // CSS
 import '../../../assets/fonts/fonts.css';
@@ -11,12 +14,19 @@ import '../../../assets/fonts/fonts.css';
 // Assets
 import defaultUserImage from '../../../assets/images/default-user.png'
 
+// Types
+import { status } from '../../../common/types'
+
 type ProfileProps = {
-	username: string,
+	contact: {
+		username:string,
+		id:number,
+		status:status,
+	},
 	userImage: string,
 }
 
-const Profile = ({username, userImage} : ProfileProps) => {
+const Profile = ({contact, userImage} : ProfileProps) => {
 	
 	return (
 		<div className="w-full h-screen relative bg-slate-900">
@@ -25,20 +35,9 @@ const Profile = ({username, userImage} : ProfileProps) => {
 							w-full top-[80px] sm:top-[112px] bottom-0 sm:bottom-[48px]">
 				<div className="w-[calc(100%-400px)] h-full flex sm:block justify-between z-50 p-[40px]">
 					<div className=''>
-						<div className='flex items-center'>
-							<img src={userImage} width="200" height="200" alt="userimage" className="rounded-full mr-[200px]"></img>
-							<div >
-							<h2 className='font-bold bold text-[64px] text-transparent backgroundTextOutline'>{username}</h2>
-							</div>
-						</div>
-						<div  className='w-full border-t-2 border-slate-700'>
-							<h2 className='font-pilowlava text-[64px] text-transparent backgroundTextOutline'>Stats</h2>
-							<p className="text-slat">No Games played yet</p>
-						</div>
-						<div  className='w-full border-t-2 border-slate-700'>
-							<h2 className='font-pilowlava text-[64px] text-transparent backgroundTextOutline'>History</h2>
-							<p className="text-slat">No Games played yet</p>
-						</div>
+						<ProfileInfos	contact={contact} userImage={userImage}/>
+						<ProfileHistory	contact={contact}/>
+						<ProfileStats	contact={contact}/>
 					</div>
 				</div>
 				<ContactList/>
