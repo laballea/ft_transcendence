@@ -7,19 +7,15 @@ import FriendRequestOut from './FriendRequestOut'
 
 
 // Hooks
-import React, {useState, useEffect, useContext} from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { FRIEND_REQUEST_ACTIONS } from '../../common/types';
+import React, {useState, useEffect} from 'react'
+import { useSelector } from 'react-redux'
 
 // SocketIo
-import { addFriend, SocketContext } from '../../context/socket';
+import { addFriend } from '../../context/socket';
 
 const ContactList = () => { 
 	const global = useSelector((state: any) => state.global)
 	const [state, setState] = useState({contactList:[]})
-	const socket = useContext(SocketContext);
-	const dispatch = useDispatch()
-
 	var eventSource:EventSource;
 
 	// Getting Contact List
