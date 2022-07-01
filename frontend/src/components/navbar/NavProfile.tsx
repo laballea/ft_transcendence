@@ -16,7 +16,7 @@ type NavProfileProps = {
 	onClickHome: () => void,
 }
 
-const NavProfile = ({username, userImage, onClickLogOut, onClickProfile, onClickHome} : NavProfileProps) => {
+const NavProfile = ({username, userImage, onClickSettings, onClickLogOut, onClickProfile, onClickHome} : NavProfileProps) => {
 	const [showMenu, setShowMenu] = React.useState(false);
 	return (
 		<>
@@ -34,7 +34,7 @@ const NavProfile = ({username, userImage, onClickLogOut, onClickProfile, onClick
 					</p>
 				</div>
 				<div className="hidden sm:flex items-center">
-					<IconButton icon={FiSettings}></IconButton>
+					<IconButton icon={FiSettings} onClick={onClickSettings}></IconButton>
 					<IconButton icon={FiLogOut} onClick={onClickLogOut}></IconButton>
 				</div>
 			</div>

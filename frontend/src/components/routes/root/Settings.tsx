@@ -16,6 +16,9 @@ const Settings = ({} : SettingsProps) => {
 	
 	return (
 		<>
+			<p>
+				SETTINGS
+			</p>
 		</>
 	)
 }

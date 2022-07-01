@@ -51,7 +51,7 @@ const NavBar = () => {
 				<NavProfile 
 					username={global.username}
 					userImage={global.userImage || undefined}
-					// onClickSettings={navigate('settings')}
+					onClickSettings={() => {navigate('/app/settings')}}
 					onClickLogOut={() => {socket.disconnect();dispatch(logout())}}
 					onClickProfile={() => {navigate('/app/profile')}}
 					onClickHome={() => {navigate('/app')}}

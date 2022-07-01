@@ -14,6 +14,7 @@ import Profile from './Profile';
 import Popup from 'reactjs-popup'; 
 import PopUpWindow from '../../commons/popup/PopUpWindow';
 import Message from './Message';
+import Settings from './Settings';
 
 // Types
 import { status } from '../../../common/types'
@@ -87,8 +88,9 @@ const SocketConnection = (props:any) => {
 		<>
 			<Routes>		
 				<Route path="/" element={<Home/>}/>
-				<Route path="/profile" element={<Profile contact={userContact}/>}/>
 				<Route path="/message" element={<Message/>}/>
+				<Route path="/profile" element={<Profile contact={userContact}/>}/>
+				<Route path="/settings" element={<Settings/>}/>
 			</Routes>
 			<Popup open={popup.open} contentStyle={{position:'absolute', bottom:0, left:0}}>
 				<PopUpWindow content={popup.message} error={popup.error}/>
