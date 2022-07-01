@@ -33,8 +33,9 @@ const ContactList = () => {
 			eventSource.close()
 		};
 	}, []);
-	const friendsRequestList = global.friendsRequest.length > 0 ? global.friendsRequest.map((user: {id:number, username:string}) =>  <FriendRequestIn username={user.username}/>): [];
-	const friendsList = state.contactList.length > 0 ? state.contactList.map((contact: any) =>  <Contact contact={contact}/>): [];
+	const friendsRequestList = global.friendsRequest.length > 0 ? global.friendsRequest.map((user: {id:number, username:string}, index:number) =>  <FriendRequestIn key={index} username={user.username}/>): [];
+	const friendsList = state.contactList.length > 0 ? state.contactList.map((contact: any, index:number) =>  <Contact key={index} contact={contact}/>): [];
+	const pendingRequest = global.pendingRequest.length > 0 ? global.pendingRequest.map((contact: any, index:number) =>  <FriendRequestOut key={index} username={contact.username}/>): [];
 	return (
 		<div className="relative overflow-scroll flex-initial w-full bg-slate-800 sm:w-[400px] flex-1 p-[16px] mx-[16px] sm:mx-0 rounded sm:rounded-l ">
 			<AddFriendButton onSubmit={(username:string)=> addFriend(global, username)}/>
@@ -49,6 +50,7 @@ const ContactList = () => {
 					:
 					<EmptyStateContactList/>
 				}
+				{ pendingRequest }
 			</div>
 		</div>
 	)

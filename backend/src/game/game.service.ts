@@ -64,10 +64,12 @@ export class GameService {
 	}
 
 	disconnectUser(user:UserSocket){
-		this.removeFromQueue([user.id])
-		if (user.gameID){
-			let game:GAMES_SOCKET = this.findGame(user.gameID)
-			game.pong.pause(true);
+		if (user) {
+			this.removeFromQueue([user.id])
+			if (user.gameID){
+				let game:GAMES_SOCKET = this.findGame(user.gameID)
+				game.pong.pause(true);
+			}
 		}
 	}
 	createGame(users:UserSocket[]):GAMES_SOCKET{

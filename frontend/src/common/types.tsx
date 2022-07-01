@@ -11,6 +11,7 @@ export interface user {
 	token?: string;
 	logged?:boolean;
 	friendsRequest?:Array<number>;
+	pendingRequest?:Array<number>;
 	friends?:Array<number>;
 	clientChat:string;
 	convID?:number;

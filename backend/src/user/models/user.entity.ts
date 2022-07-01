@@ -35,6 +35,9 @@ export class User {
 	@Column("int", { array: true, default: '{}', nullable:true})
 	friendsRequest: number[];
 
+	@Column("int", { array: true, default: '{}', nullable:true})
+	pendingRequest: number[];
+
 	@ManyToMany(() => Conversation, conversation => conversation.users)
 	conversations: Conversation[];
 

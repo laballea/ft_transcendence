@@ -18,6 +18,8 @@ export interface UserI {
 	gameData: GameData[];
 
 	friendsRequest:number[];
+	
+	pendingRequest:number[];
 	nullChecks():Promise<void>;
 }
 
@@ -56,9 +58,12 @@ export interface UserSafeInfo {
 
 	friendsRequest?:{id:number, username:string}[];
 
+	pendingRequest?:{id:number, username:string}[];
+
 	conv?:safeConv[];
 	
 	profilIntraUrl:string,
+
 	gameID:string
 }
 

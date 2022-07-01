@@ -22,6 +22,7 @@ export class FriendsService {
 			!recv.friends.includes(send.id)) //is user already a friend
 		{
 				recv.friendsRequest.push(send.id); //add user to friend request
+				send.pendingRequest.push(recv.id); //add user to pending request
 				return ({
 					error:false,
 					message:`Friend request send to ${truncateString(recv.username, 10)}.`,
@@ -63,8 +64,10 @@ export class FriendsService {
 		if (!send.friends.includes(recv.id))// not already a friend
 			send.friends.push(recv.id);
 		/* remove friend request if exist */
-		if (send.friendsRequest.includes(recv.id))
+		if (send.friendsRequest.includes(recv.id)) {
 			send.friendsRequest.splice(send.friendsRequest.indexOf(recv.id), 1);
+			recv.pendingRequest.splice(recv.pendingRequest.indexOf(send.id), 1);
+		}
 	}
 
 	/* 
@@ -72,5 +75,6 @@ export class FriendsService {
 	decline(send:User, recv:User){
 		if (send.friendsRequest.includes(recv.id))
 			send.friendsRequest.splice(send.friendsRequest.indexOf(recv.id), 1);
+			recv.pendingRequest.splice(recv.pendingRequest.indexOf(send.id), 1);
 	}
 }

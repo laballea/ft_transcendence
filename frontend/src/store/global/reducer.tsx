@@ -5,6 +5,7 @@ const InitialState: user = {
 	logged:false,
 	username:undefined,
 	friendsRequest:[],
+	pendingRequest:[],
 	clientChat:"",
 	convID:undefined,
 	conv:[],
@@ -24,6 +25,7 @@ export const globalSlice = createSlice({
 			state.logged = true
 			state.token = data.payload.token
 			state.friendsRequest = data.payload.user.friendsRequest
+			state.pendingRequest = data.payload.user.pendingRequest
 			state.userImage = data.payload.user.profilIntraUrl
 			state.conv = data.payload.user.conv
 			state.gameID = data.payload.user.gameID
@@ -34,6 +36,7 @@ export const globalSlice = createSlice({
 		updateDB: (state:any, data:any) => {
 			state.status = data.payload.status
 			state.friendsRequest = data.payload.friendsRequest
+			state.pendingRequest = data.payload.pendingRequest
 			state.friends = data.payload.friends
 			state.bloqued = data.payload.bloqued
 			state.conv = data.payload.conv
