@@ -14,6 +14,7 @@ type NavProfileProps = {
 	onClickLogOut: () => void,
 	onClickProfile: () => void,
 	onClickHome: () => void,
+	onClickMessage: () => void,
 }
 
 const NavProfile = ({username, userImage, onClickSettings, onClickLogOut, onClickProfile, onClickHome} : NavProfileProps) => {
@@ -53,7 +54,7 @@ const NavProfile = ({username, userImage, onClickSettings, onClickLogOut, onClic
 						<div>
 							<MobileMenuButton cta="Home"		icon={FiHome}			onClick={onClickProfile} />
 							<MobileMenuButton cta="Profile"		icon={FiUser}			onClick={onClickProfile} />
-							<MobileMenuButton cta="Message"		icon={FiMessageCircle}	onClick={() => {}} />
+							<MobileMenuButton cta="Message"		icon={FiMessageCircle}	onClick={onClickMessage} />
 							<MobileMenuButton cta="Settings"	icon={FiSettings}		onClick={() => {}} />
 						</div>
 						<div>
@@ -75,6 +76,7 @@ NavProfile.defaultProps = {
 	onClickLogOut: () => { console.log("onClickLogOut")},
 	onClickProfile: () => { console.log("onClickProfile")},
 	onClickHome: () => { console.log("onClickHome")},
+	onClickMessage: () => { console.log("onClickMessage")},
 }
 
 export default NavProfile

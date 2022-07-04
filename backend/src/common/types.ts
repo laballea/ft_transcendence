@@ -49,14 +49,26 @@ export interface MESSAGE_DATA {
 	jwt: number;
 }
 
+export interface ROOM_DATA {
+	admin: string;
+	name: string;
+	password: string;
+}
+
+export interface NEW_MEMBER {
+	roomId: number;
+	user: string;
+	admin: string;
+}
+
 export interface FIND_GAME_DATA {
 	client_send: string;
 	jwt: number;
 }
 
 export interface POPUP_DATA {
-	error:boolean,
-	message:string,
+	error: boolean;
+	message: string;
 }
 
 export interface GameUserI {

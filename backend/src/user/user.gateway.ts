@@ -11,11 +11,18 @@ import {
 } from '@nestjs/websockets';
 import {
 	Repository,
+	getConnection
 } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Conversation, Message, User } from './models/user.entity';
+import { Conversation, Message, User, Room } from './models/user.entity';
 import { status } from 'src/common/types';
-import { FIND_GAME_DATA, FRIEND_REQUEST_ACTIONS, FRIEND_REQUEST_DATA, MESSAGE_DATA, POPUP_DATA } from 'src/common/types';
+import { FRIEND_REQUEST_ACTIONS,
+	FRIEND_REQUEST_DATA,
+	MESSAGE_DATA,
+	POPUP_DATA,
+	ROOM_DATA,
+	NEW_MEMBER
+} from 'src/common/types';
 import { UserService } from './user.service';
 import { truncateString } from 'src/common/utils';
 import { Server } from 'socket.io';
@@ -37,6 +44,8 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		private messageRepository: Repository<Message>,
 		@InjectRepository(Conversation)
 		private convRepository: Repository<Conversation>,
+		@InjectRepository(Room)
+		private roomRepository: Repository<Room>,
 
 		private userService:UserService,
 		private friendsService:FriendsService,
@@ -139,7 +148,7 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 	@SubscribeMessage('dmServer')
 	async handleDM(@MessageBody() data: MESSAGE_DATA) {
 		const user_send:UserSocket = this.userService.findConnectedUserByUsername(data.client_send);
-		const db_user_send:User = await this.userRepository.findOne({ where:{username:data.client_send}})
+		const db_user_send:User = await this.userRepository.findOne({ where:{username:data.client_send} })
 		
 		if (data.client_recv == undefined && (!data.conversationID || data.conversationID < 0))
 			return this.emitPopUp([user_send], {error:true, message: `Message can't be sent.`});
@@ -175,6 +184,140 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 			let userSocket = this.userService.findConnectedUserByUsername(conv.users[idx].username)
 			if (userSocket)
 				userSocket.socket.emit('UPDATE_DB', await this.userService.parseUserInfo(conv.users[idx].id))
+		}
+	}
+
+	@SubscribeMessage('newChatRoom')
+	async handleRoom(@MessageBody() data: ROOM_DATA) {
+		const user_send: UserSocket = this.userService.findConnectedUserByUsername(data.admin);
+		const db_user_send: User = await this.userRepository.findOne({ where:{username:data.admin} })
+		console.log("NEW CHAT ROOM")
+		/* does Room exist else create it */
+		let room : Room = await this.roomRepository.findOne({ where:{name: data.name} })
+
+		if (!room) {
+			room = new Room();
+			room.name = data.name;
+			room.password = data.password;
+			room.adminId = db_user_send.id;
+			room.users = [db_user_send];
+			await this.roomRepository.save(room);
+			user_send.socket.emit('UPDATE_DB', await this.userService.parseUserInfo(db_user_send))
+		}
+		else {
+			return this.emitPopUp([user_send], {error:true, message: `Room name ${data.name} already exist.`});
+		}
+	}
+
+	@SubscribeMessage('addMember')
+	async addMember(@MessageBody() data: NEW_MEMBER) {
+		console.log("new member : ", data.roomId, data.user, data.admin)
+		const admin: UserSocket = this.userService.findConnectedUserByUsername(data.admin);
+		const db_admin: User = await this.userRepository.findOne({ where:{username:data.admin} })
+		let room : Room = await this.roomRepository.findOne({
+			where:{id: data.roomId},
+			relations:['users', 'users.rooms'],
+		})
+		let newUser:User = await this.userRepository.findOne({ where:{username:data.user} })
+		if (!room || !newUser)
+			return this.emitPopUp([admin], {error:true, message: `User ${data.user} doesn't exist.`});
+		console.log("my room: ", room)
+		room.users.push(newUser)
+		console.log("my room: ", room)
+		await this.roomRepository.save(room);
+		admin.socket.emit('UPDATE_DB', await this.userService.parseUserInfo(db_admin))
+		const newSocket: UserSocket = this.userService.findConnectedUserByUsername(data.user);
+		if (newSocket)
+			newSocket.socket.emit('UPDATE_DB', await this.userService.parseUserInfo(newUser))
+	}
+
+	@SubscribeMessage('deleteRoom')
+	async deleteRoom(@MessageBody() data: {roomId: number, user: string}) {
+		const user: UserSocket = this.userService.findConnectedUserByUsername(data.user);
+		const db_user: User = await this.userRepository.findOne({ where:{username:data.user} })
+		console.log('delete room')
+		//delete msg then delete room
+		await getConnection()
+		.createQueryBuilder()
+		.delete()
+		.from(Message)
+		.where("roomId = :roomId", { roomId: data.roomId })
+		.execute();
+		//delete room empty
+		await getConnection()
+		.createQueryBuilder()
+		.delete()
+		.from(Room)
+		.where("id = :id", { id: data.roomId })
+		.andWhere("adminId = :adminId", {adminId: db_user.id})
+		.execute();
+		user.socket.emit('UPDATE_DB', await this.userService.parseUserInfo(db_user))
+	}
+
+	@SubscribeMessage('joinRoom')
+	async joinRoom(@MessageBody() data: {joinRoom:string, passRoom:string, user:string}) {
+		console.log("joinRoom", data.joinRoom, data.passRoom, data.user)
+		const user: UserSocket = this.userService.findConnectedUserByUsername(data.user);
+		const newUser: User = await this.userRepository.findOne({ where:{username:data.user} })
+		let room : Room = await this.roomRepository.findOne({
+			where:{name: data.joinRoom},
+			relations:['users', 'users.rooms'],
+		})
+		if (!room)
+			return this.emitPopUp([user], {error:true, message: `Room doesn't exist !`});
+		else if (room.password != data.passRoom)
+			return this.emitPopUp([user], {error:true, message: `Password doesn't match with the room !`});
+		room.users.push(newUser)
+		await this.roomRepository.save(room);
+		user.socket.emit('UPDATE_DB', await this.userService.parseUserInfo(newUser))
+	}
+
+	@SubscribeMessage('deleteMember')
+	async deleteMember(@MessageBody() data: {roomId: number, userId: number, admin: string}) {
+		const admin: UserSocket = this.userService.findConnectedUserByUsername(data.admin);
+		const db_admin: User = await this.userRepository.findOne({ where:{username:data.admin} })
+		console.log('delete Member', data.roomId, data.userId, data.admin)
+		if (data.userId == db_admin.id)
+			this.deleteRoom({roomId: data.roomId, user: data.admin})
+		else {
+			await getConnection()
+			.createQueryBuilder()
+			.relation(Room, "users")
+			.of(data.roomId)
+			.remove(data.userId)
+			admin.socket.emit('UPDATE_DB', await this.userService.parseUserInfo(db_admin))
+		}
+	}
+
+	@SubscribeMessage('roomMsg')
+	async handleRoomMsg(@MessageBody() data: MESSAGE_DATA) {
+		console.log(data.client_send, data.content)
+		const user_send:UserSocket = this.userService.findConnectedUserByUsername(data.client_send);
+		const db_user_send:User = await this.userRepository.findOne({ where:{username:data.client_send} })
+
+		/* does conversation exist else create it */
+		let room : Room = await this.roomRepository.findOne({
+			relations:["users"],
+			where: {
+				id: data.conversationID
+			},
+		})
+
+		/* create new message, save it, update room */
+		let msg = new Message();
+		msg.content = data.content;
+		msg.date = new Date().toUTCString();
+		msg.idSend = db_user_send.id;
+		msg.author = db_user_send.username;
+		msg.room = room;
+		await this.messageRepository.save(msg);
+		await this.roomRepository.save(room);
+
+		for (let idx in room.users){
+			console.log(room.users[idx].username)
+			let userSocket = this.userService.findConnectedUserByUsername(room.users[idx].username)
+			if (userSocket)
+				userSocket.socket.emit('UPDATE_DB', await this.userService.parseUserInfo(room.users[idx]))
 		}
 	}
 

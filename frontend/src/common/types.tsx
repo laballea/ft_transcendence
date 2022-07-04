@@ -15,7 +15,9 @@ export interface user {
 	friends?:Array<number>;
 	clientChat:string;
 	convID?:number;
+	roomID?:number;
 	conv?:Conv[];
+	room?:Room[];
 	gameID?:string
 }
 
@@ -54,6 +56,14 @@ export interface Conv {
 	users:{id:number, username:string}[]
 }
 
+export interface Room {
+	id: number,
+	name: string,
+	password: string,
+	adminId: number,
+	users:{id:number, username:string}[]
+	msg: Message[],
+}
 export interface GameUserI {
 	id:number,
 	username:string,

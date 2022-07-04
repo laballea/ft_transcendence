@@ -15,9 +15,22 @@ const Chat = ({ msg, username}:ChatProps) => {
 			)
 		})
 	}
+
+	const test = () => {
+		console.log("test", msg)
+		return (
+			<p>Send the first message !</p>
+		)
+	}
+
 	return (
 		<ul>
-			{messagesList()}
+			{
+				msg != null ?
+					messagesList()
+				:
+				test()
+			}
 		</ul>
 	)
 }

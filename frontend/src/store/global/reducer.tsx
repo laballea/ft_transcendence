@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { user, status } from '../../common/types'
+import { user, status, Room } from '../../common/types'
 
 const InitialState: user = {
 	logged:false,
@@ -8,7 +8,9 @@ const InitialState: user = {
 	pendingRequest:[],
 	clientChat:"",
 	convID:undefined,
+	roomID:undefined,
 	conv:[],
+	room:[],
 	status:"Disconnected",
 	token:undefined,
 	gameID:undefined
@@ -28,6 +30,7 @@ export const globalSlice = createSlice({
 			state.pendingRequest = data.payload.user.pendingRequest
 			state.userImage = data.payload.user.profilIntraUrl
 			state.conv = data.payload.user.conv
+			state.room = data.payload.user.room
 			state.gameID = data.payload.user.gameID
 		},
 		logout: (state: any) => {
@@ -46,6 +49,12 @@ export const globalSlice = createSlice({
 					return conv.users.length === 2 && conv.users.findIndex((user:any) => user.username === state.clientChat) >= 0
 				}).id
 			}
+			state.room = data.payload.room
+			if (state.roomID == -1){
+				state.roomID = state.room.find((room:any) => {
+					return room.users.length == 1 && room.users.findIndex((user:any) => user.username == state.clientChat) >= 0
+				}).id
+			}
 		},
 		setCurrentConv: (state:any, data:any) => {
 			var {id, username} = data.payload
@@ -61,11 +70,27 @@ export const globalSlice = createSlice({
 					state.clientChat = username
 					state.convID = -1;
 				}
-				else	
-					state.convID = conv.id	
-			}
-			else
+				else
+					state.convID = conv.id
+				
+			} else
 				state.convID = id
+		},
+		setCurrentRoom: (state:any, data:any) => {
+			var {id, username} = data.payload
+			if (id == undefined) {
+				let room = state.room.find((room:any) => {
+					return room.users.length == 1 && room.users.findIndex((user:any) => user.username == username) >= 0
+				})
+				if (room == undefined){
+					state.clientChat = username
+					state.roomID = -1;
+				}
+				else
+					state.roomID = room.id
+				
+			} else
+				state.roomID = id
 		},
 		setGameStatus: (state:any, data:any) => {
 			state.status = data.payload
@@ -82,6 +107,6 @@ export const globalSlice = createSlice({
 })
 
 // Action creators are generated for each case reducer function
-export const { login, setGameStatus, logout, updateDB, setCurrentConv, gameFound, gameEnd } = globalSlice.actions
+export const { login, setGameStatus, logout, updateDB, setCurrentConv, setCurrentRoom, gameFound, gameEnd } = globalSlice.actions
 
 export default globalSlice.reducer

@@ -1,5 +1,6 @@
 import { status } from "src/common/types";
-import { Conversation, GameData, Message } from "./user.entity";
+import { Conversation, GameData, Message, Room } from "./user.entity";
+
 export interface UserI {
 	id:number;
 
@@ -15,6 +16,8 @@ export interface UserI {
 
 	conversations: Conversation[];
 
+	rooms: Room[];
+
 	gameData: GameData[];
 
 	friendsRequest:number[];
@@ -29,6 +32,15 @@ export interface MessageI {
 	idRecv: number;
 	content: string;
 	date: Date;
+}
+
+export interface RoomI {
+	id: number;
+	name: string;
+	password: string;
+	adminId: number;
+	users: UserI[];
+	messages: MessageI[];
 }
 
 export interface ConversationI {
@@ -61,6 +73,8 @@ export interface UserSafeInfo {
 	pendingRequest?:{id:number, username:string}[];
 
 	conv?:safeConv[];
+
+	room?:safeRoom[];
 	
 	profilIntraUrl:string,
 
@@ -71,5 +85,14 @@ export interface safeConv {
 	id:number,
 	msg:Message[],
 	name:string,
+	users:{id:number, username:string}[]
+}
+
+export interface safeRoom {
+	id:number,
+	name:string,
+	password:string,
+	adminId: number,
+	msg:Message[],
 	users:{id:number, username:string}[]
 }
