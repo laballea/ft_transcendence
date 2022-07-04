@@ -17,7 +17,7 @@ import { status } from '../../../common/types';
 
 export default function Home() {
 	const global = useSelector((state: any) => state.global)
-	document.title = global.username;
+	document.title = "FT_TRANS "+ global.username;
 
 	return (
 		<div className="w-full h-screen relative bg-slate-900">
