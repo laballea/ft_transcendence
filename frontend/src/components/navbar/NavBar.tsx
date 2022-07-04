@@ -32,7 +32,7 @@ const NavBar = () => {
 
 			<div className="flex items-center">
 				<div className="hidden sm:block">
-					<NavBarButtonHome />
+					<NavBarButtonHome onClick={() => {navigate('/app')}} />
 				</div>
 				<NavBarButtonPrimary cta="Play Now" disable={global.status === status.InQueue || global.status === status.InGame} icon={FiZap} onClick={()=>{
 					socket.emit("FIND_GAME", {
@@ -51,10 +51,10 @@ const NavBar = () => {
 				<NavProfile 
 					username={global.username}
 					userImage={global.userImage || undefined}
-					// onClickSettings={navigate('settings')}
+					onClickSettings={() => {navigate('/app/settings')}}
 					onClickLogOut={() => {socket.disconnect();dispatch(logout())}}
-					onClickProfile={() => {navigate('profile')}}
-					onClickHome={() => {navigate('/')}}
+					onClickProfile={() => {navigate('/app/profile')}}
+					onClickHome={() => {navigate('/app')}}
 				/>
 				{/* <button onClick={() => {navigate('profile')}}>{global.username}</button> */}
 				{/* <button onClick={() => {dispatch(logout())}}>Log out</button> */}

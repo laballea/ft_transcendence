@@ -68,7 +68,7 @@ const Logging = () => {
 		.then(async response=>{
 			let resp = await response.json();
 			if (response.ok){
-				navigate('/home')
+				navigate('/app')
 				dispatch(login({user:resp, token:jwt}))
 			}
 			else {

@@ -37,7 +37,7 @@ const ContactList = () => {
 	const friendsList = state.contactList.length > 0 ? state.contactList.map((contact: any, index:number) =>  <Contact key={index} contact={contact}/>): [];
 	const pendingRequest = global.pendingRequest.length > 0 ? global.pendingRequest.map((contact: any, index:number) =>  <FriendRequestOut key={index} username={contact.username}/>): [];
 	return (
-		<div className="relative overflow-scroll flex-initial w-full bg-slate-800 sm:w-[400px] flex-1 p-[16px] mx-[16px] sm:mx-0 rounded sm:rounded-l ">
+		<div className="relative overflow-scroll w-full bg-slate-800 sm:w-[400px] flex-1 p-[16px] mx-[16px] sm:mx-0 rounded sm:rounded-l ">
 			<AddFriendButton onSubmit={(username:string)=> addFriend(global, username)}/>
 			<div className="relative w-full h-full mt-[60px]">
 				{ friendsRequestList }

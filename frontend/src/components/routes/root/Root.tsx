@@ -14,6 +14,17 @@ import Profile from './Profile';
 import Popup from 'reactjs-popup'; 
 import PopUpWindow from '../../commons/popup/PopUpWindow';
 import Message from './Message';
+import Settings from './Settings';
+
+// Types
+import { status } from '../../../common/types'
+import Contact from '../../contactList/Contact';
+
+type contact = {
+		username:string,
+		id:number,
+		status:status,
+}
 
 const SocketConnection = (props:any) => {
 	const socket = useContext(SocketContext);
@@ -64,12 +75,22 @@ const SocketConnection = (props:any) => {
 		};
 	// eslint-disable-next-line
 	}, []);
+
+	// Getting Contact info for Profile Page
+	const userContact: contact = {
+		username : global.username,
+		id : global.id,
+		status : status.Connected,
+	};
+
+
 	return (
 		<>
 			<Routes>		
 				<Route path="/" element={<Home/>}/>
-				<Route path="/profile" element={<Profile/>}/>
 				<Route path="/message" element={<Message/>}/>
+				<Route path="/profile" element={<Profile contact={userContact}/>}/>
+				<Route path="/settings" element={<Settings/>}/>
 			</Routes>
 			<Popup open={popup.open} contentStyle={{position:'absolute', bottom:0, left:0}}>
 				<PopUpWindow content={popup.message} error={popup.error}/>
