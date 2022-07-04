@@ -21,7 +21,8 @@ import { FRIEND_REQUEST_ACTIONS,
 	MESSAGE_DATA,
 	POPUP_DATA,
 	ROOM_DATA,
-	NEW_MEMBER
+	NEW_MEMBER,
+	FIND_GAME_DATA
 } from 'src/common/types';
 import { UserService } from './user.service';
 import { truncateString } from 'src/common/utils';
@@ -202,7 +203,7 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 			room.adminId = db_user_send.id;
 			room.users = [db_user_send];
 			await this.roomRepository.save(room);
-			user_send.socket.emit('UPDATE_DB', await this.userService.parseUserInfo(db_user_send))
+			user_send.socket.emit('UPDATE_DB', await this.userService.parseUserInfo(db_user_send.id))
 		}
 		else {
 			return this.emitPopUp([user_send], {error:true, message: `Room name ${data.name} already exist.`});
@@ -225,10 +226,10 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		room.users.push(newUser)
 		console.log("my room: ", room)
 		await this.roomRepository.save(room);
-		admin.socket.emit('UPDATE_DB', await this.userService.parseUserInfo(db_admin))
+		admin.socket.emit('UPDATE_DB', await this.userService.parseUserInfo(db_admin.id))
 		const newSocket: UserSocket = this.userService.findConnectedUserByUsername(data.user);
 		if (newSocket)
-			newSocket.socket.emit('UPDATE_DB', await this.userService.parseUserInfo(newUser))
+			newSocket.socket.emit('UPDATE_DB', await this.userService.parseUserInfo(newUser.id))
 	}
 
 	@SubscribeMessage('deleteRoom')
@@ -251,7 +252,7 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		.where("id = :id", { id: data.roomId })
 		.andWhere("adminId = :adminId", {adminId: db_user.id})
 		.execute();
-		user.socket.emit('UPDATE_DB', await this.userService.parseUserInfo(db_user))
+		user.socket.emit('UPDATE_DB', await this.userService.parseUserInfo(db_user.id))
 	}
 
 	@SubscribeMessage('joinRoom')
@@ -269,7 +270,7 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 			return this.emitPopUp([user], {error:true, message: `Password doesn't match with the room !`});
 		room.users.push(newUser)
 		await this.roomRepository.save(room);
-		user.socket.emit('UPDATE_DB', await this.userService.parseUserInfo(newUser))
+		user.socket.emit('UPDATE_DB', await this.userService.parseUserInfo(newUser.id))
 	}
 
 	@SubscribeMessage('deleteMember')
@@ -285,7 +286,7 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 			.relation(Room, "users")
 			.of(data.roomId)
 			.remove(data.userId)
-			admin.socket.emit('UPDATE_DB', await this.userService.parseUserInfo(db_admin))
+			admin.socket.emit('UPDATE_DB', await this.userService.parseUserInfo(db_admin.id))
 		}
 	}
 
@@ -317,7 +318,7 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 			console.log(room.users[idx].username)
 			let userSocket = this.userService.findConnectedUserByUsername(room.users[idx].username)
 			if (userSocket)
-				userSocket.socket.emit('UPDATE_DB', await this.userService.parseUserInfo(room.users[idx]))
+				userSocket.socket.emit('UPDATE_DB', await this.userService.parseUserInfo(room.users[idx].id))
 		}
 	}
 

@@ -54,7 +54,7 @@ const NavProfile = ({username, userImage, onClickSettings, onClickLogOut, onClic
 						<div>
 							<MobileMenuButton cta="Home"		icon={FiHome}			onClick={onClickProfile} />
 							<MobileMenuButton cta="Profile"		icon={FiUser}			onClick={onClickProfile} />
-							<MobileMenuButton cta="Message"		icon={FiMessageCircle}	onClick={onClickMessage} />
+							{/* <MobileMenuButton cta="Message"		icon={FiMessageCircle}	onClick={onClickMessage} /> */}
 							<MobileMenuButton cta="Settings"	icon={FiSettings}		onClick={() => {}} />
 						</div>
 						<div>

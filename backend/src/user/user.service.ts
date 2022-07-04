@@ -190,12 +190,12 @@ export class UserService {
 			profilIntraUrl: userRepo.profilIntraUrl,
 			gameID: userInfo ? userInfo.gameID : undefined,
 		};
-		UserSafeInfo.friends = userInfo.friends.map(id => ({ id: id, username: userRepo.find(el => el.id == id).username}));
-		UserSafeInfo.bloqued = userInfo.bloqued.map(id => ({ id: id, username: userRepo.find(el => el.id == id).username}));
+		UserSafeInfo.friends = userRepo.friends.map(id => ({ id: id, username: usersRepo.find(el => el.id == id).username}));
+		UserSafeInfo.bloqued = userRepo.bloqued.map(id => ({ id: id, username: usersRepo.find(el => el.id == id).username}));
 		UserSafeInfo.friendsRequest = userRepo.friendsRequest.map(id => ({ id: id, username: usersRepo.find(el => el.id == id).username}));
 		UserSafeInfo.pendingRequest = userRepo.pendingRequest.map(id => ({ id: id, username: usersRepo.find(el => el.id == id).username}));
 		UserSafeInfo.conv = await this.getConversationByUserId(userRepo);
-		UserSafeInfo.room = await this.getRoomByUserId(userInfo.id);
+		UserSafeInfo.room = await this.getRoomByUserId(userRepo.id);
 		return UserSafeInfo;
 	}
 }
