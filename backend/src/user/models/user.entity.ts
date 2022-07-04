@@ -80,7 +80,7 @@ export class Room {
 	@JoinTable()
 	users: User[];
 
-	@OneToMany(() => Message, message => message.room, {cascade: ['insert', 'update']})
+	@OneToMany(() => Message, message => message.room, {cascade: ['insert', 'update', 'remove']})
 	messages: Message[];
 }
 

@@ -55,52 +55,61 @@ function Room() {
 		});
 	}
 	console.log("room", room)
-	return (
-		<div className="chat" style={{margin:50, width:400, height:500, display:'flex', flexDirection:'column', justifyContent:"center"}}>
-			<h3 style={{color:'white', flex:1}}>Chat /{room.name}</h3>
+	if (room) {
+		return (
+			<div className="chat" style={{margin:50, width:400, height:500, display:'flex', flexDirection:'column', justifyContent:"center"}}>
+				<h3 style={{color:'white', flex:1}}>Chat /{room != null ? room.name : null}</h3>
+				<div>
+					<input
+						type="text"
+						placeholder="member"
+						value={input.member}
+						onChange={handleChange}
+						name="member"
+					/>
+					<button
+						style={{color:'white'}}
+						onClick={addMember}
+					>
+						Add member
+					</button>
+				</div>
+				<div>
+					<button
+						onClick={deleteRoom}
+					>
+						Delete
+					</button>
+				</div>
+				<div>
+					{
+						room != null ? 
+							<Member room={room}/>
+						:
+							null
+					}
+				</div>
+				<div style={{overflow:"hidden", overflowY:"scroll", flex:10}}>
+					{
+						room != null ? 
+							<Chat msg={room.msg} username={global.username}/>
+						:
+							null
+					}
+				</div>
+				<div style={{flex:1}}>
+					<Com conv={room} />
+				</div>
+			</div>
+		)
+	}
+	else {
+		return (
 			<div>
-				<input
-					type="text"
-					placeholder="member"
-					value={input.member}
-					onChange={handleChange}
-					name="member"
-				/>
-				<button
-					style={{color:'white'}}
-					onClick={addMember}
-				>
-					Add member
-				</button>
+				
 			</div>
-			<div>
-				<button
-					onClick={deleteRoom}
-				>
-					Delete
-				</button>
-			</div>
-			<div>
-				{
-					room != null ? 
-						<Member room={room}/>
-					:
-						null
-				}
-			</div>
-			<div style={{overflow:"hidden", overflowY:"scroll", flex:10}}>
-				{
-					room != null ? 
-						<Chat msg={room.msg} username={global.username}/>
-					:
-						null
-				}
-			</div>
-			<div style={{flex:1}}>
-				<Com conv={room} />
-			</div>
-		</div>
-	)
+		)
+	}
 }
 
 export default Room;

@@ -2,6 +2,7 @@ import React, { useState, useContext, useEffect } from "react";
 import { io, Socket } from 'socket.io-client'
 import { useSelector } from 'react-redux'
 import { SocketContext } from '../../context/socket';
+import Room from "../room";
 
 interface IProps {
 	conv: any
@@ -24,7 +25,7 @@ const Com: React.FC<IProps> = ({ conv }) => {
 
 	const sendMessage = (): void => {
 		console.log("Send msg")
-		if (!global.clientChat) {
+		if (conv.adminId != undefined) {
 			socket.emit('roomMsg', {
 				content: input.content,
 				client_send: global.username,

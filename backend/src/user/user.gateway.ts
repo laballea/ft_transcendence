@@ -231,6 +231,14 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		const user: UserSocket = this.userService.findConnectedUserByUsername(data.user);
 		const db_user: User = await this.userRepository.findOne({ where:{username:data.user} })
 		console.log('delete room')
+		//delete msg then delete room
+		await getConnection()
+		.createQueryBuilder()
+		.delete()
+		.from(Message)
+		.where("roomId = :roomId", { roomId: data.roomId })
+		.execute();
+		//delete room empty
 		await getConnection()
 		.createQueryBuilder()
 		.delete()
