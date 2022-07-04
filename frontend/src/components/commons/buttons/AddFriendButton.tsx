@@ -1,16 +1,10 @@
 import React, {useState} from 'react'
 
-// Types
-
-// Components
-import { FiPlus } from 'react-icons/fi'
-
 type AddFriendButtonProps = {
 	onSubmit : (username:string) => void
 }
 
 const AddFriendButton = ({ onSubmit } : AddFriendButtonProps) => {
-	const Icon = FiPlus;
 	const [username, setUsername] = useState("");
 	const handleSubmit = async (event: any) => {
 		// Prevent page reload

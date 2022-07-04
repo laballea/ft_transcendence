@@ -1,4 +1,4 @@
-import React, {useContext} from 'react'
+import React, { useContext } from 'react'
 
 // Components
 import NavBarButtonPrimary from		'../commons/buttons/NavBarButtonPrimary'
@@ -12,11 +12,12 @@ import { FiZap, FiMessageCircle} from 'react-icons/fi'
 
 // Hooks
 import { useSelector, useDispatch } from 'react-redux'
-import { logout } from '../../store/global/reducer'
+import { logout, setGameStatus } from '../../store/global/reducer'
 import { useNavigate } from "react-router-dom";
 
 //socket
 import { SocketContext } from '../../context/socket';
+import { status } from '../../common/types'
 
 const NavBar = () => {
 	let navigate = useNavigate();
@@ -31,11 +32,18 @@ const NavBar = () => {
 
 			<div className="flex items-center">
 				<div className="hidden sm:block">
-					<NavBarButtonHome onClick={() => {navigate('/home')}} />
+					<NavBarButtonHome onClick={() => {navigate('/app')}} />
 				</div>
-				<NavBarButtonPrimary cta="Play Now" icon={FiZap}/>
+				<NavBarButtonPrimary cta="Play Now" disable={global.status === status.InQueue || global.status === status.InGame} icon={FiZap} onClick={()=>{
+					socket.emit("FIND_GAME", {
+						client_send: global.username,
+						jwt:global.token
+					})
+					dispatch(setGameStatus(status.InQueue))
+				}					
+				}/>
 				<div className="hidden sm:block">
-					<NavBarButtonSecondary onClick={() => {navigate('/home/groupe')}} cta="Message" icon={FiMessageCircle} />
+					<NavBarButtonSecondary cta="Message" icon={FiMessageCircle} onClick={()=>{navigate('message')}}/>
 				</div>
 			</div>
 
@@ -43,11 +51,10 @@ const NavBar = () => {
 				<NavProfile 
 					username={global.username}
 					userImage={global.userImage || undefined}
-					// onClickSettings={navigate('settings')}
+					onClickSettings={() => {navigate('/app/settings')}}
 					onClickLogOut={() => {socket.disconnect();dispatch(logout())}}
-					onClickProfile={() => {navigate('/home/profile')}}
-					onClickHome={() => {navigate('/home')}}
-					onClickMessage={() => {navigate('/home/groupe')}}
+					onClickProfile={() => {navigate('/app/profile')}}
+					onClickHome={() => {navigate('/app')}}
 				/>
 				{/* <button onClick={() => {navigate('profile')}}>{global.username}</button> */}
 				{/* <button onClick={() => {dispatch(logout())}}>Log out</button> */}

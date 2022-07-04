@@ -9,10 +9,11 @@ import {FiSmile} from 'react-icons/fi'
 type NavBarButtonPrimaryProps = {
 	cta : string,
 	icon: IconType,
-	onClick : () => void
+	onClick : () => void,
+	disable:boolean
 }
 
-const NavBarButtonPrimary = ({cta, onClick, icon } : NavBarButtonPrimaryProps) => {
+const NavBarButtonPrimary = ({cta, onClick, icon, disable } : NavBarButtonPrimaryProps) => {
 	const Icon = icon;
 	return (
 		<button	
@@ -20,7 +21,8 @@ const NavBarButtonPrimary = ({cta, onClick, icon } : NavBarButtonPrimaryProps) =
 							font-space text-[20px] text-slate-400 hover:text-slate-200
 							transition-all duration-300 ease-in-out
 							flex justify-center items-center" 
-				onClick={onClick} >
+				onClick={onClick}
+				disabled={disable}>
 				<Icon className="w-[24px] h-[24px] mr-[8px]"></Icon>
 				<p>{ cta }</p>
 		</button>
@@ -30,7 +32,8 @@ const NavBarButtonPrimary = ({cta, onClick, icon } : NavBarButtonPrimaryProps) =
 NavBarButtonPrimary.defaultProps = {
 	cta: "Default",
 	onClick: () => { console.log("Default Click : no actions assigned")},
-	icon: {FiSmile}
+	icon: {FiSmile},
+	disable:false
 }
 
 export default NavBarButtonPrimary

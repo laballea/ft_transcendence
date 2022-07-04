@@ -17,8 +17,6 @@ import { UserModule } from 'src/user/user.module';
 @Module({
   imports: [
     PassportModule.register({ defaultStrategy: 'jwt', property: 'user' }),
-    HttpModule,
-	forwardRef(() => UserModule),
 	JwtModule.registerAsync({
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
@@ -26,6 +24,8 @@ import { UserModule } from 'src/user/user.module';
         signOptions: { expiresIn: '60s' },
       }),
     }),
+    HttpModule,
+	forwardRef(() => UserModule),
     TypeOrmModule.forFeature([User]),
   ],
   controllers: [AuthController],

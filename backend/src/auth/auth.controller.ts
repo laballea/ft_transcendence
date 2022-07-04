@@ -5,8 +5,7 @@ import { JwtAuthGuard, IntraAuthGuard } from './auth.guard';
 import { AuthService } from './auth.service';
 import { Request } from 'express';
 import { UserService } from 'src/user/user.service';
-import { status } from '../user/models/user.entity';
-import { HTTP_STATUS } from 'src/common/types';
+import { HTTP_STATUS, status } from 'src/common/types';
 
 @Controller('auth')
 export class AuthController {
@@ -54,6 +53,6 @@ export class AuthController {
 	async getUser(@Res() res, @Req() req): Promise<any> {
 		if (this.userService.getUserStatus(req.user.id) != status.Disconnected)
 			throw new HttpException(HTTP_STATUS.ALREADY_CONNECTED, HttpStatus.CONFLICT);
-		res.status(HttpStatus.OK).send(await this.userService.parseUserInfo(req.user));
+		res.status(HttpStatus.OK).send(await this.userService.parseUserInfo(req.user.id));
 	}
 }

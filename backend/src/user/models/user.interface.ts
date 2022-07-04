@@ -1,6 +1,6 @@
-import { status } from "./user.entity";
-import { Conversation, Room } from "./user.entity";
-import { Message } from "./user.entity";
+import { status } from "src/common/types";
+import { Conversation, GameData, Message, Room } from "./user.entity";
+
 export interface UserI {
 	id:number;
 
@@ -18,9 +18,12 @@ export interface UserI {
 
 	rooms: Room[];
 
-	friendsRequest:number[];
-	nullChecks():Promise<void>;
+	gameData: GameData[];
 
+	friendsRequest:number[];
+	
+	pendingRequest:number[];
+	nullChecks():Promise<void>;
 }
 
 export interface MessageI {
@@ -49,6 +52,7 @@ export interface ConversationI {
 export interface UserSocket {
 	id: number;
 	username:string;
+	gameID?:string,
 	socket: any;
 	status:status;
 }
@@ -66,9 +70,15 @@ export interface UserSafeInfo {
 
 	friendsRequest?:{id:number, username:string}[];
 
+	pendingRequest?:{id:number, username:string}[];
+
 	conv?:safeConv[];
 
 	room?:safeRoom[];
+	
+	profilIntraUrl:string,
+
+	gameID:string
 }
 
 export interface safeConv {

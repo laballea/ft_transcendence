@@ -1,5 +1,4 @@
-import React, { useState, useContext, useEffect } from "react";
-import { io, Socket } from 'socket.io-client'
+import React, { useState, useContext } from "react";
 import { useSelector } from 'react-redux'
 import { SocketContext } from '../../context/socket';
 import Room from "../room";

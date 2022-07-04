@@ -5,11 +5,15 @@ const InitialState: user = {
 	logged:false,
 	username:undefined,
 	friendsRequest:[],
+	pendingRequest:[],
 	clientChat:"",
 	convID:undefined,
 	roomID:undefined,
 	conv:[],
 	room:[],
+	status:"Disconnected",
+	token:undefined,
+	gameID:undefined
 }
 
 export const globalSlice = createSlice({
@@ -23,22 +27,26 @@ export const globalSlice = createSlice({
 			state.logged = true
 			state.token = data.payload.token
 			state.friendsRequest = data.payload.user.friendsRequest
+			state.pendingRequest = data.payload.user.pendingRequest
 			state.userImage = data.payload.user.profilIntraUrl
 			state.conv = data.payload.user.conv
 			state.room = data.payload.user.room
+			state.gameID = data.payload.user.gameID
 		},
 		logout: (state: any) => {
-			state = InitialState
+			Object.assign(state, InitialState)
 		},
 		updateDB: (state:any, data:any) => {
 			state.status = data.payload.status
 			state.friendsRequest = data.payload.friendsRequest
+			state.pendingRequest = data.payload.pendingRequest
 			state.friends = data.payload.friends
 			state.bloqued = data.payload.bloqued
 			state.conv = data.payload.conv
-			if (state.convID == -1){
+			state.gameID = data.payload.gameID
+			if (state.convID === -1){
 				state.convID = state.conv.find((conv:any) => {
-					return conv.users.length == 2 && conv.users.findIndex((user:any) => user.username == state.clientChat) >= 0
+					return conv.users.length === 2 && conv.users.findIndex((user:any) => user.username === state.clientChat) >= 0
 				}).id
 			}
 			state.room = data.payload.room
@@ -50,11 +58,15 @@ export const globalSlice = createSlice({
 		},
 		setCurrentConv: (state:any, data:any) => {
 			var {id, username} = data.payload
-			if (id == undefined) {
+			if (id === undefined && username === undefined){
+				state.convID = undefined
+				state.clientChat = undefined
+			}
+			else if (id === undefined) {
 				let conv = state.conv.find((conv:any) => {
-					return conv.users.length == 2 && conv.users.findIndex((user:any) => user.username == username) >= 0
+					return conv.users.length === 2 && conv.users.findIndex((user:any) => user.username === username) >= 0
 				})
-				if (conv == undefined){
+				if (conv === undefined){
 					state.clientChat = username
 					state.convID = -1;
 				}
@@ -80,10 +92,21 @@ export const globalSlice = createSlice({
 			} else
 				state.roomID = id
 		},
+		setGameStatus: (state:any, data:any) => {
+			state.status = data.payload
+		},
+		gameFound: (state:any, data:any) => {
+			state.gameID = data.payload.gameID
+			state.status = status.InGame
+		},
+		gameEnd: (state:any) => {
+			state.gameID = undefined
+			state.status = status.Connected
+		}
 	},
 })
 
 // Action creators are generated for each case reducer function
-export const { login, logout, updateDB, setCurrentConv, setCurrentRoom } = globalSlice.actions
+export const { login, setGameStatus, logout, updateDB, setCurrentConv, setCurrentRoom, gameFound, gameEnd } = globalSlice.actions
 
 export default globalSlice.reducer

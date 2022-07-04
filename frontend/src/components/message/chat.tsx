@@ -7,13 +7,11 @@ type ChatProps = {
 	msg:MessageI[]
 }
 
-const Chat = ({ msg, username }:ChatProps) => {
-
+const Chat = ({ msg, username}:ChatProps) => {
 	const messagesList = (): JSX.Element[] => {
-		console.log("display msg")
-		return msg.map((message) => {
+		return msg.map((message, index) => {
 			return (
-				<Message message={message} own={message.author == username}/>
+				<Message key={index} message={message} own={message.author === username}/>
 			)
 		})
 	}
