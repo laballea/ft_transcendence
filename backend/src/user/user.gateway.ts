@@ -29,6 +29,7 @@ import { truncateString } from 'src/common/utils';
 import { Server } from 'socket.io';
 import { FriendsService } from 'src/friends/friends.service';
 import { GameService } from 'src/game/game.service';
+import * as bcrypt from 'bcrypt';
 
 @WebSocketGateway({
 	cors: {
@@ -195,11 +196,10 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		console.log("NEW CHAT ROOM")
 		/* does Room exist else create it */
 		let room : Room = await this.roomRepository.findOne({ where:{name: data.name} })
-
 		if (!room) {
 			room = new Room();
 			room.name = data.name;
-			room.password = data.password;
+			room.password = await bcrypt.hash(data.password, 10);
 			room.adminId = db_user_send.id;
 			room.users = [db_user_send];
 			await this.roomRepository.save(room);
@@ -276,7 +276,7 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		})
 		if (!room)
 			return this.emitPopUp([user], {error:true, message: `Room doesn't exist !`});
-		else if (room.password != data.passRoom)
+		else if (!bcrypt.compare(data.passRoom, room.password))
 			return this.emitPopUp([user], {error:true, message: `Password doesn't match with the room !`});
 		room.users.push(newUser)
 		await this.roomRepository.save(room);
