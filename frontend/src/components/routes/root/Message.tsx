@@ -12,7 +12,7 @@ const Message = () => {
 		<>
 			<div style={{justifyContent:'center', color:'white'}}>
 				<p>MESSAGE</p>
-				<button onClick={() => {navigate('/home')}}>Go back</button>
+				<button onClick={() => {navigate('/app')}}>Go back</button>
 			</div>
 		</>
 	)
