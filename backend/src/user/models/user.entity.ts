@@ -16,6 +16,12 @@ export class User {
 	@PrimaryGeneratedColumn()
 	id:number;
 
+	@Column({ nullable: true })
+	public twoFactorAuthenticationSecret?: string;
+
+	@Column({ default: false })
+	public isTwoFactorAuthenticationEnabled: boolean;
+
 	@Column()
 	username:string;
 
