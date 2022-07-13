@@ -8,7 +8,7 @@ import { UserService } from 'src/user/user.service';
 import { HTTP_STATUS, status} from 'src/common/types';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import TokenPayload from './tokenPayload.interface';
+import TokenPayload from 'tokenPayload.interface';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
 import { Request } from 'express';
@@ -58,12 +58,12 @@ export class AuthService {
 	) {}
 	
 	public getCookieWithJwtAccessToken(userId: number, isSecondFactorAuthenticated = false) {
-	const payload: TokenPayload = { userId, isSecondFactorAuthenticated };
-	const token = this.jwtService.sign(payload, {
-		secret: this.configService.get('JWT_ACCESS_TOKEN_SECRET'),
-		expiresIn: `${this.configService.get('JWT_ACCESS_TOKEN_EXPIRATION_TIME')}s`
-	});
-	return `Authentication=${token}; HttpOnly; Path=/; Max-Age=${this.configService.get('JWT_ACCESS_TOKEN_EXPIRATION_TIME')}`;
+		const payload: TokenPayload = { userId, isSecondFactorAuthenticated };
+		const token = this.jwtService.sign(payload, {
+			secret: this.configService.get('JWT_ACCESS_TOKEN_SECRET'),
+			expiresIn: `${this.configService.get('JWT_ACCESS_TOKEN_EXPIRATION_TIME')}s`
+		});
+		return `Authentication=${token}; HttpOnly; Path=/; Max-Age=${this.configService.get('JWT_ACCESS_TOKEN_EXPIRATION_TIME')}`;
 	}
 
 	/*

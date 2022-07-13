@@ -54,6 +54,10 @@ export class UserService {
 		return res
 	}
 
+	getById(id: number):Promise<UserI | undefined> {
+		return this.userRepository.findOne({ id });
+	}
+
 	/*
 		find user by username
 	*/

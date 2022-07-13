@@ -9,19 +9,20 @@ import {
 	Body,
 	UnauthorizedException, HttpCode,
 } from '@nestjs/common';
-import { TwoFactorAuthenticationService } from './twoFactorAuthentication.service';
-import JwtAuthenticationGuard from '../jwt-authentication.guard';
+import { TwoFactorAuthenticationService } from './tfa.service';
+import JwtAuthenticationGuard from '../auth/auth.guard';
 import RequestWithUser from '../requestWithUser.interface';
 import { TurnOnTwoFactorAuthenticationDto } from './dto/turnOnTwoFactorAuthentication.dto';
-import { UsersService } from '../../users/users.service';
+import { UserService } from '../user/user.service';
+import { AuthService } from '../auth/auth.service';
 
 @Controller('2fa')
 @UseInterceptors(ClassSerializerInterceptor)
 export class TwoFactorAuthenticationController {
 	constructor(
 		private readonly twoFactorAuthenticationService: TwoFactorAuthenticationService,
-		private readonly usersService: UsersService,
-		private readonly authenticationService: AuthenticationService,
+		private readonly userService: UserService,
+		private readonly authenticationService: AuthService,
 	) {}
 
 	@Post('generate')
@@ -44,7 +45,7 @@ export class TwoFactorAuthenticationController {
 		if (!isCodeValid) {
 			throw new UnauthorizedException('Wrong authentication code');
 		}
-		await this.usersService.turnOnTwoFactorAuthentication(request.user.id);
+		await this.userService.turnOnTwoFactorAuthentication(request.user.id);
 	}
 
 	@Post('authenticate')

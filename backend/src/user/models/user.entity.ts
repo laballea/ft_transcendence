@@ -28,6 +28,9 @@ export class User {
 	@Column("int", {nullable:true})
 	intraID:number;
 
+	@Column({ unique: true })
+	public email: string;
+
 	@Column({nullable:true})
 	profilIntraUrl:string;
 
