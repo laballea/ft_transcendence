@@ -2,7 +2,8 @@ export enum status {
 	Connected = 'Connected',
 	Disconnected = 'Disconnected',
 	InGame = 'InGame',
-	InQueue = 'InQueue'
+	InQueue = 'InQueue',
+	Spectate = 'Spectate'
 }
 
 export interface user {

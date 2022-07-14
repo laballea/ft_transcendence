@@ -5,7 +5,7 @@ import React from 'react'
 import { status } from '../../common/types';
 
 type ContactInfoProps = {
-	Contact: {
+	contact: {
 		username:string,
 		id:number,
 		status:status,
@@ -14,70 +14,42 @@ type ContactInfoProps = {
 	userImage:string
 }
 
-const ContactInfo = ({Contact, userImage} : ContactInfoProps) => {
-
-	if (Contact.status === status.Connected)
-	{
-		console.log("Connected: " + Contact.username)
-		return (
-			<>
-				{/* On click go to profile */}
-					<div className='flex items-center w-full h-full'>
-						{/* Fetch image */}
-						<div className="border-2 border-green-500 rounded-full ml-[8px]">
-							<img src={userImage} width="40" height="40" alt="userimage" className='rounded-full'></img>
-						</div>
-						<div className="ml-[16px]">
-							<p className='absolute mt-[-8px] text-green-500 font-space text-[10px]'>{Contact.status}</p>
-							<p className='font-space text-slate-400 text-[20px]'>
-								{Contact.username}
-							</p>
-						</div>
+const ContactInfo = ({contact, userImage} : ContactInfoProps) => {
+	return (
+		<>
+			{/* On click go to profile */}
+				<div className='flex items-center w-full h-full'>
+					{/* Fetch image */}
+					<div className="border-2 border-green-500 rounded-full ml-[8px]">
+						<img src={userImage} width="40" height="40" alt="userimage" className='rounded-full'>
+						</img>
 					</div>
-			</>
-		)
-	}
-	else if (Contact.status === status.InGame || Contact.status === status.InQueue)
-	{
-		return (
-			<>
-				{/* On click go to profile */}
-					<div className='flex items-center w-full h-full'>
-						{/* Fetch image */}
-						<div className="border-2 border-yellow-500 rounded-full ml-[8px]">
-							<img src={userImage} width="40" height="40" alt="userimage" className='rounded-full'></img>
-						</div>
-						<div className="ml-[16px]">
-							<p className='absolute mt-[-8px] text-yellow-500 font-space text-[10px]'>{Contact.status}</p>
-							<p className='font-space text-slate-400 text-[20px]'>
-								{Contact.username}
-							</p>
-						</div>
-					</div>
-			</>
-		)
-
-	}
-	else 
-	{
-		console.log("DISConnected: " + Contact.status + status.Connected)
-		return (
-			<>
-				{/* On click go to profile */}
-					<div className='flex items-center w-full h-full'>
-						{/* Fetch image */}
-						<div className="border-2 border-transparent rounded-full ml-[8px]">
-							<img src={userImage} width="40" height="40" alt="userimage" className='rounded-full'></img>
-						</div>
+					
+						{contact.status === status.Connected ?
+							<div className="ml-[16px]">
+								<p className='absolute mt-[-8px] text-green-500 font-space text-[10px]'>{contact.status}</p>
+								<p className='font-space text-slate-400 text-[20px]'>
+									{contact.username}
+								</p>
+							</div>
+						:
+						contact.status === status.InGame || contact.status === status.Spectate || contact.status === status.InQueue ?
+							<div className="ml-[16px]">
+								<p className='absolute mt-[-8px] text-yellow-500 font-space text-[10px]'>{contact.status}</p>
+								<p className='font-space text-slate-400 text-[20px]'>
+									{contact.username}
+								</p>
+							</div>
+						:
 						<div className="ml-[16px]">
 							<p className='font-space text-slate-400/50 text-[20px]'>
-								{Contact.username}
+								{contact.username}
 							</p>
 						</div>
-					</div>
-			</>
-		)
-	}
+						}
+				</div>
+		</>
+	)
 }
 
 export default ContactInfo

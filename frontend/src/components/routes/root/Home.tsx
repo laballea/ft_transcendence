@@ -20,7 +20,6 @@ import { status } from '../../../common/types';
 
 export default function Home() {
 	const global = useSelector((state: any) => state.global)
-	document.title = "FT_TRANS "+ global.username;
 
 	return (
 		<div className="w-full h-screen relative bg-slate-900">
@@ -29,11 +28,11 @@ export default function Home() {
 							w-full top-[80px] sm:top-[112px] bottom-0 sm:bottom-[48px]">
 				<div className="hidden w-[calc(100%-400px)] h-full flex sm:block justify-between bg-slate-700 z-50">
 					<div className="relative h-[calc(100%-30px)] w-full flex justify-between bg-slate-700 ">
-						{global.convID != undefined && <Message/>}
-						{(global.status === status.InGame || global.status === status.InQueue) && <Game/>}
+						{global.convID !== undefined && <Message/>}
+						{(global.status === status.InGame || global.status === status.InQueue || global.status === status.Spectate) && <Game/>}
 						<ChatRooms/>
 						<RoomBar/>
-						{global.roomID != undefined && <Room/>}
+						{global.roomID !== undefined && <Room/>}
 					</div>
 					<ChatBar/>
 				</div>
