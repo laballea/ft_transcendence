@@ -6,7 +6,7 @@ import Error_404 from '../Error/Error_404';
 
 // Hooks
 import {useDispatch, useSelector } from 'react-redux';
-import { logout, updateDB, gameFound, gameEnd } from '../../../store/global/reducer';
+import { logout, updateDB, gameFound, gameEnd, spectate } from '../../../store/global/reducer';
 
 //socket
 import { SocketContext, socket} from '../../../context/socket';
@@ -61,6 +61,10 @@ const SocketConnection = (props:any) => {
 				socket.on("GAME_END", () => {
 					dispatch(gameEnd())
 				});
+				socket.on("JOIN_SPECTATE", (data) => {
+					console.log("HERE")
+					dispatch(spectate(data.gameId))
+				});
 			});
 		
 		return () => {
@@ -72,6 +76,7 @@ const SocketConnection = (props:any) => {
 			socket.off("GAME_END")
 			socket.off("PopUp")
 			socket.off("UPDATE_DB")
+			socket.off("JOIN_SPECTATE")
 			socket.disconnect()
 		};
 	// eslint-disable-next-line
@@ -83,6 +88,7 @@ const SocketConnection = (props:any) => {
 		id : global.id,
 		status : status.Connected,
 	};
+	document.title = "FT_TRANS "+ global.username;
 
 
 	return (
@@ -90,7 +96,7 @@ const SocketConnection = (props:any) => {
 			<Routes>
 				<Route path="/" element={<Home/>}/>
 				<Route path="/message" element={<Message/>}/>
-				<Route path="/profile" element={<Profile contact={userContact}/>}/>
+				<Route path="/profile/*" element={<Profile contact={userContact}/>}/>
 				<Route path="/settings" element={<Settings/>}/>
 				<Route path="*" element={<Error_404/>}/>
 			</Routes>

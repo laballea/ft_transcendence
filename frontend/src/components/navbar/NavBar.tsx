@@ -43,7 +43,7 @@ const NavBar = () => {
 				}					
 				}/>
 				<div className="hidden sm:block">
-					<NavBarButtonSecondary cta="Message" icon={FiMessageCircle} onClick={()=>{navigate('message')}}/>
+					<NavBarButtonSecondary cta="Message" icon={FiMessageCircle} onClick={()=>{navigate('/app/message')}}/>
 				</div>
 			</div>
 
@@ -53,7 +53,7 @@ const NavBar = () => {
 					userImage={global.userImage || undefined}
 					onClickSettings={() => {navigate('/app/settings')}}
 					onClickLogOut={() => {socket.disconnect();dispatch(logout())}}
-					onClickProfile={() => {navigate('/app/profile')}}
+					onClickProfile={() => {navigate('/app/profile', { state: {id:global.id} })}}
 					onClickHome={() => {navigate('/app')}}
 				/>
 				{/* <button onClick={() => {navigate('profile')}}>{global.username}</button> */}

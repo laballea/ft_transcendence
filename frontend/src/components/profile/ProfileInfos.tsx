@@ -16,6 +16,7 @@ type ProfileInfosProps = {
 		username:string,
 		id:number,
 		status:status,
+		gameStats:any
 	},
 	userImage:string
 }
