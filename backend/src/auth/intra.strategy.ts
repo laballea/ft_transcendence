@@ -6,6 +6,7 @@ import { ConfigService } from '@nestjs/config';
 import { HttpService } from '@nestjs/axios';
 import { lastValueFrom } from 'rxjs';
 import { UserService } from 'src/user/user.service';
+
 @Injectable()
 export class IntraStrategy extends PassportStrategy(Strategy, 'intra-oauth') {
 	constructor(

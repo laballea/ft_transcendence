@@ -28,7 +28,7 @@ export class User {
 	@Column("int", {nullable:true})
 	intraID:number;
 
-	@Column({ unique: true })
+	@Column({ unique: true, nullable: true })
 	public email: string;
 
 	@Column({nullable:true})

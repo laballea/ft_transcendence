@@ -316,7 +316,7 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 	@SubscribeMessage('roomMsg')
 	async handleRoomMsg(@MessageBody() data: MESSAGE_DATA) {
 		console.log(data.client_send, data.content)
-		const user_send:UserSocket = this.userService.findConnectedUserByUsername(data.client_send);
+		// const user_send:UserSocket = this.userService.findConnectedUserByUsername(data.client_send);
 		const db_user_send:User = await this.userRepository.findOne({ where:{username:data.client_send} })
 
 		/* does conversation exist else create it */
@@ -345,6 +345,11 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		}
 	}
 
+	@SubscribeMessage('turn-2fa')
+	async set2fa(@MessageBody() username: string) {
+		const user:User = await this.userRepository.findOne({ where:{username: username} })
+		this.userService.turnOnTwoFactorAuthentication(user.id);
+	}
 
 	/*
 		add user to queue

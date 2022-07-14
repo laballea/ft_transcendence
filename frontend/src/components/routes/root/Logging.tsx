@@ -38,8 +38,8 @@ const Logging = () => {
 		const requestOptions = {
 			method: 'POST',
 			headers: {
-			  'Content-Type': 'application/json;charset=utf-8',
-			  'Access-Control-Allow-Origin': '*',
+				'Content-Type': 'application/json;charset=utf-8',
+				'Access-Control-Allow-Origin': '*',
 			},
 			body: JSON.stringify({
 				username: username,
@@ -54,14 +54,14 @@ const Logging = () => {
 				setPopup({open:true, error:true, message:resp.message})
 			}
 		})
-	};
+	}
 	if (jwt && !global.token){ // if token exist in redux user is already logged
 		const requestOptions = {
 			method: 'GET',
 			headers: {
-			  'Content-Type': 'application/json;charset=utf-8',
-			  'Access-Control-Allow-Origin': '*',
-			  'Authorization': 'bearer ' + jwt,
+				'Content-Type': 'application/json;charset=utf-8',
+				'Access-Control-Allow-Origin': '*',
+				'Authorization': 'bearer ' + jwt,
 			},
 		}
 		fetch("http://localhost:5000/auth/user", requestOptions)

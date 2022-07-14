@@ -8,11 +8,10 @@ import { UserService } from 'src/user/user.service';
 import { HTTP_STATUS, status} from 'src/common/types';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import { TokenPayload } from 'tokenPayload.interface';
+import { TokenPayload } from './auth.payload.interface';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
 import { Request } from 'express';
-
 
 @Injectable()
 export class JwtTwoFactorStrategy extends PassportStrategy(
@@ -95,8 +94,10 @@ export class AuthService {
 			throw new HttpException(HTTP_STATUS.ALREADY_CONNECTED, HttpStatus.CONFLICT);
 		return {token:this.helper.generateToken(user)};
 	}
+
 	public createToken(user: User): string{
-		return this.helper.generateToken(user);
+		let tmp = this.helper.generateToken(user);
+		return tmp;
 	}
 
 	public async registerIntra(userData: any): Promise<User | never> {
@@ -113,9 +114,11 @@ export class AuthService {
 			user = await this.registerIntra(userData);
 		return user;
 	}
+
 	public async validToken(jwt: string): Promise<boolean> {
 		return this.helper.validate(jwt);
 	}
+
 	public async refresh(user: User): Promise<string> {
 		return this.helper.generateToken(user);
 	}

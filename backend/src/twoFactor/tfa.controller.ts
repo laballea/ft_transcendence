@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { TwoFactorAuthenticationService } from './tfa.service';
 import JwtAuthenticationGuard from '../auth/auth.guard';
-import RequestWithUser from '../requestWithUser.interface';
+import RequestWithUser from '../auth/requestWithUser.interface';
 import { TwoFactorAuthenticationCodeDto } from '../auth/auth.dto'
 import { UserService } from '../user/user.service';
 import { AuthService } from '../auth/auth.service';
@@ -56,16 +56,13 @@ export class TwoFactorAuthenticationController {
 		@Body() { code } : TwoFactorAuthenticationCodeDto
 	) {
 		const isCodeValid = this.twoFactorAuthenticationService.isTwoFactorAuthenticationCodeValid(
-		code, request.user
+			code, request.user
 		);
 		if (!isCodeValid) {
-		throw new UnauthorizedException('Wrong authentication code');
+			throw new UnauthorizedException('Wrong authentication code');
 		}
-	
 		const accessTokenCookie = this.authenticationService.getCookieWithJwtAccessToken(request.user.id, true);
-	
 		request.res.setHeader('Set-Cookie', [accessTokenCookie]);
-	
 		return request.user;
 	}
 }

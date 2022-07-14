@@ -21,7 +21,6 @@ export class UserService {
 
 	public connectedUser: UserSocket[] = [];
 
-
 	// TWO FACTOR
 	async setTwoFactorAuthenticationSecret(secret: string, userId: number) {
 		return this.userRepository.update(userId, {
@@ -32,7 +31,7 @@ export class UserService {
 	// TWO FACTOR ENABLE?
 	async turnOnTwoFactorAuthentication(userId: number) {
 		return this.userRepository.update(userId, {
-		  isTwoFactorAuthenticationEnabled: true
+			isTwoFactorAuthenticationEnabled: true
 		});
 	}
 
@@ -55,14 +54,14 @@ export class UserService {
 	}
 
 	getById(id: number):Promise<UserI | undefined> {
-		return this.userRepository.findOne({ id });
+		return this.userRepository.findOne({ where:{id: id} });
 	}
 
 	/*
 		find user by username
 	*/
 	findOne(username: string):Promise<UserI | undefined> {
-		return this.userRepository.findOne({ username });
+		return this.userRepository.findOne({ where:{username: username} });
 	}
 	/*
 		find user by username

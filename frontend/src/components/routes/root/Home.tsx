@@ -17,10 +17,16 @@ import RoomBar from '../../room/roomBar';
 import Room from "../../room/index";
 import Game from '../../game/Game';
 import { status } from '../../../common/types';
+import { socket } from '../../../context/socket';
 
 export default function Home() {
 	const global = useSelector((state: any) => state.global)
 	document.title = "FT_TRANS "+ global.username;
+
+	const set2fa = () => {
+		console.log("turn 2fa")
+		socket.emit('turn-2fa', global.username);
+	}
 
 	return (
 		<div className="w-full h-screen relative bg-slate-900">
@@ -32,6 +38,13 @@ export default function Home() {
 						{global.convID != undefined && <Message/>}
 						{(global.status === status.InGame || global.status === status.InQueue) && <Game/>}
 						<ChatRooms/>
+						<button
+							className="add-chat"
+							onClick={() => set2fa()}
+							style={{color:'white'}}
+						>
+							Turn 2fa
+						</button>
 						<RoomBar/>
 						{global.roomID != undefined && <Room/>}
 					</div>
