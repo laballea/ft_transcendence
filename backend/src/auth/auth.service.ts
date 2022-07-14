@@ -8,7 +8,7 @@ import { UserService } from 'src/user/user.service';
 import { HTTP_STATUS, status} from 'src/common/types';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import TokenPayload from 'tokenPayload.interface';
+import { TokenPayload } from 'tokenPayload.interface';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
 import { Request } from 'express';

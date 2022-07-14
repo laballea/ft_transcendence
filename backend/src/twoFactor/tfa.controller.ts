@@ -12,7 +12,7 @@ import {
 import { TwoFactorAuthenticationService } from './tfa.service';
 import JwtAuthenticationGuard from '../auth/auth.guard';
 import RequestWithUser from '../requestWithUser.interface';
-import { TurnOnTwoFactorAuthenticationDto } from './dto/turnOnTwoFactorAuthentication.dto';
+import { TwoFactorAuthenticationCodeDto } from '../auth/auth.dto'
 import { UserService } from '../user/user.service';
 import { AuthService } from '../auth/auth.service';
 
@@ -37,10 +37,10 @@ export class TwoFactorAuthenticationController {
 	@UseGuards(JwtAuthenticationGuard)
 	async turnOnTwoFactorAuthentication(
 		@Req() request: RequestWithUser,
-		@Body() { twoFactorAuthenticationCode } : TwoFactorAuthenticationCodeDto
+		@Body() { code } : TwoFactorAuthenticationCodeDto
 	) {
 		const isCodeValid = this.twoFactorAuthenticationService.isTwoFactorAuthenticationCodeValid(
-			twoFactorAuthenticationCode, request.user
+			code, request.user
 		);
 		if (!isCodeValid) {
 			throw new UnauthorizedException('Wrong authentication code');
@@ -53,10 +53,10 @@ export class TwoFactorAuthenticationController {
 	@UseGuards(JwtAuthenticationGuard)
 	async authenticate(
 		@Req() request: RequestWithUser,
-		@Body() { twoFactorAuthenticationCode } : TwoFactorAuthenticationCodeDto
+		@Body() { code } : TwoFactorAuthenticationCodeDto
 	) {
 		const isCodeValid = this.twoFactorAuthenticationService.isTwoFactorAuthenticationCodeValid(
-		twoFactorAuthenticationCode, request.user
+		code, request.user
 		);
 		if (!isCodeValid) {
 		throw new UnauthorizedException('Wrong authentication code');

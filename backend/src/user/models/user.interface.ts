@@ -12,7 +12,7 @@ export interface UserI {
 
 	intraID:number;
 
-	mail:string;
+	email:string;
 
 	profilIntraUrl:string;
 
