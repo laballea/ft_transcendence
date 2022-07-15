@@ -6,7 +6,7 @@ import Error_404 from '../Error/Error_404';
 
 // Hooks
 import {useDispatch, useSelector } from 'react-redux';
-import { logout, updateDB, gameFound, gameEnd, spectate } from '../../../store/global/reducer';
+import { logout, updateDB, gameFound, gameEnd, spectate, challenged } from '../../../store/global/reducer';
 
 //socket
 import { SocketContext, socket} from '../../../context/socket';
@@ -47,6 +47,7 @@ const SocketConnection = (props:any) => {
 			socket.on("connect", () => {
 				socket.emit("CONNECT", {socketID: socket.id, id:global.id, username:global.username});
 				socket.on("UPDATE_DB", (data) => {
+					console.log("HERE", data)
 					dispatch(updateDB(data))
 				});
 				socket.on("PopUp", (data) => {
@@ -64,6 +65,10 @@ const SocketConnection = (props:any) => {
 				socket.on("JOIN_SPECTATE", (data) => {
 					console.log("HERE")
 					dispatch(spectate(data.gameId))
+				});
+				socket.on("CHALLENGED", (data) => {
+					console.log("HERE", data)
+					dispatch(challenged(data))
 				});
 			});
 		

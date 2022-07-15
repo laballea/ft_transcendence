@@ -120,7 +120,7 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 				}
 			}
 			/* update both user db */
-			this.userService.updateUserDB([db_user_recv, db_user_send]);
+			await this.userService.updateUserDB([db_user_recv, db_user_send]);
 			if (user_recv)
 				user_recv.socket.emit('UPDATE_DB', await this.userService.parseUserInfo(db_user_recv.id))
 			if (user_send)
@@ -315,7 +315,6 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 
 	@SubscribeMessage('roomMsg')
 	async handleRoomMsg(@MessageBody() data: MESSAGE_DATA) {
-		console.log(data.client_send, data.content)
 		const user_send:UserSocket = this.userService.findConnectedUserByUsername(data.client_send);
 		const db_user_send:User = await this.userRepository.findOne({ where:{username:data.client_send} })
 
@@ -365,6 +364,8 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 					let game = this.gameService.createGame([user_send, otherUser])
 					this.emitPopUp([user_send,otherUser], {error:false, message: `Game founded.`});
 					this.server.to(game.id).emit("GAME_FOUND", {gameID:game.id})
+					user_send.status = status.InGame
+					otherUser.status = status.InGame
 					game.pong.run()
 					this.gameService.removeFromQueue([user_send.id, otherUser.id])
 				}
@@ -373,9 +374,56 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 			console.log(e)
 		}
 	}
+	@SubscribeMessage('CHALLENGED')
+	async challenged(@MessageBody() data: {action:string, asking:number, receiving:number, token:string}) {
+		try {
+			const user_asking:UserSocket = this.userService.findConnectedUserById(data.asking);
+			const user_receiving:UserSocket = this.userService.findConnectedUserById(data.receiving);
+			switch (data.action){
+				case ("ASK"):{
+					if (user_receiving != undefined && user_receiving.challenged === false){
+						user_receiving.challenged = true;
+						user_receiving.socket.emit("CHALLENGED", {who:{id:data.asking, username:user_asking.username}})
+					}
+					else
+						this.emitPopUp([user_asking], {error:true, message: `User not connected.`});
+					break;
+				}
+				case ("ACCEPT"):{
+					this.gameService.removeFromQueue([user_asking.id, user_receiving.id])
+					user_asking.socket.emit("CHALLENGED", {who:undefined})
 
+					let game = this.gameService.createGame([user_asking, user_receiving])
+					this.emitPopUp([user_asking,user_receiving], {error:false, message: `Game founded.`});
+					this.server.to(game.id).emit("GAME_FOUND", {gameID:game.id})
+					user_asking.status = status.InGame
+					user_receiving.status = status.InGame
+					game.pong.run()
+					break;
+				}
+				case ("DECLINE"):{
+					user_asking.socket.emit("CHALLENGED", {who:undefined})
+					this.emitPopUp([user_asking], {error:true, message: `Challenge declined.`});
+					break;
+				}
+			}
+		} catch (e){
+			console.log(e)
+		}
+	}
 	@SubscribeMessage('KEYPRESS')
 	async keyPress(@MessageBody() data: {dir:string,id:number, on:boolean,gameID:string,jwt:string}) {
 		this.gameService.findGame(data.gameID).pong.keyPress(data.id, data.dir == "ArrowUp" ? -1 : 1, data.on)
+	}
+
+	@SubscribeMessage('SPECTATE')
+	async spectate(@MessageBody() data:{clientId:number, spectateId:number, token:string}) {
+		let gameId = this.gameService.spectate(data.clientId, data.spectateId)
+		const user:UserSocket = this.userService.findConnectedUserById(data.clientId);
+		if (user){
+			user.status = status.Spectate
+			user.socket.emit("JOIN_SPECTATE", {gameId})
+		}
+		
 	}
 }
