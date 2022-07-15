@@ -27,6 +27,8 @@ export class AuthService {
 			throw new HttpException(HTTP_STATUS.ALREADY_EXIST, HttpStatus.CONFLICT);
 		user = new User();
 		user.username = username;
+		user.profilPic = "default";
+
 		return this.repository.save(user);
 	}
 
@@ -53,7 +55,7 @@ export class AuthService {
 		var user: User = new User();
 		user.username = userData.login;
 		user.intraID = userData.id;
-		user.profilIntraUrl = userData.image_url;
+		user.profilPic = userData.image_url;
 		return this.repository.save(user);
 	}
 

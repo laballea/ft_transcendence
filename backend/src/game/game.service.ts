@@ -52,6 +52,16 @@ export class GameService {
 		let res = this.Games.find(game => {return game.id == id})
 		return res
 	}
+	spectate(userID:number, spectateID:number):string{
+		let game = this.Games.find((game)=>game.usersID.includes(spectateID))
+		if (game){
+			game.spectatesID.push(userID)
+			return game.id
+		}
+		else
+			return undefined
+	}
+
 	reconnect(userID:number):string{
 		let game = this.Games.find((game)=>game.usersID.includes(userID))
 		if (game){
@@ -80,6 +90,7 @@ export class GameService {
 		}
 		let game:GAMES_SOCKET = {
 			id:gameID,
+			spectatesID:[],
 			usersID:users.map(user => {return user.id}),
 			pong:new PongInstance ({
 				users:users.map((user, index)=> {
@@ -117,6 +128,16 @@ export class GameService {
 		let game:GAMES_SOCKET = this.findGame(gameID)
 		this.userService.saveGame(game)
 		for (let id of game.usersID){
+			let user:UserSocket = this.userService.findConnectedUserById(id)
+			if (user){
+				user.socket.emit("GAME_END")
+				user.challenged = false
+				user.socket.leave(gameID)
+				user.status = status.Connected
+				user.gameID = undefined
+			}
+		}
+		for (let id of game.spectatesID){
 			let user:UserSocket = this.userService.findConnectedUserById(id)
 			if (user){
 				user.socket.emit("GAME_END")

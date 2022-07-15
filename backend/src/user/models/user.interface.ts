@@ -8,7 +8,7 @@ export interface UserI {
 
 	username:string;
 	
-	profilIntraUrl:string;
+	profilPic:string;
 
 	friends:number[];
 
@@ -55,6 +55,7 @@ export interface UserSocket {
 	gameID?:string,
 	socket: any;
 	status:status;
+	challenged:boolean;
 }
 
 export interface UserSafeInfo {
@@ -76,7 +77,7 @@ export interface UserSafeInfo {
 
 	room?:safeRoom[];
 	
-	profilIntraUrl:string,
+	profilPic:string,
 
 	gameID:string
 }

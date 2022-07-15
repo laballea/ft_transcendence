@@ -41,13 +41,13 @@ export function addFriend(global:any, username:string){
 	})
 }
 
-export function sendGameRequest(global:any, username:string){
-	/*socket.emit("FRIEND_REQUEST", {
-		action: FRIEND_REQUEST_ACTIONS.ADD,
-		client_send: global.username,
-		client_recv: username,
+export function challenged(action:string,global:any, id:number){
+	socket.emit("CHALLENGED", {
+		action: action,
+		asking: global.id,
+		receiving: id,
 		jwt:global.token
-	})*/
+	})
 }
 
 export function spectateGame(global:any,clientId:number,spectateId:number){

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { POPUP_DATA } from 'src/common/types';
 import { User } from '../user/models/user.entity';
 import { truncateString } from 'src/common/utils';
-import { userInfo } from 'os';
+
 @Injectable()
 export class FriendsService {
 	constructor(

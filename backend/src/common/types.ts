@@ -6,6 +6,7 @@ export enum status {
 	Connected = 'Connected',
 	Disconnected = 'Disconnected',
 	InGame = 'InGame',
+	Spectate = 'Spectate',
 	InQueue = 'InQueue',
 }
 
@@ -109,5 +110,6 @@ export interface GameI {
 export interface GAMES_SOCKET {
 	id:string,
 	usersID:number[],
+	spectatesID:number[],
 	pong:PongInstance,
 }

@@ -23,7 +23,7 @@ export class User {
 	intraID:number;
 
 	@Column({nullable:true})
-	profilIntraUrl:string;
+	profilPic:string;
 
 	@Column("int", { array: true, default: '{}',nullable: true})
 	friends: number[];

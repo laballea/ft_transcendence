@@ -13,7 +13,9 @@ const InitialState: user = {
 	room:[],
 	status:"Disconnected",
 	token:undefined,
-	gameID:undefined
+	gameID:undefined,
+	challenged:undefined,
+	contactList:[],
 }
 
 export const globalSlice = createSlice({
@@ -29,7 +31,6 @@ export const globalSlice = createSlice({
 			state.friendsRequest = data.payload.user.friendsRequest
 			state.pendingRequest = data.payload.user.pendingRequest
 			state.userImage = getProfilImg(data.payload.user.profilPic)
-			console.log(state.userImage)
 			state.conv = data.payload.user.conv
 			state.room = data.payload.user.room
 			state.gameID = data.payload.user.gameID
@@ -93,6 +94,9 @@ export const globalSlice = createSlice({
 			} else
 				state.roomID = id
 		},
+		setContactList: (state:any, data:any) => {
+			state.contactList = data.payload
+		},
 		setGameStatus: (state:any, data:any) => {
 			state.status = data.payload
 		},
@@ -105,9 +109,12 @@ export const globalSlice = createSlice({
 			state.status = status.Connected
 		},
 		spectate: (state:any, data) => {
-			console.log(data)
 			state.gameID = data.payload
 			state.status = status.Spectate
+		},
+		challenged: (state:any, data) => {
+			console.log(data.payload.who)
+			state.challenged = data.payload.who
 		}
 	},
 })
@@ -122,6 +129,8 @@ export const {
 	setCurrentRoom,
 	gameFound,
 	gameEnd,
-	spectate} = globalSlice.actions
+	spectate,
+	challenged,
+	setContactList} = globalSlice.actions
 
 export default globalSlice.reducer
