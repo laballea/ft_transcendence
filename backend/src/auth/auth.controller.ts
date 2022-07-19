@@ -6,6 +6,7 @@ import { AuthService } from './auth.service';
 import { Request } from 'express';
 import { UserService } from 'src/user/user.service';
 import { HTTP_STATUS, status } from 'src/common/types';
+import JwtTwoFactorGuard from '../twoFactor/jwt-two-factor.guard';
 
 @Controller('auth')
 export class AuthController {

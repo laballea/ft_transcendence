@@ -18,6 +18,7 @@ export interface user {
 	roomID?:number;
 	conv?:Conv[];
 	room?:Room[];
+	twoFactor?:boolean;
 	gameID?:string
 }
 

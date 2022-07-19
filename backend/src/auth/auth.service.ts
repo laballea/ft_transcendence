@@ -14,10 +14,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Request } from 'express';
 
 @Injectable()
-export class JwtTwoFactorStrategy extends PassportStrategy(
-	Strategy,
-	'jwt-two-factor'
-) {
+export class JwtTwoFactorStrategy extends PassportStrategy(Strategy, 'jwt-two-factor') {
 	constructor(
 		private readonly configService: ConfigService,
 		private readonly userService: UserService,

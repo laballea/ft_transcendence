@@ -55,7 +55,7 @@ const Logging = () => {
 			}
 		})
 	}
-	if (jwt && !global.token){ // if token exist in redux user is already logged
+	if (jwt && !global.token && !global.twoFactor){ // if token exist in redux user is already logged
 		const requestOptions = {
 			method: 'GET',
 			headers: {
@@ -66,6 +66,7 @@ const Logging = () => {
 		}
 		fetch("http://localhost:5000/auth/user", requestOptions)
 		.then(async response=>{
+			console.log("bob")
 			let resp = await response.json();
 			if (response.ok){
 				navigate('/app')
@@ -79,7 +80,28 @@ const Logging = () => {
 				setPopup({open:true, error:true, message:resp.message})
 			}
 		})
-	}
+	}/* else if (jwt && !global.token && global.twoFactor) {
+		console.log("ENABLE 2fa")
+		const requestOptions = {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json;charset=utf-8',
+				'Access-Control-Allow-Origin': '*',
+			},
+			body: JSON.stringify({
+				username: username,
+			})
+		}
+		fetch("http://localhost:5000/2fa/authenticate", requestOptions)
+		.then(async response=>{
+			const resp:any = await response.json()
+			if (response.ok){
+				navigate(`/login?jwt=${resp.token}`)
+			} else {
+				setPopup({open:true, error:true, message:resp.message})
+			}
+		})
+	}*/
 	return (
 		<>
 			<BackgroundLogging/>

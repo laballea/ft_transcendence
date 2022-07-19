@@ -15,6 +15,7 @@ import RequestWithUser from '../auth/requestWithUser.interface';
 import { TwoFactorAuthenticationCodeDto } from '../auth/auth.dto'
 import { UserService } from '../user/user.service';
 import { AuthService } from '../auth/auth.service';
+import { Response } from 'express';
 
 @Controller('2fa')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -35,13 +36,8 @@ export class TwoFactorAuthenticationController {
 	@Post('turn-on')
 	@HttpCode(200)
 	@UseGuards(JwtAuthenticationGuard)
-	async turnOnTwoFactorAuthentication(
-		@Req() request: RequestWithUser,
-		@Body() { code } : TwoFactorAuthenticationCodeDto
-	) {
-		const isCodeValid = this.twoFactorAuthenticationService.isTwoFactorAuthenticationCodeValid(
-			code, request.user
-		);
+	async turnOnTwoFactorAuthentication(@Req() request: RequestWithUser, @Body() { code } : TwoFactorAuthenticationCodeDto) {
+		const isCodeValid = this.twoFactorAuthenticationService.isTwoFactorAuthenticationCodeValid(code, request.user);
 		if (!isCodeValid) {
 			throw new UnauthorizedException('Wrong authentication code');
 		}
@@ -51,13 +47,9 @@ export class TwoFactorAuthenticationController {
 	@Post('authenticate')
 	@HttpCode(200)
 	@UseGuards(JwtAuthenticationGuard)
-	async authenticate(
-		@Req() request: RequestWithUser,
-		@Body() { code } : TwoFactorAuthenticationCodeDto
-	) {
-		const isCodeValid = this.twoFactorAuthenticationService.isTwoFactorAuthenticationCodeValid(
-			code, request.user
-		);
+	async authenticate(@Req() request: RequestWithUser, @Body() { code } : TwoFactorAuthenticationCodeDto) {
+		console.log("yooh")
+		const isCodeValid = this.twoFactorAuthenticationService.isTwoFactorAuthenticationCodeValid(code, request.user);
 		if (!isCodeValid) {
 			throw new UnauthorizedException('Wrong authentication code');
 		}
