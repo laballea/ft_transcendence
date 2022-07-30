@@ -66,7 +66,7 @@ const Logging = () => {
 		}
 		fetch("http://localhost:5000/auth/user", requestOptions)
 		.then(async response=>{
-			console.log("bob")
+			console.log("bob1", jwt)
 			let resp = await response.json();
 			if (response.ok){
 				navigate('/app')

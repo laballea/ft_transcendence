@@ -23,7 +23,7 @@ export class JwtTwoFactorStrategy extends PassportStrategy(Strategy, 'jwt-two-fa
 			jwtFromRequest: ExtractJwt.fromExtractors([(request: Request) => {
 				return request?.cookies?.Authentication;
 			}]),
-			secretOrKey: configService.get('JWT_ACCESS_TOKEN_SECRET'),
+			secretOrKey: configService.get('JWT_SECRET'),
 		});
 	}
 
@@ -56,10 +56,10 @@ export class AuthService {
 	public getCookieWithJwtAccessToken(userId: number, isSecondFactorAuthenticated = false) {
 		const payload: TokenPayload = { userId, isSecondFactorAuthenticated };
 		const token = this.jwtService.sign(payload, {
-			secret: this.configService.get('JWT_ACCESS_TOKEN_SECRET'),
-			expiresIn: `${this.configService.get('JWT_ACCESS_TOKEN_EXPIRATION_TIME')}s`
+			secret: this.configService.get('JWT_SECRET'),
+			expiresIn: `${this.configService.get('JWT_EXP_TIME')}s`
 		});
-		return `Authentication=${token}; HttpOnly; Path=/; Max-Age=${this.configService.get('JWT_ACCESS_TOKEN_EXPIRATION_TIME')}`;
+		return `Authentication=${token}; HttpOnly; Path=/; Max-Age=${this.configService.get('JWT_EXP_TIME')}`;
 	}
 
 	/*

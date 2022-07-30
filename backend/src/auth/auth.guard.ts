@@ -6,9 +6,6 @@ import { HttpException } from '@nestjs/common';
 import { HTTP_STATUS } from 'src/common/types';
 
 @Injectable()
-export default class JwtAuthenticationGuard extends AuthGuard('jwt') {}
-
-@Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') implements IAuthGuard {
 	public handleRequest(err: unknown, user: User): any {
 		return user;

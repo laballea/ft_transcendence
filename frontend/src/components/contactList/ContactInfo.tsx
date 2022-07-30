@@ -60,7 +60,7 @@ const ContactInfo = ({Contact, userImage} : ContactInfoProps) => {
 	}
 	else 
 	{
-		console.log("DISConnected: " + Contact.status + status.Connected)
+		// console.log("DISConnected: " + Contact.status + status.Connected)
 		return (
 			<>
 				{/* On click go to profile */}

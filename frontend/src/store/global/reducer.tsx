@@ -13,7 +13,7 @@ const InitialState: user = {
 	room:[],
 	status:"Disconnected",
 	token:undefined,
-	twoFactor:false,
+	twoFactor:undefined,
 	gameID:undefined
 }
 
