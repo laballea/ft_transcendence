@@ -45,16 +45,18 @@ const Contact = ({contact, userImage} : ContactProps) => {
 					{/* { check if contact is online before showing ACCEPT DECLINE buttons} */}
 					{global.challenged && global.challenged.id === contact.id ?
 						<div className='flex items-center'>
-							<p>Challenges you!</p>
 							<IconButton icon={FiCheck} onClick={() => {challenged("ACCEPT", global, contact.id)}}/>
 							<IconButton icon={FiX} onClick={() => {challenged("DECLINE", global, contact.id)}}/>
-aw
+
 						</div>
 						:
 						<div className='flex items-center'>
-							<IconButton icon={FiEye} onClick={() => {navigate('/app/profile/' + contact.username, { state: {id:contact.id} })}}/>
+							{
+								global.status === status.InGame &&
+								<IconButton icon={FiEye} onClick={() => {navigate('/app/profile/' + contact.username, { state: {id:contact.id} })}}/>
+							}
 							{global.status !== status.InGame && contact.status !== status.Disconnected &&
-								<IconButton icon={FiZap} color={contact.status === status.InGame ? "red" : "green"} 
+								<IconButton icon={FiZap}  
 								onClick={() => {contact.status === status.InGame ? spectateGame(global, global.id, contact.id) : challenged("ASK", global, contact.id) }}/>
 							}
 							<IconButton icon={FiMessageCircle} onClick={() => dispatch(setCurrentConv({username:contact.username}))}/>
