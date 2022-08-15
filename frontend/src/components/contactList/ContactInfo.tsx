@@ -8,23 +8,41 @@ type ContactInfoProps = {
 	contact: {
 		username:string,
 		id:number,
-		status:status,
-		
+		status:status
 	},
 	userImage:string
 	challenge:boolean
 }
 
 const ContactInfo = ({contact, userImage, challenge} : ContactInfoProps) => {
+
 	return (
 		<>
 			{/* On click go to profile */}
 				<div className='flex items-center w-full h-full'>
-					{/* Fetch image */}
-					<div className="border-2 border-green-500 rounded-full ml-[8px]">
-						<img src={userImage} width="40" height="40" alt="userimage" className='rounded-full'>
-						</img>
-					</div>
+				<>
+					{
+						contact.status === status.Disconnected ?
+							<div className="border-2 border-transparent rounded-full ml-[8px]">
+								<img src={userImage} width="40" height="40" alt="userimage" className='rounded-full'>
+								</img>
+							</div>
+						:
+							<>
+							{
+								contact.status === status.InGame ?
+								<div className="border-2 border-yellow-500 rounded-full ml-[8px]">
+									<img src={userImage} width="40" height="40" alt="userimage" className='rounded-full'>
+									</img>
+								</div>
+								:
+								<div className="border-2 border-green-500 rounded-full ml-[8px]">
+									<img src={userImage} width="40" height="40" alt="userimage" className='rounded-full'>
+									</img>
+								</div>
+							}
+							</>
+					}
 					
 						{contact.status === status.Connected ?
 							<div className="ml-[16px]">
@@ -55,6 +73,7 @@ const ContactInfo = ({contact, userImage, challenge} : ContactInfoProps) => {
 							</p>
 						</div>
 						}
+				</>
 				</div>
 		</>
 	)
