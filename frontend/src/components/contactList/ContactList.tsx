@@ -39,18 +39,17 @@ const ContactList = () => {
 		<div className="relative overflow-scroll w-full bg-slate-800 sm:w-[400px] flex-1 p-[16px] mx-[16px] sm:mx-0 rounded sm:rounded-l ">
 			<AddFriendButton onSubmit={(username:string)=> addFriend(global, username)}/>
 			<div className="relative w-full h-full mt-[60px]">
-				{ friendsRequestList }
 				{
-					global.contactList.length > 0 
+					friendsRequestList.length > 0 || global.contactList.length > 0 || pendingRequest.length > 0 
 					?
 					<div>
+						{ friendsRequestList }
 						{ friendsList }
+						{ pendingRequest }
 					</div>
 					:
 					<EmptyStateContactList/>
 				}
-				{ pendingRequest }
-
 			</div>
 		</div>
 	)
