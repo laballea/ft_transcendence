@@ -12,9 +12,10 @@ type ContactInfoProps = {
 		
 	},
 	userImage:string
+	challenge:boolean
 }
 
-const ContactInfo = ({contact, userImage} : ContactInfoProps) => {
+const ContactInfo = ({contact, userImage, challenge} : ContactInfoProps) => {
 	return (
 		<>
 			{/* On click go to profile */}
@@ -28,9 +29,16 @@ const ContactInfo = ({contact, userImage} : ContactInfoProps) => {
 						{contact.status === status.Connected ?
 							<div className="ml-[16px]">
 								<p className='absolute mt-[-8px] text-green-500 font-space text-[10px]'>{contact.status}</p>
-								<p className='font-space text-slate-400 text-[20px]'>
-									{contact.username}
-								</p>
+								{	// Display depending on challenge status
+									challenge ? 
+									<p className='font-space text-slate-400 text-[20px] animate-vibrate'>
+										{contact.username}
+									</p>
+									:
+									<p className='font-space text-slate-400 text-[20px]'>
+										{contact.username}
+									</p>
+								}
 							</div>
 						:
 						contact.status === status.InGame || contact.status === status.Spectate || contact.status === status.InQueue ?

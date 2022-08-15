@@ -32,20 +32,23 @@ const Contact = ({contact, userImage} : ContactProps) => {
 	const dispatch = useDispatch()
 	let navigate = useNavigate();
 	const global = useSelector((state: any) => state.global)
-
+	
+	console.log('global.challenged' + global.challenged)
+	
 	return (
 		<>
 			{/* On click go to profile */}
 			<div className='flex justify-between w-full h-[56px] rounded-[4px] bg-transparent hover:bg-slate-900 mb-[16px]'>
-				<ContactInfo contact={contact} userImage={userImage}/>
+				<ContactInfo contact={contact} userImage={userImage} challenge={global.challenged ? true : false}/>
 				
-					{/* { if user is online rende challenge buttong, else render FiEye Button  } */}
+					{/* { if user is online rende challenge button, else render FiEye Button  } */}
+					{/* { check if contact is online before showing ACCEPT DECLINE buttons} */}
 					{global.challenged && global.challenged.id === contact.id ?
 						<div className='flex items-center'>
-							<p>challenged</p>
+							<p>Challenges you!</p>
 							<IconButton icon={FiCheck} onClick={() => {challenged("ACCEPT", global, contact.id)}}/>
 							<IconButton icon={FiX} onClick={() => {challenged("DECLINE", global, contact.id)}}/>
-
+aw
 						</div>
 						:
 						<div className='flex items-center'>
