@@ -16,6 +16,7 @@ const InitialState: user = {
 	gameID:undefined,
 	challenged:undefined,
 	contactList:[],
+	gameMode:"Normal",
 }
 
 export const globalSlice = createSlice({
@@ -115,7 +116,11 @@ export const globalSlice = createSlice({
 		challenged: (state:any, data) => {
 			console.log(data.payload.who)
 			state.challenged = data.payload.who
-		}
+		},
+		setGameMode: (state:any, data:any) => {
+			console.log(data.payload)
+			state.gameMode = data.payload
+		},
 	},
 })
 
@@ -131,6 +136,8 @@ export const {
 	gameEnd,
 	spectate,
 	challenged,
-	setContactList} = globalSlice.actions
+	setContactList,
+	setGameMode,
+	} = globalSlice.actions
 
 export default globalSlice.reducer

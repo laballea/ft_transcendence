@@ -374,6 +374,18 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 			console.log(e)
 		}
 	}
+
+	@SubscribeMessage('QUIT_QUEUE')
+	async quitQueue(@MessageBody() data: FIND_GAME_DATA) {
+		try {
+			const user_send:UserSocket = this.userService.findConnectedUserByUsername(data.client_send);
+			if (user_send != undefined){
+				this.gameService.removeFromQueue([user_send.id])
+			}
+		} catch (e){
+			console.log(e)
+		}
+	}
 	@SubscribeMessage('CHALLENGED')
 	async challenged(@MessageBody() data: {action:string, asking:number, receiving:number, token:string}) {
 		try {

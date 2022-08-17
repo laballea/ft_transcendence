@@ -21,7 +21,8 @@ export interface user {
 	room?:Room[];
 	gameID?:string;
 	challenged?:{id:number, username:string},
-	contactList:any[]
+	contactList:any[],
+	gameMode:string
 }
 
 export enum FRIEND_REQUEST_ACTIONS {
