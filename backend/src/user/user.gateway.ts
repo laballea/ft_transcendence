@@ -15,7 +15,7 @@ import {
 } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Conversation, Message, User, Room } from './models/user.entity';
-import { status } from 'src/common/types';
+import { gamemode, status } from 'src/common/types';
 import { FRIEND_REQUEST_ACTIONS,
 	FRIEND_REQUEST_DATA,
 	MESSAGE_DATA,
@@ -355,13 +355,13 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		try {
 			const user_send:UserSocket = this.userService.findConnectedUserByUsername(data.client_send);
 			if (user_send != undefined){
-				if (!this.gameService.addToQueue(user_send)) // add User to queue
+				if (!this.gameService.addToQueue(user_send, data.mode)) // add User to queue
 					return this.emitPopUp([user_send], {error:true, message: `${data.client_send} already in queue.`});
 				this.emitPopUp([user_send], {error:false, message: `Succesfully added ${data.client_send} to queue.`});
 				user_send.status = status.InQueue
-				const otherUser:UserSocket = this.userService.findConnectedUserById(this.gameService.findOtherPlayer(user_send));
+				const otherUser:UserSocket = this.userService.findConnectedUserById(this.gameService.findOtherPlayer(user_send, data.mode));
 				if (otherUser){
-					let game = this.gameService.createGame([user_send, otherUser])
+					let game = this.gameService.createGame([user_send, otherUser], data.mode)
 					this.emitPopUp([user_send,otherUser], {error:false, message: `Game founded.`});
 					this.server.to(game.id).emit("GAME_FOUND", {gameID:game.id})
 					user_send.status = status.InGame
@@ -374,8 +374,20 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 			console.log(e)
 		}
 	}
+
+	@SubscribeMessage('QUIT_QUEUE')
+	async quitQueue(@MessageBody() data: FIND_GAME_DATA) {
+		try {
+			const user_send:UserSocket = this.userService.findConnectedUserByUsername(data.client_send);
+			if (user_send != undefined){
+				this.gameService.removeFromQueue([user_send.id])
+			}
+		} catch (e){
+			console.log(e)
+		}
+	}
 	@SubscribeMessage('CHALLENGED')
-	async challenged(@MessageBody() data: {action:string, asking:number, receiving:number, token:string}) {
+	async challenged(@MessageBody() data: {action:string, mode:gamemode, asking:number, receiving:number, token:string}) {
 		try {
 			const user_asking:UserSocket = this.userService.findConnectedUserById(data.asking);
 			const user_receiving:UserSocket = this.userService.findConnectedUserById(data.receiving);
@@ -393,7 +405,7 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 					this.gameService.removeFromQueue([user_asking.id, user_receiving.id])
 					user_asking.socket.emit("CHALLENGED", {who:undefined})
 
-					let game = this.gameService.createGame([user_asking, user_receiving])
+					let game = this.gameService.createGame([user_asking, user_receiving], data.mode)
 					this.emitPopUp([user_asking,user_receiving], {error:false, message: `Game founded.`});
 					this.server.to(game.id).emit("GAME_FOUND", {gameID:game.id})
 					user_asking.status = status.InGame
@@ -411,9 +423,14 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 			console.log(e)
 		}
 	}
+
 	@SubscribeMessage('KEYPRESS')
 	async keyPress(@MessageBody() data: {dir:string,id:number, on:boolean,gameID:string,jwt:string}) {
 		this.gameService.findGame(data.gameID).pong.keyPress(data.id, data.dir == "ArrowUp" ? -1 : 1, data.on)
+	}
+	@SubscribeMessage('MOUSE_MOVE')
+	async mousemove(@MessageBody() data: {dirx:number,id:number,gameID:string,jwt:string}) {
+		this.gameService.findGame(data.gameID).pong.mousemove(data.id, data.dirx)
 	}
 
 	@SubscribeMessage('SPECTATE')

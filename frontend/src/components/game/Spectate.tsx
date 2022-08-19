@@ -23,7 +23,6 @@ const Spectate = () => {
 
 		eventSource.onmessage = async ({ data }) => {
 			const json = await JSON.parse(data)
-			console.log(json.game)
 			setGame(json.game)
 		}
 		return () => {

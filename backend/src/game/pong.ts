@@ -1,6 +1,6 @@
 import { GameI, GameUserI, GameBallI, GAME_STATUS, gamemode } from 'src/common/types';
 
-export class PongInstance {
+export class Pong {
 	constructor(
 		game:GameI,
 		gameEnd:any,
@@ -8,28 +8,50 @@ export class PongInstance {
 	) {
 		this.users = game.users
 		this.mode = game.mode
-		this.status = game.status
-		this.ball = game.ball
-		this.ball.d = this.randomDir(0)
+		this.status = GAME_STATUS.COUNTDOWN
 		this.map = {width:1900, height:1000}
 		this.timeBegin = game.time
-		this.countDown = game.countDown
+		this.countDown = 5
 		this.winner = {username:undefined, id:-1}
 		this.gameEnd = gameEnd
 		this.gameID = gameID
 		this.maxBallSpeed = 0
+		this.ball
+		this.init()
 	}
-	private users:GameUserI[]
-	private mode:gamemode
-	private status:GAME_STATUS
-	private ball:GameBallI
-	private map: {width:number, height:number}
-	private timeBegin: number
-	private countDown: number
-	private winner: {username:string,id:number}
-	private gameEnd:any
-	private gameID:string
-	private maxBallSpeed:number
+	protected mode:gamemode
+	protected users:GameUserI[]
+	protected status:GAME_STATUS
+	protected ball:GameBallI
+	protected map: {width:number, height:number}
+	protected timeBegin: number
+	protected countDown: number
+	protected winner: {username:string,id:number}
+	protected gameEnd:any
+	protected gameID:string
+	protected maxBallSpeed:number
+
+	init(){
+		this.users = this.users.map((user, index)=> {
+			return {
+				id:user.id,
+				username:user.username,
+				posx:[50, 1900 - 55][index],
+				posy:1000/2 - 150,
+				point:0,
+				speed:33,
+				keyPress: 0//0=none, -1=up, 1=down
+			}
+		})
+		this.ball = {
+			posx:1900 / 2,
+			posy: 1000 / 2,
+			speed:20,
+			d:{x:0, y:0},
+			size:30 //rayon
+		}
+		this.ball.d = this.randomDir(0)
+	}
 
 	between(x:number, min:number, max:number) {
 		return x >= min && x <= max;
@@ -144,7 +166,7 @@ export class PongInstance {
 			time:this.timeBegin,
 			countDown:this.countDown,
 			winner:this.winner,
-			mode:this.mode
+			mode:this.mode,
 		}
 	}
 
@@ -155,6 +177,11 @@ export class PongInstance {
 		} else if (user.keyPress == dir) {
 			user.keyPress = 0
 		}
+	}
+
+	mousemove(userID:number, mousepos:number){
+		let user = this.users.find((user) => user.id == userID)
+		user.mousepos = mousepos
 	}
 
 	pause(status:boolean){

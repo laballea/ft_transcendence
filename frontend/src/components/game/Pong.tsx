@@ -36,6 +36,7 @@ const Pong = () => {
 			jwt: global.token
 		})
 	}
+
 	useEffect(() => {
 		// eslint-disable-next-line
 		eventSource = new EventSource('http://localhost:5000/game/' + global.gameID);
