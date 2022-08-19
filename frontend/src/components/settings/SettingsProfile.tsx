@@ -1,4 +1,5 @@
 import React from 'react'
+import { FiEdit2 } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom'
 
 // Assets
@@ -6,8 +7,12 @@ type SettingsProfileProps = {
 }
 
 const SettingsProfile = ({} : SettingsProfileProps) => {
+	
+	
 	const navigate = useNavigate();
 	const backtext : string = "<- back";
+
+	const username : string = "Username69"
 
 	return (
 		<>
@@ -20,6 +25,28 @@ const SettingsProfile = ({} : SettingsProfileProps) => {
 				<div  className='w-full border h-[2px] border-slate-700'></div>
 			</div>
 			<h2 className='font-pilowlava text-[64px] text-transparent backgroundTextOutline'>Profile</h2>
+			<div className='flex items-center gap-[40px]'>
+				<div className=''>
+					<div className='absolute z-10 w-[200px] h-[200px] rounded-full flex items-center justify-center
+									text-slate-200 bg-slate-800/50
+									opacity-0 hover:opacity-100
+									cursor-pointer
+									transition-all duration-300 ease-in-out'>
+						<FiEdit2 size='24px'></FiEdit2>
+					</div>
+					<div className='w-[200px] h-[200px] rounded-full'>
+						<img src='https://preview.redd.it/klfh8gaj6oa51.jpg?auto=webp&s=bd9a25f3a29538faf33c3339a5eb08bb6129d48d' width="200" height="200" alt="userimage" className='rounded-full'></img>
+					</div>
+				</div>
+				<div className='flex items-center gap-[8px] 
+								text-slate-400 hover:text-slate-200 font-space text-[40px]
+								cursor-pointer
+								transition-all duration-300 ease-in-out'>
+					<p>{ username }</p>
+					<FiEdit2 size='24px'></FiEdit2>
+				</div>
+			</div>
+			<div className='mb-[64px]'></div>
 		</>
 	)
 }
