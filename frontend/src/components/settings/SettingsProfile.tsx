@@ -4,15 +4,15 @@ import { useNavigate } from 'react-router-dom'
 
 // Assets
 type SettingsProfileProps = {
+	username: string,
+	userImage: string
 }
 
-const SettingsProfile = ({} : SettingsProfileProps) => {
+const SettingsProfile = ({username, userImage} : SettingsProfileProps) => {
 	
 	
 	const navigate = useNavigate();
 	const backtext : string = "<- back";
-
-	const username : string = "Username69"
 
 	return (
 		<>
@@ -35,7 +35,7 @@ const SettingsProfile = ({} : SettingsProfileProps) => {
 						<FiEdit2 size='24px'></FiEdit2>
 					</div>
 					<div className='w-[200px] h-[200px] rounded-full'>
-						<img src='https://preview.redd.it/klfh8gaj6oa51.jpg?auto=webp&s=bd9a25f3a29538faf33c3339a5eb08bb6129d48d' width="200" height="200" alt="userimage" className='rounded-full'></img>
+						<img src={userImage} width="200" height="200" alt="userimage" className='rounded-full'></img>
 					</div>
 				</div>
 				<div className='flex items-center gap-[8px] 

@@ -19,6 +19,8 @@ type SettingsProps = {
 
 const Settings = ({} : SettingsProps) => {
 
+	const global = useSelector((state: any) => state.global)
+
 	return (
 		<div className="w-full h-screen relative bg-slate-900">
 			<NavBar/>
@@ -26,7 +28,7 @@ const Settings = ({} : SettingsProps) => {
 							w-full top-[80px] sm:top-[112px] bottom-0 sm:bottom-[48px]">
 				<div className="w-[calc(100%-400px)] overflow-hidden h-full flex sm:block justify-between z-50 p-[40px]">
 					<div className=''>
-						<SettingsProfile/>
+						<SettingsProfile username={global.username} userImage={global.userImage}/>
 						<Settings2FA/>
 					</div>
 				</div>
