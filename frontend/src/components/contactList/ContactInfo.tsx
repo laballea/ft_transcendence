@@ -44,7 +44,8 @@ const ContactInfo = ({contact, userImage, challenge} : ContactInfoProps) => {
 							</>
 					}
 					
-						{contact.status === status.Connected ?
+						{
+							contact.status === status.Connected ?
 							<div className="ml-[16px]">
 								<p className='absolute mt-[-8px] text-green-500 font-space text-[10px]'>{contact.status}</p>
 								{	// Display depending on challenge status

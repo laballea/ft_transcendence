@@ -38,7 +38,7 @@ const ProfileHistory = ({contact} : ProfileHistoryProps) => {
 	return (
 		<div  className='w-full border-t-2 border-slate-700'>
 			<h2 className='font-pilowlava text-[64px] text-transparent backgroundTextOutline'>History</h2>
-			{ contact.gameStats.length == 0 ?
+			{ contact.gameStats.length === 0 ?
 				<p className="text-slat">{contact.username}: No Games played yet</p>
 				:
 				<div>

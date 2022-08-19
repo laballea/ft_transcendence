@@ -7,7 +7,7 @@ import ContactInfo from './ContactInfo'
 
 // Assets
 import defaultUserImage from '../../assets/images/default-user.png'
-import {FiCheck, FiEye, FiMessageCircle, FiX, FiZap} from 'react-icons/fi'
+import {FiEye, FiMessageCircle, FiX, FiZap} from 'react-icons/fi'
 
 import { useDispatch } from 'react-redux'
 import { setCurrentConv } from '../../store/global/reducer';
@@ -39,14 +39,14 @@ const Contact = ({contact, userImage} : ContactProps) => {
 		<>
 			{/* On click go to profile */}
 			<div className='flex justify-between w-full h-[56px] rounded-[4px] bg-transparent hover:bg-slate-900 mb-[16px] transition-all duration-300 ease-in-out'>
-				<ContactInfo contact={contact} userImage={userImage} challenge={global.challenged ? true : false}/>
+				<ContactInfo contact={contact} userImage={userImage} challenge={global.challenged && global.challenged.id === contact.id ? true : false}/>
 				
 					{/* { if user is online rende challenge button, else render FiEye Button  } */}
 					{/* { check if contact is online before showing ACCEPT DECLINE buttons} */}
 					{global.challenged && global.challenged.id === contact.id ?
 						<div className='flex items-center'>
-							<IconButton icon={FiCheck} onClick={() => {challenged("ACCEPT", global, contact.id)}}/>
-							<IconButton icon={FiX} onClick={() => {challenged("DECLINE", global, contact.id)}}/>
+							<IconButton color="green" icon={FiZap} onClick={() => {challenged("ACCEPT", global, contact.id)}}/>
+							<IconButton color="red" icon={FiX} onClick={() => {challenged("DECLINE", global, contact.id)}}/>
 
 						</div>
 						:

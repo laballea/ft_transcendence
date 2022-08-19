@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react'
 
 // Components
 import Home from './Home';
-import Error_404 from '../Error/Error_404';
+import Error404 from '../Error/Error404';
 
 // Hooks
 import {useDispatch, useSelector } from 'react-redux';
@@ -103,7 +103,7 @@ const SocketConnection = (props:any) => {
 				<Route path="/message" element={<Message/>}/>
 				<Route path="/profile/*" element={<Profile contact={userContact}/>}/>
 				<Route path="/settings" element={<Settings/>}/>
-				<Route path="*" element={<Error_404/>}/>
+				<Route path="*" element={<Error404/>}/>
 			</Routes>
 			<Popup open={popup.open} contentStyle={{position:'absolute', bottom:0, left:0}}>
 				<PopUpWindow content={popup.message} error={popup.error}/>

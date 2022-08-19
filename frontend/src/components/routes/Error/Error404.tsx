@@ -10,7 +10,7 @@ import E from '../../../assets/svg/E.svg';
 import R from '../../../assets/svg/R.svg';
 import O from '../../../assets/svg/O.svg';
 
-function Error_404() {
+function Error404() {
   return (
     <div className="w-full h-full bg-slate-900">
       <NavBar/>
@@ -34,4 +34,4 @@ function Error_404() {
   )
 };
 
-export default Error_404
+export default Error404
