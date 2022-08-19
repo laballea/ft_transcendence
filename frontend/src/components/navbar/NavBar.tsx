@@ -12,12 +12,13 @@ import { FiZap, FiMessageCircle} from 'react-icons/fi'
 
 // Hooks
 import { useSelector, useDispatch } from 'react-redux'
-import { logout, setGameStatus } from '../../store/global/reducer'
+import { logout, setGameMode, setGameStatus } from '../../store/global/reducer'
 import { useNavigate } from "react-router-dom";
 
 //socket
 import { SocketContext } from '../../context/socket';
-import { status } from '../../common/types'
+import { gamemode, status } from '../../common/types'
+import ChooseModeButton from '../commons/buttons/ChooseModeButton'
 
 const NavBar = () => {
 	let navigate = useNavigate();
@@ -34,14 +35,25 @@ const NavBar = () => {
 				<div className="hidden sm:block">
 					<NavBarButtonHome onClick={() => {navigate('/app')}} />
 				</div>
-				<NavBarButtonPrimary cta="Play Now" disable={global.status === status.InQueue || global.status === status.InGame} icon={FiZap} onClick={()=>{
-					socket.emit("FIND_GAME", {
-						client_send: global.username,
-						jwt:global.token
-					})
-					dispatch(setGameStatus(status.InQueue))
-				}					
-				}/>
+				<div className="hidden sm:block">
+					<NavBarButtonPrimary cta="Play Now" disable={global.status === status.InQueue || global.status === status.InGame} icon={FiZap}
+					onClick={()=>{
+						console.log(global.gamemode)
+						socket.emit("FIND_GAME", {
+							client_send: global.username,
+							mode:global.gamemode,
+							jwt:global.token
+						})
+						dispatch(setGameStatus(status.InQueue))
+					}					
+					}/>
+					<div className="absolute bottom-0 w-[160px] sm:w-[200px] flex flex-row items-center">
+						<ChooseModeButton cta="Normal" disable={global.status === status.InQueue || global.status === status.InGame} check={global.gamemode === gamemode.normal} onClick={() => {dispatch(setGameMode(gamemode.normal))}}/>
+						<ChooseModeButton cta="Boost" disable={global.status === status.InQueue || global.status === status.InGame} check={global.gamemode === gamemode.boost} onClick={() => {dispatch(setGameMode(gamemode.boost))}}/>
+					</div>
+					
+				</div>
+
 				<div className="hidden sm:block">
 					<NavBarButtonSecondary cta="Message" icon={FiMessageCircle} onClick={()=>{navigate('/app/message')}}/>
 				</div>

@@ -1,6 +1,6 @@
 import { Conversation, User } from "src/user/models/user.entity";
 import { UserSocket } from "src/user/models/user.interface";
-import { PongInstance } from "src/game/pongInstance"
+import { Pong } from "src/game/pong"
 
 export enum status {
 	Connected = 'Connected',
@@ -64,6 +64,7 @@ export interface NEW_MEMBER {
 
 export interface FIND_GAME_DATA {
 	client_send: string;
+	mode:gamemode;
 	jwt: number;
 }
 
@@ -75,11 +76,12 @@ export interface POPUP_DATA {
 export interface GameUserI {
 	id:number,
 	username:string,
-	posx:number,
-	posy:number,
-	point:number,
-	keyPress:number,
-	speed:number
+	posx?:number,
+	posy?:number,
+	point?:number,
+	keyPress?:number,
+	speed?:number
+	mousepos?:number
 }
 
 export enum GAME_STATUS {
@@ -100,16 +102,22 @@ export interface GameBallI {
 
 export interface GameI {
 	users:GameUserI[],
-	status:GAME_STATUS,
-	ball:GameBallI,
+	status?:GAME_STATUS,
+	ball?:GameBallI,
 	time:number,
-	countDown:number,
-	winner?:{username:string,id:number}
+	countDown?:number,
+	winner?:{username:string,id:number},
+	mode:gamemode
 }
 
 export interface GAMES_SOCKET {
 	id:string,
 	usersID:number[],
 	spectatesID:number[],
-	pong:PongInstance,
+	pong:Pong,
+}
+
+export enum gamemode {
+	normal = 'normal',
+	boost = 'boost',
 }

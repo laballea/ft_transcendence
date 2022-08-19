@@ -14,8 +14,8 @@ const Game = () => {
 
 	return (
 		<div className="relative flex-1 justify-center">
-			{global.status === status.InGame && <Pong/>}
 			{global.status === status.InQueue && <Waiting/>}
+			{global.status === status.InGame && <Pong/>}
 			{global.status === status.Spectate && <Spectate/>}
 		</div>
 	)

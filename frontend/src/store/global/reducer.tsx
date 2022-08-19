@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { user, status } from '../../common/types'
+import { user, status, gamemode } from '../../common/types'
 import getProfilImg from '../../components/commons/utils/getProfilImg'
 const InitialState: user = {
 	logged:false,
@@ -16,6 +16,7 @@ const InitialState: user = {
 	gameID:undefined,
 	challenged:undefined,
 	contactList:[],
+	gamemode:gamemode.normal,
 }
 
 export const globalSlice = createSlice({
@@ -115,7 +116,11 @@ export const globalSlice = createSlice({
 		challenged: (state:any, data) => {
 			console.log(data.payload.who)
 			state.challenged = data.payload.who
-		}
+		},
+		setGameMode: (state:any, data:any) => {
+			console.log(data.payload)
+			state.gamemode = data.payload
+		},
 	},
 })
 
@@ -131,6 +136,8 @@ export const {
 	gameEnd,
 	spectate,
 	challenged,
-	setContactList} = globalSlice.actions
+	setContactList,
+	setGameMode,
+	} = globalSlice.actions
 
 export default globalSlice.reducer
