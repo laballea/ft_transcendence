@@ -1,9 +1,8 @@
 import React, { useContext } from 'react'
 import { SocketContext } from '../../context/socket';
-import ChooseModeButton from '../commons/buttons/ChooseModeButton';
-import { FiZap, FiZapOff } from 'react-icons/fi';
+import { FiZapOff } from 'react-icons/fi';
 import { useSelector, useDispatch } from 'react-redux'
-import { setGameMode, setGameStatus } from '../../store/global/reducer';
+import { setGameStatus } from '../../store/global/reducer';
 import DefaultButtonPrimary from '../commons/buttons/DefaultButtonPrimary';
 import { status } from '../../common/types';
 
@@ -13,11 +12,12 @@ const Waiting = () => {
 	const socket = useContext(SocketContext);
 	return(
 		<div style={{display:'flex', flex:1, height:'100%', justifyContent:'center', alignItems:'center', flexDirection:"column"}}>
-			<p>Searching for {global.gameMode} game !</p>
+			<p>Searching for {global.gamemode} game !</p>
 			<DefaultButtonPrimary cta="Quit" disable={false} icon={FiZapOff}
 					onClick={()=>{
 						socket.emit("QUIT_QUEUE", {
 							client_send: global.username,
+							gamemode:global.gamemode,
 							jwt:global.token
 						})
 						dispatch(setGameStatus(status.Connected))

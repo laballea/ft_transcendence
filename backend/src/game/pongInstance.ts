@@ -1,4 +1,4 @@
-import { GameI, GameUserI, GameBallI, GAME_STATUS } from 'src/common/types';
+import { GameI, GameUserI, GameBallI, GAME_STATUS, gamemode } from 'src/common/types';
 
 export class PongInstance {
 	constructor(
@@ -7,6 +7,7 @@ export class PongInstance {
 		gameID:string
 	) {
 		this.users = game.users
+		this.mode = game.mode
 		this.status = game.status
 		this.ball = game.ball
 		this.ball.d = this.randomDir(0)
@@ -19,6 +20,7 @@ export class PongInstance {
 		this.maxBallSpeed = 0
 	}
 	private users:GameUserI[]
+	private mode:gamemode
 	private status:GAME_STATUS
 	private ball:GameBallI
 	private map: {width:number, height:number}
@@ -141,7 +143,8 @@ export class PongInstance {
 			ball: this.ball,
 			time:this.timeBegin,
 			countDown:this.countDown,
-			winner:this.winner
+			winner:this.winner,
+			mode:this.mode
 		}
 	}
 

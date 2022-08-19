@@ -17,7 +17,7 @@ import { useNavigate } from "react-router-dom";
 
 //socket
 import { SocketContext } from '../../context/socket';
-import { status } from '../../common/types'
+import { gamemode, status } from '../../common/types'
 import ChooseModeButton from '../commons/buttons/ChooseModeButton'
 
 const NavBar = () => {
@@ -38,16 +38,18 @@ const NavBar = () => {
 				<div className="hidden sm:block">
 					<NavBarButtonPrimary cta="Play Now" disable={global.status === status.InQueue || global.status === status.InGame} icon={FiZap}
 					onClick={()=>{
+						console.log(global.gamemode)
 						socket.emit("FIND_GAME", {
 							client_send: global.username,
+							mode:global.gamemode,
 							jwt:global.token
 						})
 						dispatch(setGameStatus(status.InQueue))
 					}					
 					}/>
 					<div className="absolute bottom-0 w-[160px] sm:w-[200px] flex flex-row items-center">
-						<ChooseModeButton cta="Normal" disable={global.status === status.InQueue || global.status === status.InGame} check={global.gameMode == "Normal"} onClick={() => {dispatch(setGameMode("Normal"))}}/>
-						<ChooseModeButton cta="Turntable" disable={global.status === status.InQueue || global.status === status.InGame} check={global.gameMode == "Turntable"} onClick={() => {dispatch(setGameMode("Turntable"))}}/>
+						<ChooseModeButton cta="Normal" disable={global.status === status.InQueue || global.status === status.InGame} check={global.gamemode === gamemode.normal} onClick={() => {dispatch(setGameMode(gamemode.normal))}}/>
+						<ChooseModeButton cta="Boost" disable={global.status === status.InQueue || global.status === status.InGame} check={global.gamemode === gamemode.boost} onClick={() => {dispatch(setGameMode(gamemode.boost))}}/>
 					</div>
 					
 				</div>

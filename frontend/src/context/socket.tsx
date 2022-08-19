@@ -44,6 +44,7 @@ export function addFriend(global:any, username:string){
 export function challenged(action:string,global:any, id:number){
 	socket.emit("CHALLENGED", {
 		action: action,
+		mode:global.gamemode,
 		asking: global.id,
 		receiving: id,
 		jwt:global.token
@@ -55,5 +56,14 @@ export function spectateGame(global:any,clientId:number,spectateId:number){
 		clientId,
 		spectateId,
 		jwt:global.token
+	})
+}
+
+export function mousemoveSocket(global:any,dirx:number){
+	socket.emit("MOUSE_MOVE", {
+		dirx,
+		id:global.id,
+		gameID:global.gameID,
+		jwt: global.token
 	})
 }
