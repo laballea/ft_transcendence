@@ -16,7 +16,8 @@ const ProfileActions = ({} : ProfileActionsProps) => {
 		<>
 			<div className='flex items-center justify-self-stretch mb-3'>
 				<button 
-					className="font-space w-24  text-slate-400 pr-4"
+					className="font-space w-24  text-slate-400 pr-4 hover:text-slate-300
+								transition-all duration-300 ease-in-out"
 					onClick={ () => navigate("/app") }> 
 					{ backtext }
 				</button>
