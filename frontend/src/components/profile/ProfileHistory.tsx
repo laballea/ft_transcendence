@@ -31,7 +31,7 @@ const ProfileHistory = ({contact} : ProfileHistoryProps) => {
 												:	<p className='font-pilowlava text-[32px] text-red-500'>L</p>
 				}
 				</div>
-				<div className='flex items-center justify-center gap-[8px]'>
+				<div className='flex items-center justify-left gap-[8px]'>
 					<div className='w-[32px]'>
 						<img src={
 								getProfilImg(games.users.find((user:any) => user.id === games.winner).profilPic)
@@ -43,22 +43,24 @@ const ProfileHistory = ({contact} : ProfileHistoryProps) => {
 						{games.users.find((user:any) => user.id === games.winner).username}
 					</p>
 				</div>
-				<div className='w-[80px] flex items-center justify-center'>
-					<p>
+				<div className='flex items-center justify-center'>
+					<p className='w-[24px] flex items-center justify-center'>
 						{games.score[0] > games.score[1] ? games.score[0] : games.score[1]}
 					</p>
-					-
 					<p>
+						-
+					</p>
+					<p className='w-[24px] flex items-center justify-center'>
 						{games.score[0] > games.score[1] ? games.score[1] : games.score[0]}
 					</p>
 				</div>
-				<div className='w-[144px] flex items-center justify-center gap-[8px]'>
-					<p className='font-space text-[16px]'>
+				<div className='flex items-center justify-end gap-[8px]'>
+					<p className='w-[144px] font-space text-[16px] text-right'>
 						{games.users.find((user:any) => user.id !== games.winner).username}
 					</p>
 					<div className='w-[32px]'>
 						<img src={
-								getProfilImg(games.users.find((user:any) => user.id === games.winner).profilPic)
+								getProfilImg(games.users.find((user:any) => user.id !== games.winner).profilPic)
 							} 
 							width="32" height="32" alt="userimage" className="rounded-full mr-[16px]">	
 						</img>
