@@ -428,9 +428,9 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 	async keyPress(@MessageBody() data: {dir:string,id:number, on:boolean,gameID:string,jwt:string}) {
 		this.gameService.findGame(data.gameID).pong.keyPress(data.id, data.dir == "ArrowUp" ? -1 : 1, data.on)
 	}
-	@SubscribeMessage('MOUSE_MOVE')
-	async mousemove(@MessageBody() data: {dirx:number,id:number,gameID:string,jwt:string}) {
-		this.gameService.findGame(data.gameID).pong.mousemove(data.id, data.dirx)
+	@SubscribeMessage('MOUSE_CLICK')
+	async mouseclick(@MessageBody() data: {pos:{x:number, y:number},id:number,gameID:string,jwt:string}) {
+		this.gameService.findGame(data.gameID).pong.mouseclick(data.id, data.pos)
 	}
 
 	@SubscribeMessage('SPECTATE')

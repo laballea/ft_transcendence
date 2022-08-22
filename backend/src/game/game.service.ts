@@ -76,6 +76,8 @@ export class GameService {
 			this.removeFromQueue([user.id])
 			if (user.gameID){
 				let game:GAMES_SOCKET = this.findGame(user.gameID)
+				if (game.pong.status === GAME_STATUS.PAUSE)
+					this.gameEnd(user.gameID)
 				game.pong.pause(true);
 			}
 		}

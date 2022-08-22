@@ -21,7 +21,7 @@ export class Pong {
 	}
 	protected mode:gamemode
 	protected users:GameUserI[]
-	protected status:GAME_STATUS
+	public status:GAME_STATUS
 	protected ball:GameBallI
 	protected map: {width:number, height:number}
 	protected timeBegin: number
@@ -37,9 +37,11 @@ export class Pong {
 				id:user.id,
 				username:user.username,
 				posx:[50, 1900 - 55][index],
+				pos:["left", "right"][index],
 				posy:1000/2 - 150,
 				point:0,
 				speed:33,
+				clickpos:[],
 				keyPress: 0//0=none, -1=up, 1=down
 			}
 		})
@@ -47,6 +49,7 @@ export class Pong {
 			posx:1900 / 2,
 			posy: 1000 / 2,
 			speed:20,
+			angle:this.randomNumber(0, 360),
 			d:{x:0, y:0},
 			size:30 //rayon
 		}
@@ -107,8 +110,9 @@ export class Pong {
 	ballTrajectory(){
 		for (let i=1; i < this.ball.speed / 5; i++) {
 			let speed = this.ball.speed / 5
-			let newPosx = this.ball.posx + speed * this.ball.d.x
-			let newPosy = this.ball.posy + speed * this.ball.d.y
+			let velocity = {x:speed * Math.cos(this.ball.angle), y:speed * Math.sin(this.ball.angle)}
+			let newPosx = this.ball.posx + velocity.x
+			let newPosy = this.ball.posy + velocity.y
 			let bounce = false
 			let hit = {
 				bot:newPosy < this.ball.size,
@@ -119,8 +123,8 @@ export class Pong {
 			for (let idx in this.users){
 				let user = this.users[idx]
 				if (this.between(newPosy, user.posy - this.ball.size, user.posy + this.ball.size + 300)){
-					if (this.between(newPosx + Math.sign(this.ball.d.x) * this.ball.size, idx ? user.posx : user.posx + 5, idx ? user.posx + 15: user.posx + 20)){
-						this.ball.d.x *= -1
+					if (this.between(newPosx + (velocity.x / 5) * this.ball.size, idx ? user.posx : user.posx + 5, idx ? user.posx + 15: user.posx + 20)){
+						this.ball.angle = (this.ball.angle + (this.ball.angle ? -180 : 180)) % 360
 						this.ball.speed += 1
 						if (this.ball.speed > this.maxBallSpeed)
 							this.maxBallSpeed = this.ball.speed
@@ -130,7 +134,9 @@ export class Pong {
 			}
 			if ((hit.bot || hit.top) && !bounce) {
 				newPosy = hit.bot ? this.ball.size : (this.map.height  - this.ball.size)
-				this.ball.d.y *= -1
+				console.log(this.ball.angle)
+				this.ball.angle = (this.ball.angle + (this.ball.angle ? -180 : 180)) % 360
+				console.log(this.ball.angle)
 				bounce = true
 			}
 			if ((hit.left || hit.right) && !bounce) {
@@ -148,7 +154,8 @@ export class Pong {
 				newPosx = this.map.width / 2
 				newPosy = this.map.height / 2
 				this.ball.speed = 20
-				this.ball.d = this.randomDir(newPosx < this.ball.size ? 1 : 0)
+				this.ball.angle = this.randomNumber(0, 360)
+				//this.ball.d = this.randomDir(newPosx < this.ball.size ? 1 : 0)
 				bounce = true
 			}
 			this.ball.posx = newPosx
@@ -179,9 +186,24 @@ export class Pong {
 		}
 	}
 
-	mousemove(userID:number, mousepos:number){
+	mouseclick(userID:number, pos:{x:number, y:number}){
 		let user = this.users.find((user) => user.id == userID)
-		user.mousepos = mousepos
+		if (user.clickpos.length < 3) {
+			if (user.clickpos.length < 1)
+				user.clickpos.push(pos)
+			else {
+				let last = user.clickpos[user.clickpos.length - 1]
+				if (last) {
+					if (user.pos == "left") {
+						if (pos.x > last.x)
+							user.clickpos.push(pos)
+					}else {
+						if (pos.x < last.x)
+							user.clickpos.push(pos)
+					}
+				}
+			}
+		}
 	}
 
 	pause(status:boolean){

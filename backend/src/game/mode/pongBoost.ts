@@ -8,7 +8,9 @@ export class Boost extends Pong {
 		gameID:string
 	) {
 		super(game, gameEnd, gameID)
+		this.balltraj = []
 	}
+	private balltraj: {x:number, y:number}[]
 
 	ballTrajectory(){
 		for (let i=1; i < this.ball.speed / 5; i++) {
@@ -26,7 +28,17 @@ export class Boost extends Pong {
 				let user = this.users[idx]
 				if (this.between(newPosy, user.posy - this.ball.size, user.posy + this.ball.size + 300)){
 					if (this.between(newPosx + Math.sign(this.ball.d.x) * this.ball.size, idx ? user.posx : user.posx + 5, idx ? user.posx + 15: user.posx + 20)){
-						this.ball.d.x *= -1
+						this.balltraj = user.clickpos
+						console.log("normal", this.ball.d.x)
+						if (this.balltraj.length > 0) {
+							this.ball.d.x = (this.balltraj[0].x - this.ball.posx) * this.ball.speed / this.map.width
+							this.ball.d.y = (this.balltraj[0].y - this.ball.posy) * this.ball.speed / this.map.height
+							console.log("not normal", this.ball.d.x)
+
+						} else {
+							this.ball.d.x *= -1
+						}
+						user.clickpos = []
 						this.ball.speed += 1
 						if (this.ball.speed > this.maxBallSpeed)
 							this.maxBallSpeed = this.ball.speed
@@ -40,7 +52,7 @@ export class Boost extends Pong {
 				bounce = true
 			}
 			if ((hit.left || hit.right) && !bounce) {
-				this.users[(hit.left ? 1 : 0)].point += 5 // add point to user
+				this.users[(hit.left ? 1 : 0)].point += 1 // add point to user
 				this.status = GAME_STATUS.COUNTDOWN
 				if (this.users[(hit.left ? 1 : 0)].point >= 5) {
 					this.status = GAME_STATUS.WINNER

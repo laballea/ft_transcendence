@@ -1,6 +1,5 @@
 import React, { useRef, useEffect } from 'react'
-import { GAME_STATUS } from '../../common/types'
-import { mousemoveSocket } from '../../context/socket'
+import { gamemode, GAME_STATUS } from '../../common/types'
 
 const Canvas = (props:any) => {
 	const {height, width, game, ratio, username, global} = props
@@ -16,8 +15,9 @@ const Canvas = (props:any) => {
 	const drawPlayers = (ctx:any) => {
 		for (const user of game.users){
 			ctx.fillStyle = '#666666'
-			if (user.username === username)
+			if (user.username === username) {
 				ctx.fillStyle = '#659B5E'
+			}
 			ctx.fillRect(user.posx * ratio, user.posy * ratio, 5,  0.3 * height)
 		}
 		ctx.fillStyle = '#666666'
@@ -45,31 +45,10 @@ const Canvas = (props:any) => {
 			}
 		}
 	}
-	const mousemove = (event:MouseEvent, ctx:any) => {
-		var rect = canvasRef.current.getBoundingClientRect(), // abs. size of element
-		scaleX = canvasRef.current.width / rect.width,    // relationship bitmap vs. element for x
-		scaleY = canvasRef.current.height / rect.height;  // relationship bitmap vs. element for y
-		ctx.strokeStyle = "blue";
-		let posx = (event.clientX - rect.left) * scaleX
-		let posy = (event.clientY - rect.top) * scaleY
-		for (const user of game.users){
-			if (user.username === username){
-				ctx.beginPath();
-				ctx.moveTo(user.posx * ratio, user.posy * ratio + 0.15 * height);
-				ctx.lineTo(posx, posy);
-				ctx.stroke();
-				mousemoveSocket(global, ( posy - user.posy ) / ( posx - user.posx ))
-			}
-		}
-	  }
 	useEffect(() => {
 		const canvas = canvasRef.current
 		const context = canvas.getContext('2d')
 		let animationFrameId:any
-		
-		//Our draw came here
-		window.addEventListener('mousemove', function(event:MouseEvent) {mousemove(event, context)});
-
 		const render = () => {
 			let textString;
 			context.clearRect(0, 0, context.canvas.width, context.canvas.height)
@@ -78,6 +57,19 @@ const Canvas = (props:any) => {
 			drawBall(context)
 			drawPlayers(context)
 			drawStatus(context)
+			if (game.mode == gamemode.boost){
+				for (const user of game.users){
+					context.fillStyle = '#666666'
+					if (user.username === username) {
+						context.fillStyle = '#659B5E'
+					}
+					for (const click of user.clickpos) {
+						context.beginPath();
+						context.arc(click.x * ratio, click.y * ratio, 5, 0, 2*Math.PI)
+						context.stroke();
+					}
+				}
+			}
 			context.font = "30px Arial";
 			textString = game.users[0].point + " - " + game.users[1].point
 			context.fillText(textString, width / 2 - context.measureText(textString).width/2, 30);
@@ -85,7 +77,6 @@ const Canvas = (props:any) => {
 		render()
 		
 		return () => {
-			window.removeEventListener('mousemove', function(event:MouseEvent) {mousemove(event, context)})
 			window.cancelAnimationFrame(animationFrameId)
 		}
 	})

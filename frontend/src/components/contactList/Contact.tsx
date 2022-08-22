@@ -16,7 +16,6 @@ import { useSelector } from 'react-redux';
 
 // Types
 import { status } from '../../common/types';
-import { useNavigate } from "react-router-dom";
 
 type ContactProps = {
 	contact: {
@@ -30,10 +29,7 @@ type ContactProps = {
 
 const Contact = ({contact, userImage} : ContactProps) => {
 	const dispatch = useDispatch()
-	let navigate = useNavigate();
 	const global = useSelector((state: any) => state.global)
-	
-	console.log('global.challenged' + global.challenged)
 	
 	return (
 		<>
@@ -53,11 +49,11 @@ const Contact = ({contact, userImage} : ContactProps) => {
 						<div className='flex items-center'>
 							{
 								global.status === status.InGame &&
-								<IconButton icon={FiEye} onClick={() => {navigate('/app/profile/' + contact.username, { state: {id:contact.id} })}}/>
+								<IconButton icon={FiEye} onClick={() => {spectateGame(global, global.id, contact.id)}}/>
 							}
 							{global.status !== status.InGame && contact.status !== status.Disconnected &&
 								<IconButton icon={FiZap}  
-								onClick={() => {contact.status === status.InGame ? spectateGame(global, global.id, contact.id) : challenged("ASK", global, contact.id) }}/>
+								onClick={() => {contact.status === status.InGame ? console.log() : challenged("ASK", global, contact.id) }}/>
 							}
 							<IconButton icon={FiMessageCircle} onClick={() => dispatch(setCurrentConv({username:contact.username}))}/>
 						</div>

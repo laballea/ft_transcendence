@@ -59,9 +59,9 @@ export function spectateGame(global:any,clientId:number,spectateId:number){
 	})
 }
 
-export function mousemoveSocket(global:any,dirx:number){
-	socket.emit("MOUSE_MOVE", {
-		dirx,
+export function mouseClickSocket(global:any,pos:{x:number, y:number}){
+	socket.emit("MOUSE_CLICK", {
+		pos,
 		id:global.id,
 		gameID:global.gameID,
 		jwt: global.token

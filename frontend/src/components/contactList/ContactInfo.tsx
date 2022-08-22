@@ -3,6 +3,7 @@ import React from 'react'
 
 // Types
 import { status } from '../../common/types';
+import { useNavigate } from "react-router-dom";
 
 type ContactInfoProps = {
 	contact: {
@@ -15,6 +16,7 @@ type ContactInfoProps = {
 }
 
 const ContactInfo = ({contact, userImage, challenge} : ContactInfoProps) => {
+	let navigate = useNavigate();
 
 	return (
 		<>
@@ -24,7 +26,9 @@ const ContactInfo = ({contact, userImage, challenge} : ContactInfoProps) => {
 					{
 						contact.status === status.Disconnected ?
 							<div className="border-2 border-transparent rounded-full ml-[8px]">
-								<img src={userImage} width="40" height="40" alt="userimage" className='rounded-full'>
+								<img src={userImage} width="40" height="40" alt="userimage" className='rounded-full' onClick={()=>{
+									navigate('/app/profile/' + contact.username, { state: {id:contact.id} })
+								}}>
 								</img>
 							</div>
 						:
@@ -32,12 +36,12 @@ const ContactInfo = ({contact, userImage, challenge} : ContactInfoProps) => {
 							{
 								contact.status === status.InGame ?
 								<div className="border-2 border-yellow-500 rounded-full ml-[8px]">
-									<img src={userImage} width="40" height="40" alt="userimage" className='rounded-full'>
+									<img src={userImage} width="40" height="40" alt="userimage" className='rounded-full' onClick={()=>{}}>
 									</img>
 								</div>
 								:
 								<div className="border-2 border-green-500 rounded-full ml-[8px]">
-									<img src={userImage} width="40" height="40" alt="userimage" className='rounded-full'>
+									<img src={userImage} width="40" height="40" alt="userimage" className='rounded-full'onClick={()=>{}}>
 									</img>
 								</div>
 							}

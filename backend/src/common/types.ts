@@ -80,8 +80,9 @@ export interface GameUserI {
 	posy?:number,
 	point?:number,
 	keyPress?:number,
-	speed?:number
-	mousepos?:number
+	speed?:number,
+	pos:string,
+	clickpos?:{x:number, y:number}[]
 }
 
 export enum GAME_STATUS {
@@ -96,6 +97,7 @@ export interface GameBallI {
 	posx:number,
 	posy:number,
 	speed:number,
+	angle:number,
 	d:{x:number, y:number}
 	size:number // rayon
 }
