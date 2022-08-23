@@ -28,7 +28,7 @@ const totalTimePlayed = (gameStats:any):number => {
 
 const victoryprct = (gameStats:any, userId:number):number => {
 	let totalWin = gameStats.reduce((accumulator:any, object:any) => {
-		if (object.winner == userId)
+		if (object.winner === userId)
 			return accumulator + 1
 		else
 			return accumulator
@@ -55,11 +55,71 @@ const ProfileStats = ({contact} : ProfileStatsProps) => {
 				<p className="font-space text-slate-400 text-[12px]">{"No Games played yet :("}</p>
 				:
 				<div>
-					<p className="text-slat">Game played: {contact.gameStats.length}</p>
-					<p className="text-slat">Total time played: {Math.round(totalTimePlayed(contact.gameStats))}min</p>
-					<p className="text-slat">Average game duration: {Math.round(totalTimePlayed(contact.gameStats) / contact.gameStats.length)}min</p>
-					<p className="text-slat">% Victory: {victoryprct(contact.gameStats, contact.id)}%</p>
-					<p className="text-slat">Ball maximum speed: {maxBallSpeed(contact.gameStats)}m/s</p>
+					<div className='flex items-center'>
+						<div className='inline-block'>
+							<p className="font-space text-slate-500">
+								Game played:
+							</p>
+						</div>
+						<div className='grow mr-[8px] ml-[8px] h-[1px] bg-slate-700'></div>
+						<div className='inline-block'>
+							<p className="font-space text-slate-300 mb-[8px]">
+								{contact.gameStats.length}
+							</p>
+						</div>
+					</div>
+					<div className='flex items-center'>
+						<div className='inline-block'>
+							<p className="font-space text-slate-500">
+								Total time played:
+							</p>
+						</div>
+						<div className='grow mr-[8px] ml-[8px] h-[1px] bg-slate-700'></div>
+						<div className='inline-block'>
+							<p className="font-space text-slate-300 mb-[8px]">
+								{Math.round(totalTimePlayed(contact.gameStats))} min
+							</p>
+						</div>
+					</div>
+					<div className='flex items-center'>
+						<div className='inline-block'>
+							<p className="font-space text-slate-500">
+								Average game duration:
+							</p>
+						</div>
+						<div className='grow mr-[8px] ml-[8px] h-[1px] bg-slate-700'></div>
+						<div className='inline-block'>
+							<p className="font-space text-slate-300 mb-[8px]">
+								{Math.round(totalTimePlayed(contact.gameStats) / contact.gameStats.length)} min
+							</p>
+						</div>
+					</div>
+					<div className='flex items-center'>
+						<div className='inline-block'>
+							<p className="font-space text-slate-500">
+								% Victory:
+							</p>
+						</div>
+						<div className='grow mr-[8px] ml-[8px] h-[1px] bg-slate-700'></div>
+						<div className='inline-block'>
+							<p className="font-space text-slate-300 mb-[8px]">
+								{victoryprct(contact.gameStats, contact.id)} %
+							</p>
+						</div>
+					</div>
+					<div className='flex items-center'>
+						<div className='inline-block'>
+							<p className="font-space text-slate-500">
+								Ball maximum speed:
+							</p>
+						</div>
+						<div className='grow mr-[8px] ml-[8px] h-[1px] bg-slate-700'></div>
+						<div className='inline-block'>
+							<p className="font-space text-slate-300 mb-[8px]">
+								{maxBallSpeed(contact.gameStats)} m/s
+							</p>
+						</div>
+					</div>
 
 				</div>
 			}

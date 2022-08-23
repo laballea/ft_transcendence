@@ -53,10 +53,10 @@ const Profile = ({contact, userImage} : ProfileProps) => {
 			<NavBar/>
 			<div className="absolute flex justify-between
 							w-full top-[80px] sm:top-[112px] bottom-0 sm:bottom-[48px]">
-				<div className="w-[calc(100%-400px)] overflow-hidden h-full flex sm:block justify-between z-50 p-[40px]">
+				<div className="w-[calc(100%-400px)] overflow-scroll h-full flex sm:block justify-between z-50 p-[40px]">
 					{user && id &&
 						<div className=''>
-							<ProfileActions/>
+							<ProfileActions contact={user}/>
 							<ProfileInfos	contact={user} userImage={userImage}/>
 							<ProfileHistory	contact={user}/>
 							<ProfileStats	contact={user}/>

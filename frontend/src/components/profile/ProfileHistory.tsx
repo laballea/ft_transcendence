@@ -8,6 +8,7 @@ import '../../assets/fonts/fonts.css';
 
 // Types
 import { status } from '../../common/types';
+import { useNavigate } from 'react-router-dom';
 
 type ProfileHistoryProps = {
 	contact: {
@@ -20,10 +21,16 @@ type ProfileHistoryProps = {
 
 const ProfileHistory = ({contact} : ProfileHistoryProps) => {
 
-	console.log(contact)
+	let navigate = useNavigate();
 
+	
 	const gamesList = contact.gameStats.length > 0 ? contact.gameStats.map((games:any, index:number) =>
-		<div key={index}>
+	{
+		const winner : any  = games.users.find((user:any) => user.id === games.winner)
+		const loser : any  = games.users.find((user:any) => user.id !== games.winner)
+		
+
+		return (<div key={index}>
 			<div className='flex items-center text-slate-500 font-pilowlava text-[22px]'>
 				<div className='w-[40px] mr-[8px]'>
 				{
@@ -34,34 +41,54 @@ const ProfileHistory = ({contact} : ProfileHistoryProps) => {
 				<div className='flex items-center justify-left gap-[8px]'>
 					<div className='w-[32px]'>
 						<img src={
-								getProfilImg(games.users.find((user:any) => user.id === games.winner).profilPic)
+								getProfilImg(winner.profilPic)
 							} 
 							width="32" height="32" alt="userimage" className="rounded-full mr-[16px]">	
 						</img>
 					</div>
-					<p className='w-[144px] font-space text-[16px]'>
-						{games.users.find((user:any) => user.id === games.winner).username}
-					</p>
+					<span	className='w-[144px] font-space text-[16px]
+										cursor-pointer' 
+						onClick={ 
+							() => {
+								navigate('/app/profile/' + winner.username, {state: {id: winner.id}})
+							}
+						}>
+					{
+						winner.username
+					}
+					</span>
 				</div>
 				<div className='flex items-center justify-center'>
 					<p className='w-[24px] flex items-center justify-center'>
-						{games.score[0] > games.score[1] ? games.score[0] : games.score[1]}
+					{
+						games.score[0] > games.score[1] ? games.score[0] : games.score[1]
+					}
 					</p>
 					<p>
 						-
 					</p>
 					<p className='w-[24px] flex items-center justify-center'>
-						{games.score[0] > games.score[1] ? games.score[1] : games.score[0]}
+					{
+						games.score[0] > games.score[1] ? games.score[1] : games.score[0]
+					}
 					</p>
 				</div>
 				<div className='flex items-center justify-end gap-[8px]'>
-					<p className='w-[144px] font-space text-[16px] text-right'>
-						{games.users.find((user:any) => user.id !== games.winner).username}
-					</p>
+					<span	className='w-[144px] font-space text-[16px] text-right
+										cursor-pointer' 
+						onClick={ 
+							() => {
+								navigate('/app/profile/' + loser.username, {state: {id: loser.id}})
+							}
+						}>
+					{
+						loser.username
+					}
+					</span>
 					<div className='w-[32px]'>
 						<img src={
-								getProfilImg(games.users.find((user:any) => user.id !== games.winner).profilPic)
-							} 
+								getProfilImg(loser.profilPic)
+							}
 							width="32" height="32" alt="userimage" className="rounded-full mr-[16px]">	
 						</img>
 					</div>
@@ -70,7 +97,7 @@ const ProfileHistory = ({contact} : ProfileHistoryProps) => {
 			{
 				contact.gameStats.length !== index + 1 ? <div  className='w-full border-t-[1px] border-slate-700 mb-[4px]'></div> : []
 			}
-		</div>
+		</div>)}
 	): [];
 
 	return (
