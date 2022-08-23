@@ -31,6 +31,14 @@ export class Pong {
 	protected gameID:string
 	protected maxBallSpeed:number
 
+	angle(ax, ay, bx, by) {
+		var dy = by - ay;
+		var dx = bx - ax;
+		var theta = Math.atan2(dy, dx); // range [-PI, PI]
+
+		return theta;
+	}
+	
 	init(){
 		this.users = this.users.map((user, index)=> {
 			return {
@@ -49,11 +57,12 @@ export class Pong {
 			posx:1900 / 2,
 			posy: 1000 / 2,
 			speed:20,
-			angle:this.randomNumber(0, 360),
+			angle:45* (Math.PI/180),
 			d:{x:0, y:0},
 			size:30 //rayon
 		}
-		this.ball.d = this.randomDir(0)
+		this.ball.d = {x:Math.cos(this.ball.angle), y:Math.sin(this.ball.angle)}
+		//this.ball.d = this.randomDir(0)
 	}
 
 	between(x:number, min:number, max:number) {
@@ -110,9 +119,8 @@ export class Pong {
 	ballTrajectory(){
 		for (let i=1; i < this.ball.speed / 5; i++) {
 			let speed = this.ball.speed / 5
-			let velocity = {x:speed * Math.cos(this.ball.angle), y:speed * Math.sin(this.ball.angle)}
-			let newPosx = this.ball.posx + velocity.x
-			let newPosy = this.ball.posy + velocity.y
+			let newPosx = this.ball.posx + (this.ball.d.x) * speed
+			let newPosy = this.ball.posy + (this.ball.d.y) * speed
 			let bounce = false
 			let hit = {
 				bot:newPosy < this.ball.size,
@@ -123,8 +131,8 @@ export class Pong {
 			for (let idx in this.users){
 				let user = this.users[idx]
 				if (this.between(newPosy, user.posy - this.ball.size, user.posy + this.ball.size + 300)){
-					if (this.between(newPosx + (velocity.x / 5) * this.ball.size, idx ? user.posx : user.posx + 5, idx ? user.posx + 15: user.posx + 20)){
-						this.ball.angle = (this.ball.angle + (this.ball.angle ? -180 : 180)) % 360
+					if (this.between(newPosx + Math.sign(this.ball.d.x) * this.ball.size, idx ? user.posx : user.posx + 5, idx ? user.posx + 15: user.posx + 20)){
+						this.ball.d.x *= -1
 						this.ball.speed += 1
 						if (this.ball.speed > this.maxBallSpeed)
 							this.maxBallSpeed = this.ball.speed
@@ -134,9 +142,7 @@ export class Pong {
 			}
 			if ((hit.bot || hit.top) && !bounce) {
 				newPosy = hit.bot ? this.ball.size : (this.map.height  - this.ball.size)
-				console.log(this.ball.angle)
-				this.ball.angle = (this.ball.angle + (this.ball.angle ? -180 : 180)) % 360
-				console.log(this.ball.angle)
+				this.ball.d.y *= -1
 				bounce = true
 			}
 			if ((hit.left || hit.right) && !bounce) {

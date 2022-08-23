@@ -9,9 +9,10 @@ export class Boost extends Pong {
 	) {
 		super(game, gameEnd, gameID)
 		this.balltraj = []
+		this.balltrajpos = 0
 	}
 	private balltraj: {x:number, y:number}[]
-
+	private balltrajpos: number
 	ballTrajectory(){
 		for (let i=1; i < this.ball.speed / 5; i++) {
 			let speed = this.ball.speed / 5
@@ -24,17 +25,28 @@ export class Boost extends Pong {
 				left:newPosx < this.ball.size,
 				right:newPosx > this.map.width - this.ball.size,
 			}
+			if (this.balltraj && this.balltraj[this.balltrajpos]) {
+				if ((this.ball.d.x <0 && this.ball.posx <= this.balltraj[this.balltrajpos].x) ||
+					(this.ball.d.x >0 && this.ball.posx >= this.balltraj[this.balltrajpos].x)){
+					if (this.balltraj[this.balltrajpos] && this.balltrajpos >= 1) {
+						this.ball.speed += 0.5
+						this.ball.angle = this.angle(this.balltraj[this.balltrajpos - 1].x, this.balltraj[this.balltrajpos - 1].y,
+						this.balltraj[this.balltrajpos].x, this.balltraj[this.balltrajpos].y)
+						this.ball.d = {x:Math.cos(this.ball.angle), y:Math.sin(this.ball.angle)}
+					}
+					this.balltrajpos++;
+				}
+			}
 			for (let idx in this.users){
 				let user = this.users[idx]
 				if (this.between(newPosy, user.posy - this.ball.size, user.posy + this.ball.size + 300)){
 					if (this.between(newPosx + Math.sign(this.ball.d.x) * this.ball.size, idx ? user.posx : user.posx + 5, idx ? user.posx + 15: user.posx + 20)){
 						this.balltraj = user.clickpos
-						console.log("normal", this.ball.d.x)
-						if (this.balltraj.length > 0) {
-							this.ball.d.x = (this.balltraj[0].x - this.ball.posx) * this.ball.speed / this.map.width
-							this.ball.d.y = (this.balltraj[0].y - this.ball.posy) * this.ball.speed / this.map.height
-							console.log("not normal", this.ball.d.x)
-
+						this.balltrajpos = 0
+						if (this.balltraj[this.balltrajpos]) {
+							this.ball.angle = this.angle(this.ball.posx, this.ball.posy,
+							this.balltraj[this.balltrajpos].x, this.balltraj[this.balltrajpos].y)
+							this.ball.d = {x:Math.cos(this.ball.angle), y:Math.sin(this.ball.angle)}
 						} else {
 							this.ball.d.x *= -1
 						}
@@ -49,6 +61,7 @@ export class Boost extends Pong {
 			if ((hit.bot || hit.top) && !bounce) {
 				newPosy = hit.bot ? this.ball.size : (this.map.height  - this.ball.size)
 				this.ball.d.y *= -1
+				this.ball.speed += 0.1
 				bounce = true
 			}
 			if ((hit.left || hit.right) && !bounce) {
