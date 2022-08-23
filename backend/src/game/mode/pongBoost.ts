@@ -29,12 +29,10 @@ export class Boost extends Pong {
 				if (this.between(newPosy, user.posy - this.ball.size, user.posy + this.ball.size + 300)){
 					if (this.between(newPosx + Math.sign(this.ball.d.x) * this.ball.size, idx ? user.posx : user.posx + 5, idx ? user.posx + 15: user.posx + 20)){
 						this.balltraj = user.clickpos
-						console.log("normal", this.ball.d.x)
 						if (this.balltraj.length > 0) {
-							this.ball.d.x = (this.balltraj[0].x - this.ball.posx) * this.ball.speed / this.map.width
-							this.ball.d.y = (this.balltraj[0].y - this.ball.posy) * this.ball.speed / this.map.height
-							console.log("not normal", this.ball.d.x)
-
+							this.ball.angle = this.angle(this.ball.posx, this.ball.posy,
+							this.balltraj[0].x, this.balltraj[0].y)
+							this.ball.d = {x:Math.cos(this.ball.angle), y:Math.sin(this.ball.angle)}
 						} else {
 							this.ball.d.x *= -1
 						}
