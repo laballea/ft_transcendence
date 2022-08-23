@@ -30,13 +30,15 @@ export class Pong {
 	protected gameEnd:any
 	protected gameID:string
 	protected maxBallSpeed:number
+
 	angle(ax, ay, bx, by) {
 		var dy = by - ay;
 		var dx = bx - ax;
 		var theta = Math.atan2(dy, dx); // range [-PI, PI]
 
 		return theta;
-	  }
+	}
+	
 	init(){
 		this.users = this.users.map((user, index)=> {
 			return {

@@ -133,7 +133,7 @@ export class UserService {
 		game.users = _game.usersID.map(id => usersRepo.find(el => el.id == id))
 		game.winner = _game.pong.getWinner().id
 		game.duration = _game.pong.getDuration()
-		game.maxSpeed = _game.pong.getMaxBallSpeed()
+		game.maxSpeed = Math.ceil(_game.pong.getMaxBallSpeed())
 		game.score = _game.pong.getScore()
 		await this.gameRepository.save(game)
 	}
