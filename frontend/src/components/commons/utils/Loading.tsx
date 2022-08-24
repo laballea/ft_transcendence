@@ -3,6 +3,8 @@ import React from "react";
 // CSS
 import '../../../assets/fonts/fonts.css';
 
+
+
 const Loading = () => {
 	return ( 
 		<div className=" w-[120px] h-[120px] 
