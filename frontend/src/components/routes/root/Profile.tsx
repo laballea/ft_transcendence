@@ -19,6 +19,7 @@ import defaultUserImage from '../../../assets/images/default-user.png'
 import { status } from '../../../common/types'
 
 import { useLocation } from "react-router-dom";
+import Loading from '../../commons/utils/Loading';
 
 type ProfileProps = {
 	contact: {
@@ -48,19 +49,28 @@ const Profile = ({contact, userImage} : ProfileProps) => {
 			eventSource.close()
 		};
 	}, [id]);
+
+
+
 	return (
 		<div className="w-full h-screen relative bg-slate-900">
 			<NavBar/>
 			<div className="absolute flex justify-between
 							w-full top-[80px] sm:top-[112px] bottom-0 sm:bottom-[48px]">
+				
 				<div className="w-[calc(100%-400px)] overflow-scroll h-full flex sm:block justify-between z-50 p-[40px]">
-					{user && id &&
-						<div className=''>
+					{
+							user && id ?
+							<div className=''>
 							<ProfileActions contact={user}/>
 							<ProfileInfos	contact={user} userImage={userImage}/>
 							<ProfileHistory	contact={user}/>
 							<ProfileStats	contact={user}/>
-						</div>
+							</div>
+							:
+							<div className='flex items-center justify-center w-full h-full'>
+								<Loading/>
+							</div>
 					}
 				</div>
 				<ContactList/>
