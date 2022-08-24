@@ -38,11 +38,12 @@ export default function Model(props: JSX.IntrinsicElements["group"]) {
 		<mesh
 			ref={ref}
 			receiveShadow
-			scale={3}
+			scale={4}
 			rotation={[Math.PI / 2, 0, 0]}
 			geometry={nodes.ft_trans.geometry}
-			material={nodes.ft_trans.material}
-		/>
+		>
+			<meshStandardMaterial wireframe wireframeLinewidth={0.5} />
+		</mesh>
 		</group>
 	);
 }
