@@ -14,7 +14,25 @@ type GLTFResult = GLTF & {
 export default function Model(props: JSX.IntrinsicElements["group"]) {
 	const { nodes } = useGLTF("/geometries/ft_trans.gltf") as GLTFResult;
 	const ref = useRef<THREE.Mesh>(null!)
-	useFrame((state, delta) => (ref.current.rotation.z += 0.001))
+
+	let rotationSpeed : number = 0.001
+
+	// if (ref.current.rotation.z === Math.PI * 2)
+	// 	ref.current.rotation.z = 0
+
+	// if (ref.current.rotation.z < Math.PI / 2 || ref.current.rotation.z > 3 * Math.PI / 2)
+	// {
+	// 	rotationSpeed = 0.001
+	// }
+	// else
+	// 	rotationSpeed = 0.01
+
+	
+
+	useFrame((state, delta) => (
+		ref.current.rotation.z += rotationSpeed
+	))
+
 	return (
 		<group {...props} dispose={null}>
 		<mesh
