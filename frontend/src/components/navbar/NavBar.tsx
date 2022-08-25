@@ -38,20 +38,20 @@ const NavBar = () => {
 				<div className="hidden sm:block">
 					<NavBarButtonPrimary cta="Play Now" disable={global.status === status.InQueue || global.status === status.InGame} icon={FiZap}
 					onClick={()=>{
-						console.log(global.gamemode)
-						socket.emit("FIND_GAME", {
-							client_send: global.username,
-							mode:global.gamemode,
-							jwt:global.token
-						})
-						dispatch(setGameStatus(status.InQueue))
-					}					
+							console.log(global.gamemode)
+							socket.emit("FIND_GAME", {
+								client_send: global.username,
+								mode:global.gamemode,
+								jwt:global.token
+							})
+							dispatch(setGameStatus(status.InQueue))
+						}					
 					}/>
-					<div className="absolute bottom-0 w-[160px] sm:w-[200px] flex flex-row items-center">
-						<ChooseModeButton cta="Normal" disable={global.status === status.InQueue || global.status === status.InGame} check={global.gamemode === gamemode.normal} onClick={() => {dispatch(setGameMode(gamemode.normal))}}/>
-						<ChooseModeButton cta="Boost" disable={global.status === status.InQueue || global.status === status.InGame} check={global.gamemode === gamemode.boost} onClick={() => {dispatch(setGameMode(gamemode.boost))}}/>
+					<div className="absolute bottom-[4px] w-[200px] flex flex-row items-center justify-center text-[8px]">
+						<ChooseModeButton cta="normal" disable={global.status === status.InQueue || global.status === status.InGame} check={global.gamemode === gamemode.normal} onClick={() => {dispatch(setGameMode(gamemode.normal))}}/>
+						<div className='w-[20%] h-[1px] m-[4px] bg-slate-500'></div>
+						<ChooseModeButton cta="boost" disable={global.status === status.InQueue || global.status === status.InGame} check={global.gamemode === gamemode.boost} onClick={() => {dispatch(setGameMode(gamemode.boost))}}/>
 					</div>
-					
 				</div>
 
 				<div className="hidden sm:block">

@@ -1,6 +1,5 @@
 import React from "react";
-import * as THREE from 'three'
-import { Canvas, useFrame, ThreeElements } from '@react-three/fiber'
+import { Canvas } from '@react-three/fiber'
 
 import Text from "./3d/Text";
 
