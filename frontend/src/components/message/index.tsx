@@ -31,15 +31,18 @@ function Message() {
 			element.scrollTop = element.scrollHeight;
 	  });
 	return (
-		<div style={{width:400, height:"50%", display:'flex', flexDirection:'column', justifyContent:"center"}}>
-			<div style={{flex:1, display:'flex', flexDirection:"row"}}>
-				<h3 style={{color:'white'}}>Chat /{conv.users.length > 2 ? conv.name : conv.users.find((user:any) => user.username !== global.username).username}</h3>
+		<div className='w-[340px] h-[400px] 
+						flex justify-center flex-col'>
+			<div className='w-full h-auto p-[4px] flex items-center justify-between bg-slate-700'>
+				<h3 className='font-space text-slate-200'>{conv.users.length > 2 ? conv.name : conv.users.find((user:any) => user.username !== global.username).username}</h3>
 				<IconButton icon={FiX} onClick={()=>{dispatch(setCurrentConv({convID:undefined}))}}></IconButton>
 			</div>
-			<div id="someRandomID" style={{overflowY:"scroll", flex:10}}>
+			<div id="someRandomID" 
+					className='overflow-y-scroll flex-grow'>
 				<Chat msg={conv.msg} username={global.username}/>
 			</div>
-			<div style={{flex:1}}>
+			<div className='w-full h-auto p-[4px] 
+							flex items-center bg-slate-700'>
 				<Com conv={conv} />
 			</div>
 		</div>
