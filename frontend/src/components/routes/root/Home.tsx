@@ -28,7 +28,7 @@ export default function Home() {
 			<div className="absolute flex justify-between
 							w-full top-[80px] sm:top-[112px] bottom-0 sm:bottom-[48px]">
 				<div className="w-[calc(100%-400px)] h-full flex sm:block justify-between z-50">
-					<div className="relative h-[calc(100%-30px)] w-full flex justify-between ">
+					<div className="relative w-full h-full flex justify-between ">
 						{
 							(global.status === status.InGame 
 								|| global.status === status.InQueue 
