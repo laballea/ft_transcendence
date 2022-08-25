@@ -13,7 +13,7 @@ export interface MessageI {
 		date: string
 }
 
-function Message() {
+function FloatingMessage() {
 	const global = useSelector((state: any) => state.global)
 	const dispatch = useDispatch();
 	const conv = global.convID === -1 ? 
@@ -32,9 +32,14 @@ function Message() {
 	  });
 	return (
 		<div className='w-[340px] h-[400px] 
-						flex justify-center flex-col'>
-			<div className='w-full h-auto p-[4px] flex items-center justify-between bg-slate-700'>
-				<h3 className='font-space text-slate-200'>{conv.users.length > 2 ? conv.name : conv.users.find((user:any) => user.username !== global.username).username}</h3>
+						flex justify-center flex-col
+						rounded-md
+						drop-shadow-custom1
+						bg-slate-700'>
+			<div className='w-full h-auto p-[8px] flex items-center justify-between bg-slate-700 drop-shadow-custom2'>
+				<h3 className='font-space text-slate-200'>
+					{conv.users.length > 2 ? conv.name : conv.users.find((user:any) => user.username !== global.username).username}
+				</h3>
 				<IconButton icon={FiX} onClick={()=>{dispatch(setCurrentConv({convID:undefined}))}}></IconButton>
 			</div>
 			<div id="someRandomID" 
@@ -42,11 +47,12 @@ function Message() {
 				<Chat msg={conv.msg} username={global.username}/>
 			</div>
 			<div className='w-full h-auto p-[4px] 
-							flex items-center bg-slate-700'>
+							flex items-center bg-slate-700
+							drop-shadow-custom1'>
 				<Com conv={conv} />
 			</div>
 		</div>
 	)
 }
 
-export default Message;
+export default FloatingMessage;

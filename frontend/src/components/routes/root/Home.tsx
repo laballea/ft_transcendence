@@ -3,7 +3,7 @@ import React from 'react'
 // Components
 import NavBar from '../../navbar/NavBar'
 import ContactList from '../../contactList/ContactList';
-import Message from '../../message/index';
+import Message from '../../message/FloatingMessage';
 import Footer from '../../commons/footer/Footer';
 
 // CSS
@@ -24,10 +24,17 @@ export default function Home() {
 
 	return (
 		<div className="w-full h-screen relative bg-slate-900">
+			{
+				global.convID !== undefined && 
+					<div className='absolute left-[12px] bottom-[40px] z-50'>
+						<Message/>
+					</div>
+
+			}
 			<NavBar/>
 			<div className="absolute flex justify-between
 							w-full top-[80px] sm:top-[112px] bottom-0 sm:bottom-[48px]">
-				<div className="w-[calc(100%-400px)] h-full flex sm:block justify-between z-50">
+				<div className="w-[calc(100%-400px)] h-full flex sm:block justify-between z-10">
 					<div className="relative w-full h-full flex justify-between ">
 						{
 							(global.status === status.InGame 
@@ -44,7 +51,6 @@ export default function Home() {
 				</div>
 				<div className="relative flex-initial flex w-full bg-slate-800 sm:w-[400px] flex-col h-full">
 					<ContactList/>
-					{global.convID !== undefined && <Message/>}
 				</div>
 			</div>
 			<Footer/>

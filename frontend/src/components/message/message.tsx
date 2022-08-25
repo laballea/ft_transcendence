@@ -1,5 +1,5 @@
 import React from "react";
-import { MessageI } from './index';
+import { MessageI } from './FloatingMessage';
 
 
 type MessageProps = {
@@ -11,25 +11,41 @@ const Message = ({ message, own }:MessageProps) => {
 	let date = new Date(message.date)
 
 	return (
-		<div>
+		<div >
 			{!own ?
-				<div style={{color:'white', padding:'5px', display:"flex",
-				flexDirection:"column",alignItems:"flex-start", wordWrap: 'break-word'}}>
-					<p >
-						{message.author} {date.getHours()}:{date.getMinutes()}
+				<div	className="	flex flex-col
+									w-[80%]
+									p-[8px] m-[8px]
+									font-space text-[12px] text-slate-200
+									bg-slate-600 rounded-sm
+									right-0 
+									">
+					<p className="text-[8px] text-slate-400">
+						{ date.getHours() }:{ date.getMinutes() }
 					</p>
-					<p className="justify-right" style={{wordBreak: 'break-all'}}>
-						{message.content}
+					<p>
+						{ message.content }
 					</p>
 				</div>
 				:
-				<div style={{color:'white', padding:'5px', display:"flex",
-				flexDirection:"column",alignItems:"flex-end"}}>
-					<p >
-						{date.getHours()}:{date.getMinutes()} {message.author}
+				<div	className="	flex flex-col 
+									w-[80%]
+									p-[8px] m-[8px]
+									font-space text-[12px] text-slate-200
+									bg-slate-800 rounded-sm
+									ml-[calc(20%-8px)]
+									">
+					<p className="text-[8px] text-slate-400">
+						{ 
+							date.getHours() 
+						}
+						:
+						{
+							date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes() 
+						} 
 					</p>
-					<p className="justify-right" style={{wordBreak: 'break-all'}}>
-						{message.content}
+					<p>
+						{ message.content }
 					</p>
 				</div>
 			}

@@ -1,5 +1,5 @@
 import React from "react";
-import { MessageI } from './index';
+import { MessageI } from './FloatingMessage';
 import Message from './message'
 
 type ChatProps = {
@@ -7,7 +7,7 @@ type ChatProps = {
 	msg:MessageI[]
 }
 
-const Chat = ({ msg, username}:ChatProps) => {
+const Chat = ({ msg, username } : ChatProps) => {
 	const messagesList = (): JSX.Element[] => {
 		return msg.map((message, index) => {
 			return (
@@ -24,14 +24,14 @@ const Chat = ({ msg, username}:ChatProps) => {
 	}
 
 	return (
-		<ul>
+		<div>
 			{
 				msg != null ?
 					messagesList()
 				:
 				test()
 			}
-		</ul>
+		</div>
 	)
 }
 

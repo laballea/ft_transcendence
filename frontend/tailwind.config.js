@@ -19,6 +19,10 @@ module.exports = {
           '80%' : { transform: 'translate(1px, -1px)'},
           '100%' : { transform: 'translate(0)'}
         }
+      },
+      dropShadow: {
+        'custom1': '0px -8px 10px rgba(0, 0, 0, 0.15)',
+        'custom2': '0px 8px 10px rgba(0, 0, 0, 0.15)',
       }
 
     },
