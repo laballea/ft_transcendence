@@ -103,6 +103,8 @@ export const globalSlice = createSlice({
 		},
 		gameFound: (state:any, data:any) => {
 			state.gameID = data.payload.gameID
+			state.gamemode = data.payload.mode
+			console.log("modee", data.payload.mode)
 			state.status = status.InGame
 		},
 		gameEnd: (state:any) => {
@@ -114,11 +116,9 @@ export const globalSlice = createSlice({
 			state.status = status.Spectate
 		},
 		challenged: (state:any, data) => {
-			console.log(data.payload.who)
 			state.challenged = data.payload.who
 		},
 		setGameMode: (state:any, data:any) => {
-			console.log(data.payload)
 			state.gamemode = data.payload
 		},
 	},

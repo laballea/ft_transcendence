@@ -42,6 +42,7 @@ export function addFriend(global:any, username:string){
 }
 
 export function challenged(action:string,global:any, id:number){
+	console.log(global.gamemode)
 	socket.emit("CHALLENGED", {
 		action: action,
 		mode:global.gamemode,

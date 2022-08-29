@@ -135,6 +135,7 @@ export class UserService {
 		game.duration = _game.pong.getDuration()
 		game.maxSpeed = Math.ceil(_game.pong.getMaxBallSpeed())
 		game.score = _game.pong.getScore()
+		game.mode = _game.pong.getMode()
 		await this.gameRepository.save(game)
 	}
 

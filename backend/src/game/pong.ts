@@ -21,7 +21,7 @@ export class Pong {
 	}
 	protected mode:gamemode
 	protected users:GameUserI[]
-	public status:GAME_STATUS
+	public		status:GAME_STATUS
 	protected ball:GameBallI
 	protected map: {width:number, height:number}
 	protected timeBegin: number
@@ -38,7 +38,7 @@ export class Pong {
 
 		return theta;
 	}
-	
+
 	init(){
 		this.users = this.users.map((user, index)=> {
 			return {
@@ -117,8 +117,9 @@ export class Pong {
 	}
 
 	ballTrajectory(){
-		for (let i=1; i < this.ball.speed / 5; i++) {
-			let speed = this.ball.speed / 5
+		let factor = this.ball.speed / 10
+		for (let i=1; i < factor; i++) {
+			let speed = this.ball.speed / factor
 			let newPosx = this.ball.posx + (this.ball.d.x) * speed
 			let newPosy = this.ball.posy + (this.ball.d.y) * speed
 			let bounce = false
@@ -161,7 +162,6 @@ export class Pong {
 				newPosy = this.map.height / 2
 				this.ball.speed = 20
 				this.ball.angle = this.randomNumber(0, 360)
-				//this.ball.d = this.randomDir(newPosx < this.ball.size ? 1 : 0)
 				bounce = true
 			}
 			this.ball.posx = newPosx
@@ -235,5 +235,9 @@ export class Pong {
 
 	getScore(){
 		return [this.users[0].point, this.users[1].point]
+	}
+
+	getMode(){
+		return this.mode
 	}
 }

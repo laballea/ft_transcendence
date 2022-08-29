@@ -24,6 +24,7 @@ const Canvas = (props:any) => {
 	}
 	const drawStatus = (ctx:any) => {
 		let textString;
+		ctx.fillStyle = '#666666'
 		switch(game.status) {
 			case(GAME_STATUS.COUNTDOWN):{
 				ctx.font = "30px Arial";
@@ -59,13 +60,10 @@ const Canvas = (props:any) => {
 			drawStatus(context)
 			if (game.mode == gamemode.boost){
 				for (const user of game.users){
-					context.fillStyle = '#666666'
-					if (user.username === username) {
-						context.fillStyle = '#659B5E'
-					}
 					for (const click of user.clickpos) {
 						context.beginPath();
 						context.arc(click.x * ratio, click.y * ratio, 5, 0, 2*Math.PI)
+						context.strokeStyle = user.username === username ? '#659B5E' : '#666666'
 						context.stroke();
 					}
 				}

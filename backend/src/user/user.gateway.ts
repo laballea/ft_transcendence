@@ -363,7 +363,7 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 				if (otherUser){
 					let game = this.gameService.createGame([user_send, otherUser], data.mode)
 					this.emitPopUp([user_send,otherUser], {error:false, message: `Game founded.`});
-					this.server.to(game.id).emit("GAME_FOUND", {gameID:game.id})
+					this.server.to(game.id).emit("GAME_FOUND", {gameID:game.id, mode:data.mode})
 					user_send.status = status.InGame
 					otherUser.status = status.InGame
 					game.pong.run()
@@ -388,6 +388,7 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 	}
 	@SubscribeMessage('CHALLENGED')
 	async challenged(@MessageBody() data: {action:string, mode:gamemode, asking:number, receiving:number, token:string}) {
+		console.log("mode", data.mode)
 		try {
 			const user_asking:UserSocket = this.userService.findConnectedUserById(data.asking);
 			const user_receiving:UserSocket = this.userService.findConnectedUserById(data.receiving);
@@ -407,7 +408,7 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 
 					let game = this.gameService.createGame([user_asking, user_receiving], data.mode)
 					this.emitPopUp([user_asking,user_receiving], {error:false, message: `Game founded.`});
-					this.server.to(game.id).emit("GAME_FOUND", {gameID:game.id})
+					this.server.to(game.id).emit("GAME_FOUND", {gameID:game.id, mode:data.mode})
 					user_asking.status = status.InGame
 					user_receiving.status = status.InGame
 					game.pong.run()

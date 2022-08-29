@@ -120,6 +120,9 @@ export class GameData {
 
 	@Column("int", { array: true, default: '{}', nullable:true})
 	score: number[];
+
+	@Column()
+	mode: string;
 }
 
 @Entity()
