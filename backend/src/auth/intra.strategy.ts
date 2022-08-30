@@ -17,7 +17,7 @@ export class IntraStrategy extends PassportStrategy(Strategy, 'intra-oauth') {
 		authorizationURL: 'https://api.intra.42.fr/oauth/authorize',
 		tokenURL: 'https://api.intra.42.fr/oauth/token',
 		clientID: "254ee9c51d283d7911364b29f60d76fd8b47354cf9de36ed2edc9ae2d65e1136",
-		clientSecret: "93879097fe0f4cc2a0bc9bfaf7c779a62b98789c91a599ab1d5b23c96be30666",
+		clientSecret: "3cb838fbc6a4e71ee9a88d063c959d68a0102f44785820120bdb18184cd9914d",
 		callbackURL:
 			"http://localhost:5000/auth/login",
 		});
