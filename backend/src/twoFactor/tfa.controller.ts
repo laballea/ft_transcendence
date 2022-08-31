@@ -50,6 +50,22 @@ export class TwoFactorAuthenticationController {
 		}
 	}
 
+	@Post('turn-off')
+	@UseGuards(JwtAuthGuard)
+	async turnOffTwoFactorAuthentication(@Req() request: RequestWithUser, @Body() { code } : TwoFactorAuthenticationCodeDto) {
+		try {
+			console.log("CODE", code)
+			console.log("REQUEST", request.user)
+			const isCodeValid = this.twoFactorAuthenticationService.isTwoFactorAuthenticationCodeValid(code, request.user);
+			if (!isCodeValid) {
+				throw new UnauthorizedException('Wrong authentication code');
+			}
+			await this.userService.turnOffTwoFactorAuthentication(request.user.id);
+		} catch (error) {
+			console.error(error)
+		}
+	}
+
 	@Post('authenticate')
 	@UseGuards(JwtAuthGuard)
 	async authenticate(@Req() request: RequestWithUser, @Body() { code } : TwoFactorAuthenticationCodeDto) {

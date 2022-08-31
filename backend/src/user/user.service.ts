@@ -28,10 +28,17 @@ export class UserService {
 		});
 	}
 
-	// TWO FACTOR ENABLE?
+	// TWO FACTOR ENABLE
 	async turnOnTwoFactorAuthentication(userId: number) {
 		return this.userRepository.update(userId, {
 			isTwoFactorAuthenticationEnabled: true
+		});
+	}
+
+	// TWO FACTOR DISABLE
+	async turnOffTwoFactorAuthentication(userId: number) {
+		return this.userRepository.update(userId, {
+			isTwoFactorAuthenticationEnabled: false
 		});
 	}
 
