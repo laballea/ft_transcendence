@@ -1,6 +1,8 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { FiEdit2 } from 'react-icons/fi';
+import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom'
+import { editUsernameSocket } from '../../context/socket';
 
 // Assets
 type SettingsProfileProps = {
@@ -9,10 +11,11 @@ type SettingsProfileProps = {
 }
 
 const SettingsProfile = ({username, userImage} : SettingsProfileProps) => {
-	
-	
 	const navigate = useNavigate();
+	const global = useSelector((state: any) => state.global)
 	const backtext : string = "<- back";
+	const [editUsername, setEditUsername] = useState(false);
+	const [newUsername, setNewUsername] = useState(username);
 
 	return (
 		<>
@@ -41,9 +44,26 @@ const SettingsProfile = ({username, userImage} : SettingsProfileProps) => {
 				<div className='flex items-center gap-[8px] 
 								text-slate-400 hover:text-slate-200 font-space text-[40px]
 								cursor-pointer
-								transition-all duration-300 ease-in-out'>
-					<p>{ username }</p>
-					<FiEdit2 size='24px'></FiEdit2>
+								transition-all duration-300 ease-in-out'
+								>
+					{editUsername ?
+					      <input
+								className="flex"
+								type="text"
+								placeholder={username}
+								value={newUsername}
+								onChange={(event)=>setNewUsername(event.target.value)}
+								name="content"
+							/>
+						:
+						<p onClick={() => setEditUsername(true)}> { username }</p>
+					}
+					<FiEdit2 size='24px' onClick={() => {
+						if (editUsername) {
+							editUsernameSocket(global, newUsername)
+						}
+						setEditUsername(!editUsername)}}
+					/>
 				</div>
 			</div>
 			<div className='mb-[64px]'></div>

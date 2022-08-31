@@ -18,7 +18,6 @@ type SettingsProps = {
 }
 
 const Settings = ({} : SettingsProps) => {
-
 	const global = useSelector((state: any) => state.global)
 
 	return (

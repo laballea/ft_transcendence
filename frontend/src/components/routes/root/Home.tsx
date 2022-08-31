@@ -12,9 +12,6 @@ import '../../../assets/fonts/fonts.css';
 //Redux
 import { useSelector } from 'react-redux';
 import ChatBar from '../../message/chatBar';
-import ChatRooms from '../../room/ChatRooms';
-import RoomBar from '../../room/roomBar';
-import Room from "../../room/index";
 import Game from '../../game/Game';
 import { status } from '../../../common/types';
 
@@ -30,6 +27,7 @@ export default function Home() {
 					<div className="relative h-[calc(100%-30px)] w-full flex justify-between bg-slate-700 ">
 						{(global.status === status.InGame || global.status === status.InQueue || global.status === status.Spectate) && <Game/>}
 					</div>
+					<ChatBar/>
 				</div>
 				<div className="relative flex-initial flex w-full bg-slate-800 sm:w-[400px] flex-col h-full">
 					<ContactList/>

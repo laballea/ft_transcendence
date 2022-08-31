@@ -68,3 +68,12 @@ export function mouseClickSocket(global:any,pos:{x:number, y:number}){
 		jwt: global.token
 	})
 }
+
+export function editUsernameSocket(global:any,newUsername:string){
+	console.log(newUsername, global.id)
+	socket.emit("EDIT_USERNAME", {
+		newUsername,
+		id:global.id,
+		jwt: global.token
+	})
+}

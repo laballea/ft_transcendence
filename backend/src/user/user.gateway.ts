@@ -337,7 +337,6 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		await this.roomRepository.save(room);
 
 		for (let idx in room.users){
-			console.log(room.users[idx].username)
 			let userSocket = this.userService.findConnectedUserByUsername(room.users[idx].username)
 			if (userSocket)
 				userSocket.socket.emit('UPDATE_DB', await this.userService.parseUserInfo(room.users[idx].id))
@@ -443,5 +442,19 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 			user.socket.emit("JOIN_SPECTATE", {gameId})
 		}
 		
+	}
+
+	@SubscribeMessage('EDIT_USERNAME')
+	async edtUsername(@MessageBody() data:{id:number, newUsername:string, token:string}) {
+		const userSocket:UserSocket = this.userService.findConnectedUserById(data.id);
+		let ret = await this.userService.editUsername(data.id, data.newUsername)
+		console.log(ret)
+		if (ret == 1) {
+			this.emitPopUp([userSocket], {error:false, message: `Username successfuly changed.`});
+			userSocket.socket.emit("UPDATE_DB", await this.userService.parseUserInfo(data.id))
+		}
+		else
+			this.emitPopUp([userSocket], {error:true, message: `Username already exist.`});
+
 	}
 }

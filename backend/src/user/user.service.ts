@@ -114,6 +114,19 @@ export class UserService {
 		return status.Disconnected
 	}
 
+	async editUsername(id:number, newUsername:string){
+		const userRepo: User = await this.userRepository.findOne({ where:{id:id}})
+		const isExist: User = await this.userRepository.findOne({ where:{username:newUsername}})
+		if (isExist) {
+			return -1;
+		} else {
+			userRepo.username = newUsername
+			await this.userRepository.save(userRepo)
+
+			return 1
+		}
+	}
+
 	/*
 	*/
 	async updateUserDB(users:User[]) {

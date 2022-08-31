@@ -12,27 +12,21 @@ const Message = ({ message, own }:MessageProps) => {
 
 	return (
 		<div>
-			{!own ?
-				<div style={{color:'white', padding:'5px', display:"flex",
-				flexDirection:"column",alignItems:"flex-start", wordWrap: 'break-word'}}>
-					<p >
-						{message.author} {date.getHours()}:{date.getMinutes()}
-					</p>
-					<p className="justify-right" style={{wordBreak: 'break-all'}}>
-						{message.content}
-					</p>
-				</div>
-				:
-				<div style={{color:'white', padding:'5px', display:"flex",
-				flexDirection:"column",alignItems:"flex-end"}}>
-					<p >
-						{date.getHours()}:{date.getMinutes()} {message.author}
-					</p>
-					<p className="justify-right" style={{wordBreak: 'break-all'}}>
-						{message.content}
-					</p>
-				</div>
-			}
+			<div style={{color:'white', padding:'5px', display:"flex",
+			flexDirection:"column",alignItems:(own ? "flex-end" : "flex-start"), wordWrap: 'break-word'}}>
+					{own ?
+						<p className="text-green-400 italic">
+							{"you"} {date.getHours()}:{date.getMinutes()}
+						</p>
+						:
+						<p className="text-slate-400 italic">
+							{message.author} {date.getHours()}:{date.getMinutes()}
+						</p>
+					}
+				<p className="justify-right" style={{wordBreak: 'break-all'}}>
+					{message.content}
+				</p>
+			</div>
 		</div>
 	)
 }
