@@ -22,7 +22,7 @@ const ProfileHistory = ({contact} : ProfileHistoryProps) => {
 
 	const gamesList = contact.gameStats.length > 0 ? contact.gameStats.map((games:any, index:number) =>
 		<div key={index} style={{display:'flex', flex:1, flexDirection:'row'}}>
-			<p>{games.winner == contact.id ? "WIN" : "LOOSE"}</p>
+			<p>{games.winner === contact.id ? "WIN" : "LOOSE"}</p>
 			<div style={{display:'flex', flexDirection:'row', margin:5}}>
 				<img src={getProfilImg(games.users.find((user:any) => user.id === games.winner).profilPic)} width="20" height="20" alt="userimage" className="rounded-full mr-[16px]"></img>
 				<p>{games.score[0] > games.score[1] ? games.score[0] : games.score[1]}</p>

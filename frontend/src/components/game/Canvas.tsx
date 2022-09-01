@@ -2,7 +2,7 @@ import React, { useRef, useEffect } from 'react'
 import { gamemode, GAME_STATUS } from '../../common/types'
 
 const Canvas = (props:any) => {
-	const {height, width, game, ratio, username, global} = props
+	const {height, width, game, ratio, username} = props
 	const canvasRef = useRef<any>()
 	const drawBall = (ctx:any) => {
 		ctx.fillStyle = '#000000'
@@ -58,7 +58,7 @@ const Canvas = (props:any) => {
 			drawBall(context)
 			drawPlayers(context)
 			drawStatus(context)
-			if (game.mode == gamemode.boost){
+			if (game.mode === gamemode.boost){
 				for (const user of game.users){
 					for (const click of user.clickpos) {
 						context.beginPath();

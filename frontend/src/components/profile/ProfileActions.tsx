@@ -7,8 +7,8 @@ import { useNavigate } from 'react-router-dom'
 type ProfileActionsProps = {
 }
 
+// eslint-disable-next-line
 const ProfileActions = ({} : ProfileActionsProps) => {
-	
 	const navigate = useNavigate();
 	const backtext : string = "<- back";
 

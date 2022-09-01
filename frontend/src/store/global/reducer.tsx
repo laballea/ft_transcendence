@@ -1,5 +1,4 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { convertCompilerOptionsFromJson } from 'typescript'
 import { user, status, gamemode } from '../../common/types'
 import getProfilImg from '../../components/commons/utils/getProfilImg'
 const InitialState: user = {
@@ -44,7 +43,8 @@ export const globalSlice = createSlice({
 			state.username = data.payload.username
 			state.status = data.payload.status
 			state.friendsRequest = data.payload.friendsRequest
-			state.pendingRequest = data.payload.pendingRequest
+			state.pendingRequest = getProfilImg(data.payload.pendingRequest)
+			state.userImage = data.payload.profilPic
 			state.friends = data.payload.friends
 			state.bloqued = data.payload.bloqued
 			state.conv = data.payload.conv
@@ -65,7 +65,7 @@ export const globalSlice = createSlice({
 			console.log("yo what happen")
 
 			var {id, username} = data.payload
-			if (id === undefined && username === undefined || (state.convID === id && id != undefined)){
+			if ((id === undefined && username === undefined) || (state.convID === id && id !== undefined)){
 				state.convID = undefined
 				state.clientChat = undefined
 			}

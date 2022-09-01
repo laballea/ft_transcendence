@@ -448,7 +448,6 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 	async edtUsername(@MessageBody() data:{id:number, newUsername:string, token:string}) {
 		const userSocket:UserSocket = this.userService.findConnectedUserById(data.id);
 		let ret = await this.userService.editUsername(data.id, data.newUsername)
-		console.log(ret)
 		if (ret == 1) {
 			this.emitPopUp([userSocket], {error:false, message: `Username successfuly changed.`});
 			userSocket.socket.emit("UPDATE_DB", await this.userService.parseUserInfo(data.id))

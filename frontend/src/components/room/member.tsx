@@ -1,6 +1,5 @@
 import React from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { user, status, Room } from '../../common/types'
+import { useSelector } from 'react-redux'
 import { socket } from '../../context/socket'
 
 interface IProps {

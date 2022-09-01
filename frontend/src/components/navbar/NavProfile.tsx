@@ -4,7 +4,7 @@ import IconButton from 	'../commons/buttons/IconButton'
 import MobileMenuButton from '../commons/buttons/MobileMenuButton'
 
 // Assets
-import {FiSettings, FiLogOut, FiMessageCircle, FiUser, FiHome} from 'react-icons/fi'
+import {FiSettings, FiLogOut, FiUser, FiHome} from 'react-icons/fi'
 import defaultUserImage from '../../assets/images/default-user.png'
 
 type NavProfileProps = {

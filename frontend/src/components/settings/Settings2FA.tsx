@@ -6,10 +6,11 @@ import {useState} from 'react'
 import {FiShield, FiShieldOff} from 'react-icons/fi'
 
 type Settings2FAProps = {
+
 }
 
+// eslint-disable-next-line
 const Settings2FA = ({} : Settings2FAProps) => {
-
 	const [twoFA,setTwoFA] = useState(false)
 
 	const handleTwoFA = (twoFA : boolean) => {

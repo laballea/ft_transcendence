@@ -15,8 +15,32 @@ const SettingsProfile = ({username, userImage} : SettingsProfileProps) => {
 	const global = useSelector((state: any) => state.global)
 	const backtext : string = "<- back";
 	const [editUsername, setEditUsername] = useState(false);
+	const [editProfilPic, setEditProfilPic] = useState(false);
+	const [file, setFile] = React.useState<any>();
 	const [newUsername, setNewUsername] = useState(username);
 
+	const onFileChange = (event:any) => { 
+		setFile(event.target.files[0])
+	}; 
+	const fileUpload = (e:any) => {
+		const formData = new FormData();
+		console.log(file.filename)
+		formData.append( 
+			"file", 
+			file,
+			file.filename
+		); 
+		fetch('http://localhost:5000/users/upload', {
+			headers: {
+				'Accept': 'application/json',
+				'Authorization': 'bearer ' + global.token,
+			},
+			method: 'POST',
+			body: formData
+		}).then((response) =>  {
+			return response.text();
+		 })
+	}
 	return (
 		<>
 			<div className='flex items-center justify-self-stretch'>
@@ -35,7 +59,15 @@ const SettingsProfile = ({username, userImage} : SettingsProfileProps) => {
 									opacity-0 hover:opacity-100
 									cursor-pointer
 									transition-all duration-300 ease-in-out'>
-						<FiEdit2 size='24px'></FiEdit2>
+						<FiEdit2 size='24px' onClick={() => {setEditProfilPic(!editProfilPic)}}/>
+						{editProfilPic && 
+							<div className='w-[200px] h-[200px] rounded-full'> 
+								<input type="file" onChange={onFileChange} /> 
+								<button onClick={fileUpload}> 
+									Upload! 
+								</button> 
+						 	</div> 
+						}
 					</div>
 					<div className='w-[200px] h-[200px] rounded-full'>
 						<img src={userImage} width="200" height="200" alt="userimage" className='rounded-full'></img>

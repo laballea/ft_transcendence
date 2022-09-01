@@ -28,7 +28,7 @@ const totalTimePlayed = (gameStats:any):number => {
 
 const victoryprct = (gameStats:any, userId:number):number => {
 	let totalWin = gameStats.reduce((accumulator:any, object:any) => {
-		if (object.winner == userId)
+		if (object.winner === userId)
 			return accumulator + 1
 		else
 			return accumulator
@@ -51,7 +51,7 @@ const ProfileStats = ({contact} : ProfileStatsProps) => {
 	return (
 		<div  className='w-full border-t-2 border-slate-700'>
 			<h2 className='font-pilowlava text-[64px] text-transparent backgroundTextOutline'>Stats</h2>
-			{ contact.gameStats.length == 0 ?
+			{ contact.gameStats.length === 0 ?
 				<p className="text-slat">{contact.username}: No Games played yet</p>
 				:
 				<div>

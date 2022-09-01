@@ -122,9 +122,15 @@ export class UserService {
 		} else {
 			userRepo.username = newUsername
 			await this.userRepository.save(userRepo)
-
 			return 1
 		}
+	}
+	async changePic(id:number, pathToPic:string){
+		const userRepo: User = await this.userRepository.findOne({ where:{id:id}})
+		const userSocket:UserSocket = this.findConnectedUserById(id);
+		userRepo.profilPic = pathToPic
+		await this.userRepository.save(userRepo)
+		userSocket.socket.emit("UPDATE_DB", await this.parseUserInfo(id))
 	}
 
 	/*

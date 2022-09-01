@@ -13,7 +13,7 @@ export interface MessageI {
 
 function Room() {
 	const global = useSelector((state: any) => state.global)
-	const room = global.roomID == -1 ? 
+	const room = global.roomID === -1 ? 
 				{
 					id:-1,
 					adminId:-1,
@@ -23,7 +23,7 @@ function Room() {
 					users:[{username:global.username}]
 				}
 				:
-				global.room.find((room:any) => room.id == global.roomID)
+				global.room.find((room:any) => room.id === global.roomID)
 	const [input, setInput] = useState({
 		member: "",
 	})

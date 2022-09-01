@@ -1,16 +1,14 @@
 // Components
 
 // Hooks
-import React, {useState, useEffect, useRef, useContext} from 'react'
+import React, {useState, useEffect, useRef} from 'react'
 import { useSelector } from 'react-redux'
 
 //
-import { SocketContext } from '../../context/socket';
 import Canvas from './Canvas';
 
 const Spectate = () => {
 	const global = useSelector((state: any) => state.global)
-	const socket = useContext(SocketContext);
 	const [game, setGame] = useState(null)
 	const [width, setWidth] = useState(100);
 	const [height, setHeight] = useState(100);

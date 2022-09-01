@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, } from "react";
 import { useSelector } from 'react-redux'
 import { socket } from "../../context/socket";
 
@@ -24,7 +24,7 @@ const ChatRooms = () => {
 
 	const pushRoom = ():void => {
 		console.log('push room')
-		if (input.password != input.confirmed)
+		if (input.password !== input.confirmed)
 			alert("password does not match !")
 		else {
 			socket.emit('newChatRoom', {

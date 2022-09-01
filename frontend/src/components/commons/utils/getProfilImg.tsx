@@ -1,5 +1,3 @@
-import React from 'react';
-
 import defaultUserImage from '../../../assets/images/default-user.png'
 
 

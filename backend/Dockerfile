@@ -15,6 +15,8 @@ COPY . .
 # Build project
 RUN npm run build
 
+ADD . /uploads/profilpic
+
 # Expost port
 EXPOSE 5000
 
