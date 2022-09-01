@@ -13,7 +13,6 @@ const InitialState: user = {
 	room:[],
 	status:"Disconnected",
 	token:undefined,
-	twoFactor:undefined,
 	gameID:undefined
 }
 
@@ -32,7 +31,6 @@ export const globalSlice = createSlice({
 			state.userImage = data.payload.user.profilIntraUrl
 			state.conv = data.payload.user.conv
 			state.room = data.payload.user.room
-			state.twoFactor = data.payload.user.isTwoFactorAuthenticationEnabled
 			state.gameID = data.payload.user.gameID
 		},
 		logout: (state: any) => {

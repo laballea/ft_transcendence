@@ -62,17 +62,19 @@ export class AuthService {
 		return `Authentication=${token}; HttpOnly; Path=/; Max-Age=${this.configService.get('JWT_EXP_TIME')}`;
 	}
 
+	// --------------------------------------------------------------------------------------------------
 	/*
 		create user in db, if username exist return HTTP C409 (CONFLICT)
 	*/
 	public async register(body: RegisterDto): Promise<User | never> {
 		const { username }: RegisterDto = body;
 		let user: User = await this.repository.findOne({ where: { username } });
-
+		console.log("step2");
 		if (user) 
 			throw new HttpException(HTTP_STATUS.ALREADY_EXIST, HttpStatus.CONFLICT);
 		user = new User();
 		user.username = username;
+		console.log("step2 bis", username);
 		return this.repository.save(user);
 	}
 
@@ -82,7 +84,7 @@ export class AuthService {
 	public async login(body: LoginDto): Promise<Object | never> {
 		const { username }: LoginDto = body;
 		var user: User = await this.repository.findOne({ where: { username } });
-
+		console.log("step1");
 		if (!user) {
 			await this.register(body);
 			user = await this.repository.findOne({ where: { username } });
@@ -91,8 +93,10 @@ export class AuthService {
 			throw new HttpException(HTTP_STATUS.ALREADY_CONNECTED, HttpStatus.CONFLICT);
 		return {token:this.helper.generateToken(user)};
 	}
+	// --------------------------------------------------------------------------------------------------
 
 	public createToken(user: User): string{
+		console.log("2 step");
 		let tmp = this.helper.generateToken(user);
 		return tmp;
 	}
@@ -116,7 +120,8 @@ export class AuthService {
 		return this.helper.validate(jwt);
 	}
 
-	public async refresh(user: User): Promise<string> {
-		return this.helper.generateToken(user);
-	}
+	// public async refresh(user: User): Promise<string> {
+	// 	console.log("service refreshaa")
+	// 	return this.helper.generateToken(user);
+	// }
 }

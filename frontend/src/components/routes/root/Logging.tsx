@@ -13,6 +13,7 @@ import PopUpWindow from '../../commons/popup/PopUpWindow';
 
 const Logging = () => {
 	const [username, setUsername] = useState("");
+	const [code2fa, setCode] = useState("");
 	const global = useSelector((state: any) => state.global)
 	const dispatch = useDispatch();
 	const [popup, setPopup] = useState({open:false, error:true, message:""});
@@ -20,6 +21,8 @@ const Logging = () => {
 	const url = new URL("http://localhost:5000/auth/login"); //url for intra auth
 	const [searchParams, setSearchParams] = useSearchParams();
 	const jwt = searchParams.get("jwt") == null ? null : searchParams.get("jwt"); // get jwt token on query
+	const id = searchParams.get("id") == null ? null : searchParams.get("id"); // get jwt token on query
+	var twofa = searchParams.get("2fa") == null ? null : searchParams.get("2fa");
 	document.title = "login";
 
 	React.useEffect(() => {
@@ -48,6 +51,7 @@ const Logging = () => {
 		fetch("http://localhost:5000/auth/login", requestOptions)
 		.then(async response=>{
 			const resp:any = await response.json()
+			console.log("login", resp)
 			if (response.ok){
 				navigate(`/login?jwt=${resp.token}`)
 			} else {
@@ -55,7 +59,52 @@ const Logging = () => {
 			}
 		})
 	}
-	if (jwt && !global.token && !global.twoFactor){ // if token exist in redux user is already logged
+
+	const handleCode = async (event: any) => {
+		event.preventDefault();// Prevent page reload
+		const requestOptions = {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json;charset=utf-8',
+				'Access-Control-Allow-Origin': '*',
+				//'Authorization': 'bearer ' + jwt,
+			},
+			body: JSON.stringify({
+				code: code2fa,
+				id:id
+			})
+		}
+		console.log("intra", jwt)
+		fetch("http://localhost:5000/2fa/authenticate", requestOptions)
+		.then(async response=>{
+			const resp:any = await response.json()
+			if (response.ok){
+				navigate(`/login?jwt=${resp.token}`)
+			} else {
+				setPopup({open:true, error:true, message:resp.message})
+			}
+		})
+	}
+
+	if (id && twofa) {
+		return (
+			<div>
+				<form onSubmit={handleCode}>
+					<input className="h-8 w-[260px] p-4 mb-2 font-space bg-transparent border-2 border-slate-400 hover:border-slate-200 text-md text-slate-400 placeholder:text-slate-600 rounded transition-all duration-300 ease-in-out"
+						type="text"
+						placeholder="code 2fa"
+						value={code2fa}
+						onChange={e => setCode(e.target.value)} required
+					/>
+					<button className="h-8 font-space text-slate-400 bg-slate-600" type="submit">
+						Send
+					</button>
+				</form>
+			</div>
+		)
+	}
+
+	if (jwt && !global.token){ // if token exist in redux user is already logged
 		const requestOptions = {
 			method: 'GET',
 			headers: {
@@ -66,7 +115,6 @@ const Logging = () => {
 		}
 		fetch("http://localhost:5000/auth/user", requestOptions)
 		.then(async response=>{
-			console.log("bob1", jwt)
 			let resp = await response.json();
 			if (response.ok){
 				navigate('/app')
@@ -80,28 +128,8 @@ const Logging = () => {
 				setPopup({open:true, error:true, message:resp.message})
 			}
 		})
-	}/* else if (jwt && !global.token && global.twoFactor) {
-		console.log("ENABLE 2fa")
-		const requestOptions = {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json;charset=utf-8',
-				'Access-Control-Allow-Origin': '*',
-			},
-			body: JSON.stringify({
-				username: username,
-			})
-		}
-		fetch("http://localhost:5000/2fa/authenticate", requestOptions)
-		.then(async response=>{
-			const resp:any = await response.json()
-			if (response.ok){
-				navigate(`/login?jwt=${resp.token}`)
-			} else {
-				setPopup({open:true, error:true, message:resp.message})
-			}
-		})
-	}*/
+	}
+
 	return (
 		<>
 			<BackgroundLogging/>
@@ -109,7 +137,12 @@ const Logging = () => {
 				<form onSubmit={handleSubmit}>			
 					<div className="flex flex-col mb-[40px]">
 						<label className="font-space text-slate-400 text-xs" >test-login:</label>
-						<input className="h-8 w-[260px] p-4 mb-2 font-space bg-transparent border-2 border-slate-400 hover:border-slate-200 text-md text-slate-400 placeholder:text-slate-600 rounded transition-all duration-300 ease-in-out" type="text" placeholder="username" value={username} onChange={e => setUsername(e.target.value)} required/>
+						<input className="h-8 w-[260px] p-4 mb-2 font-space bg-transparent border-2 border-slate-400 hover:border-slate-200 text-md text-slate-400 placeholder:text-slate-600 rounded transition-all duration-300 ease-in-out"
+							type="text"
+							placeholder="username"
+							value={username}
+							onChange={e => setUsername(e.target.value)} required
+						/>
 						<button className="h-8 font-space text-slate-400 bg-slate-600" type="submit">
 							submit
 						</button>
