@@ -31,6 +31,9 @@ export class User {
 	@Column({ unique: true, nullable: true })
 	public email: string;
 
+	@Column()
+	profilIntraUrl:string;
+
 	@Column({nullable:true})
 	profilPic:string;
 
