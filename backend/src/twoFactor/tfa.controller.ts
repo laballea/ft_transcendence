@@ -5,7 +5,7 @@ import {
 	Req,
 	Res,
 	Body,
-	UnauthorizedException, HttpCode, Redirect,
+	UnauthorizedException, HttpStatus, Redirect,
 } from '@nestjs/common';
 import { TwoFactorAuthenticationService } from './tfa.service';
 import { JwtAuthGuard } from '../auth/auth.guard';
@@ -44,6 +44,7 @@ export class TwoFactorAuthenticationController {
 				throw new UnauthorizedException('Wrong authentication code');
 			}
 			await this.userService.turnOnTwoFactorAuthentication(request.user.id);
+			return HttpStatus.OK
 		} catch (error) {
 			console.error(error)
 		}
@@ -53,6 +54,7 @@ export class TwoFactorAuthenticationController {
 	@UseGuards(JwtAuthGuard)
 	async turnOffTwoFactorAuthentication(@Req() request: RequestWithUser) {
 		await this.userService.turnOffTwoFactorAuthentication(request.user.id);
+		return HttpStatus.OK
 	}
 
 	// route that allows the user to send the 2fa code.

@@ -46,6 +46,7 @@ const SocketConnection = (props:any) => {
 			socket.on("connect", () => {
 				socket.emit("CONNECT", {socketID: socket.id, id:global.id, username:global.username});
 				socket.on("UPDATE_DB", (data) => {
+					console.log("qekauechose")
 					dispatch(updateDB(data))
 				});
 				socket.on("PopUp", (data) => {

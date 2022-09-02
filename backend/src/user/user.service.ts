@@ -30,16 +30,20 @@ export class UserService {
 
 	// TWO FACTOR ENABLE
 	async turnOnTwoFactorAuthentication(userId: number) {
-		return this.userRepository.update(userId, {
+		const user: UserSocket = this.findConnectedUserById(userId)
+		await this.userRepository.update(userId, {
 			isTwoFactorAuthenticationEnabled: true
 		});
+		//user.socket.emit('UPDATE_DB', await this.parseUserInfo(userId))
 	}
 
 	// TWO FACTOR DISABLE
 	async turnOffTwoFactorAuthentication(userId: number) {
-		return this.userRepository.update(userId, {
+		const user: UserSocket = this.findConnectedUserById(userId)
+		await this.userRepository.update(userId, {
 			isTwoFactorAuthenticationEnabled: false
 		});
+		//user.socket.emit('UPDATE_DB', await this.parseUserInfo(userId))
 	}
 
 	/*
@@ -245,6 +249,7 @@ export class UserService {
 			status: userInfo ? userInfo.status : status.Disconnected,
 			profilPic: userRepo.profilPic,
 			gameID: userInfo ? userInfo.gameID : undefined,
+			twoFactor: userRepo.isTwoFactorAuthenticationEnabled,
 		};
 		UserSafeInfo.friends = userRepo.friends.map(id => ({ id: id, username: usersRepo.find(el => el.id == id).username}));
 		UserSafeInfo.bloqued = userRepo.bloqued.map(id => ({ id: id, username: usersRepo.find(el => el.id == id).username}));

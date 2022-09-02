@@ -17,6 +17,7 @@ const InitialState: user = {
 	challenged:undefined,
 	contactList:[],
 	gamemode:gamemode.normal,
+	twoFactor:false,
 }
 
 export const globalSlice = createSlice({
@@ -35,6 +36,7 @@ export const globalSlice = createSlice({
 			state.conv = data.payload.user.conv
 			state.room = data.payload.user.room
 			state.gameID = data.payload.user.gameID
+			state.twoFactor = data.payload.twoFactor
 		},
 		logout: (state: any) => {
 			Object.assign(state, InitialState)
@@ -49,6 +51,8 @@ export const globalSlice = createSlice({
 			state.bloqued = data.payload.bloqued
 			state.conv = data.payload.conv
 			state.gameID = data.payload.gameID
+			state.twoFactor = data.payload.twoFactor
+			console.log("2fa:", state.twoFactor, data.payload.twoFactor)
 			if (state.convID === -1){
 				state.convID = state.conv.find((conv:any) => {
 					return conv.users.length === 2 && conv.users.findIndex((user:any) => user.username === state.clientChat) >= 0

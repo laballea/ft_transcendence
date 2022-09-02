@@ -85,9 +85,11 @@ export interface UserSafeInfo {
 
 	room?:safeRoom[];
 	
-	profilPic:string,
+	profilPic:string;
 
-	gameID:string
+	gameID:string;
+
+	twoFactor:boolean;
 }
 
 export interface safeConv {
