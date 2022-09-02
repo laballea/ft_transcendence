@@ -46,7 +46,6 @@ const SocketConnection = (props:any) => {
 			socket.on("connect", () => {
 				socket.emit("CONNECT", {socketID: socket.id, id:global.id, username:global.username});
 				socket.on("UPDATE_DB", (data) => {
-					console.log("HERE", data)
 					dispatch(updateDB(data))
 				});
 				socket.on("PopUp", (data) => {
@@ -62,11 +61,9 @@ const SocketConnection = (props:any) => {
 					dispatch(gameEnd())
 				});
 				socket.on("JOIN_SPECTATE", (data) => {
-					console.log("HERE")
 					dispatch(spectate(data.gameId))
 				});
 				socket.on("CHALLENGED", (data) => {
-					console.log("HERE", data)
 					dispatch(challenged(data))
 				});
 			});
@@ -93,8 +90,6 @@ const SocketConnection = (props:any) => {
 		status : status.Connected,
 	};
 	document.title = "FT_TRANS "+ global.username;
-
-	console.log("hereee")
 	return (
 		<>
 			<Routes>

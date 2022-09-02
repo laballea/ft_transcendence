@@ -3,6 +3,7 @@ import { FiEdit2 } from 'react-icons/fi';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom'
 import { editUsernameSocket } from '../../context/socket';
+import SettingsProfilPicChoice from './SettingsProfilPicChoice';
 
 // Assets
 type SettingsProfileProps = {
@@ -24,7 +25,6 @@ const SettingsProfile = ({username, userImage} : SettingsProfileProps) => {
 	}; 
 	const fileUpload = (e:any) => {
 		const formData = new FormData();
-		console.log(file.filename)
 		formData.append( 
 			"file", 
 			file,
@@ -53,25 +53,18 @@ const SettingsProfile = ({username, userImage} : SettingsProfileProps) => {
 			</div>
 			<h2 className='font-pilowlava text-[64px] text-transparent backgroundTextOutline'>Profile</h2>
 			<div className='flex items-center gap-[40px]'>
-				<div className=''>
+				<div className='flex flex-row'>
 					<div className='absolute z-10 w-[200px] h-[200px] rounded-full flex items-center justify-center
 									text-slate-200 bg-slate-800/50
 									opacity-0 hover:opacity-100
 									cursor-pointer
 									transition-all duration-300 ease-in-out'>
 						<FiEdit2 size='24px' onClick={() => {setEditProfilPic(!editProfilPic)}}/>
-						{editProfilPic && 
-							<div className='w-[200px] h-[200px] rounded-full'> 
-								<input type="file" onChange={onFileChange} /> 
-								<button onClick={fileUpload}> 
-									Upload! 
-								</button> 
-						 	</div> 
-						}
 					</div>
 					<div className='w-[200px] h-[200px] rounded-full'>
 						<img src={userImage} width="200" height="200" alt="userimage" className='rounded-full'></img>
 					</div>
+					{editProfilPic && <SettingsProfilPicChoice/>}
 				</div>
 				<div className='flex items-center gap-[8px] 
 								text-slate-400 hover:text-slate-200 font-space text-[40px]

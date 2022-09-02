@@ -23,7 +23,6 @@ const ChatRooms = () => {
 	}
 
 	const pushRoom = ():void => {
-		console.log('push room')
 		if (input.password !== input.confirmed)
 			alert("password does not match !")
 		else {
@@ -43,7 +42,6 @@ const ChatRooms = () => {
 	}
 
 	const joinRoom = ():void => {
-		console.log('join room')
 		socket.emit('joinRoom', {
 			joinRoom: input.joinRoom,
 			passRoom: input.passRoom,

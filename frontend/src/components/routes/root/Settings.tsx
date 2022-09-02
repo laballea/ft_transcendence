@@ -21,7 +21,6 @@ type SettingsProps = {
 // eslint-disable-next-line
 const Settings = ({} : SettingsProps) => {
 	const global = useSelector((state: any) => state.global)
-	console.log(global.userImage)
 	return (
 		<div className="w-full h-screen relative bg-slate-900">
 			<NavBar/>

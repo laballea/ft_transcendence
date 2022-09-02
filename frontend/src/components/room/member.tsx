@@ -10,7 +10,6 @@ const Member: React.FC<IProps> = ({ room }) => {
 	const global = useSelector((state: any) => state.global)
 
 	const deleteMember = (userId: number) => {
-		console.log('delete member', userId)
 		socket.emit('deleteMember', {
 			roomId: room.id,
 			userId: userId,

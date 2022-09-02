@@ -18,7 +18,6 @@ import Message from '../../message/index';
 
 const Chat = () => {
 	const global = useSelector((state: any) => state.global)
-	console.log("here")
 	return (
 		<div className="w-full h-screen relative bg-slate-900">
 		<NavBar/>

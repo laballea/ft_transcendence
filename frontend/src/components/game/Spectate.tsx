@@ -13,7 +13,6 @@ const Spectate = () => {
 	const [width, setWidth] = useState(100);
 	const [height, setHeight] = useState(100);
 	var eventSource:EventSource;
-	console.log(global.gameID)
 
 	useEffect(() => {
 		// eslint-disable-next-line

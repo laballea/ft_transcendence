@@ -62,8 +62,6 @@ export const globalSlice = createSlice({
 			}
 		},
 		setCurrentConv: (state:any, data:any) => {
-			console.log("yo what happen")
-
 			var {id, username} = data.payload
 			if ((id === undefined && username === undefined) || (state.convID === id && id !== undefined)){
 				state.convID = undefined
@@ -108,7 +106,6 @@ export const globalSlice = createSlice({
 		gameFound: (state:any, data:any) => {
 			state.gameID = data.payload.gameID
 			state.gamemode = data.payload.mode
-			console.log("modee", data.payload.mode)
 			state.status = status.InGame
 		},
 		gameEnd: (state:any) => {

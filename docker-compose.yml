@@ -17,6 +17,8 @@ services:
             context: ./backend
         depends_on: 
             - postgres
+        env_file:
+          - .env
         environment:
             SECRET_KEY: "randomString"
             DATABASE_URL: postgres://admin:admin@postgres:5432/db

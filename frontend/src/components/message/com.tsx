@@ -22,7 +22,6 @@ const Com: React.FC<IProps> = ({ conv }) => {
 	}
 
 	const sendMessage = (): void => {
-		console.log("Send msg")
 		if (conv.adminId !== undefined) {
 			socket.emit('roomMsg', {
 				content: input.content,

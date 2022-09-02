@@ -42,7 +42,6 @@ export function addFriend(global:any, username:string){
 }
 
 export function challenged(action:string,global:any, id:number){
-	console.log(global.gamemode)
 	socket.emit("CHALLENGED", {
 		action: action,
 		mode:global.gamemode,
@@ -70,9 +69,16 @@ export function mouseClickSocket(global:any,pos:{x:number, y:number}){
 }
 
 export function editUsernameSocket(global:any,newUsername:string){
-	console.log(newUsername, global.id)
 	socket.emit("EDIT_USERNAME", {
 		newUsername,
+		id:global.id,
+		jwt: global.token
+	})
+}
+
+export function editProfilPicSocket(global:any,url:string){
+	socket.emit("EDIT_PROFILPIC", {
+		url,
 		id:global.id,
 		jwt: global.token
 	})

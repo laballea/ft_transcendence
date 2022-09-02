@@ -1,4 +1,4 @@
-import { Controller, Get, Sse, Query, Post, UseInterceptors, UploadedFile, HttpException, HttpStatus, Req, UseGuards, Param, Res } from '@nestjs/common';
+import { Controller, Get, StreamableFile, Sse, Query, Post, UseInterceptors, UploadedFile, HttpException, HttpStatus, Req, UseGuards, Param, Res } from '@nestjs/common';
 import { interval, Observable, mergeMap } from 'rxjs';
 import { UserI } from './models/user.interface';
 import { UserService } from './user.service';
@@ -6,8 +6,10 @@ import { UserGateway } from './user.gateway';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage, Express } from 'multer';
 import { JwtAuthGuard } from '../auth/auth.guard';
-
+import { createReadStream, readdirSync} from 'fs';
+import { join } from 'path';
 import { EventsService } from './events.service';
+
 @Controller('users')
 export class UserController {
 	constructor(
@@ -55,15 +57,11 @@ export class UserController {
 		limits: {
 			fileSize: 10000,
 		},
-		// Check the mimetypes to allow for upload
 		fileFilter: function(req: any, file: any, cb: any) {
-			if (file.mimetype.match(/\/(jpg|jpeg|png|gif)$/)) {
-				// Allow storage of file
+			if (file.mimetype.match(/\/(jpg|jpeg|png|gif)$/))
 				cb(null, true);
-			} else {
-				// Reject file
+			else
 				cb(null, false);
-			}
 		},
 		storage: diskStorage({
 			destination: './uploads/profilpic',
@@ -85,5 +83,15 @@ export class UserController {
 	seeUploadedFile(@Param('imgpath') image, @Res() res){
 		res.contentType('image/png');
 		return res.sendFile(image, { root: './uploads/profilpic' });
+	}
+
+	@Get('image/')
+	getFile() {
+		let res = []
+		let filenames = readdirSync(process.cwd() + '/uploads/profilpic');
+		filenames.forEach((file) => {
+			res.push("http://localhost:5000/users/image/" + file)
+		});
+		return res
 	}
 }
