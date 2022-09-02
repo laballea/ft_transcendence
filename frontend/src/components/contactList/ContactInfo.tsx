@@ -19,16 +19,18 @@ const ContactInfo = ({contact, userImage, challenge} : ContactInfoProps) => {
 	let navigate = useNavigate();
 
 	return (
-		<>
+		<div	className='cursor-pointer text-slate-400 hover:text-slate-300
+							transition-all duration-300 ease-in-out' 
+				onClick={()=>{
+				navigate('/app/profile/' + contact.username, { state: {id:contact.id} })
+		}}>
 			{/* On click go to profile */}
 				<div className='flex items-center w-full h-full'>
 				<>
 					{
 						contact.status === status.Disconnected ?
 							<div className="border-2 border-transparent rounded-full ml-[8px]">
-								<img src={userImage} width="40" height="40" alt="userimage" className='rounded-full' onClick={()=>{
-									navigate('/app/profile/' + contact.username, { state: {id:contact.id} })
-								}}>
+								<img src={userImage} width="40" height="40" alt="userimage" className='rounded-full' >
 								</img>
 							</div>
 						:
@@ -54,11 +56,11 @@ const ContactInfo = ({contact, userImage, challenge} : ContactInfoProps) => {
 								<p className='absolute mt-[-8px] text-green-500 font-space text-[10px]'>{contact.status}</p>
 								{	// Display depending on challenge status
 									challenge ? 
-									<p className='font-space text-slate-400 text-[20px] animate-vibrate'>
+									<p className='font-space text-[20px] animate-vibrate'>
 										{contact.username}
 									</p>
 									:
-									<p className='font-space text-slate-400 text-[20px]'>
+									<p className='font-space text-[20px]'>
 										{contact.username}
 									</p>
 								}
@@ -67,20 +69,20 @@ const ContactInfo = ({contact, userImage, challenge} : ContactInfoProps) => {
 						contact.status === status.InGame || contact.status === status.Spectate || contact.status === status.InQueue ?
 							<div className="ml-[16px]">
 								<p className='absolute mt-[-8px] text-yellow-500 font-space text-[10px]'>{contact.status}</p>
-								<p className='font-space text-slate-400 text-[20px]'>
+								<p className='font-space text-[20px]'>
 									{contact.username}
 								</p>
 							</div>
 						:
 						<div className="ml-[16px]">
-							<p className='font-space text-slate-400/50 text-[20px]'>
+							<p className='font-space text-[20px]'>
 								{contact.username}
 							</p>
 						</div>
 						}
 				</>
 				</div>
-		</>
+		</div>
 	)
 }
 

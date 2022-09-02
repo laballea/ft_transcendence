@@ -11,8 +11,7 @@ const ChooseModeButton = ({cta, onClick, disable, check } : ChooseModeButtonProp
 	return (
 		<button	
 				className= {`bg-transparent ${!check ? "text-slate-400 hover:text-slate-200" : "text-green-400 hover:text-green-200"}
-							h-full w-[80px] sm:w-[100px] rounded
-							font-space text-[16px]
+							font-space text-[10px]
 							transition-all duration-300 ease-in-out
 							flex justify-center items-center `}
 				disabled={disable}

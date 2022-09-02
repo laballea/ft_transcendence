@@ -14,6 +14,7 @@ export class AuthController {
 	@Inject(UserService)
 	private readonly userService: UserService;
 
+	// -----------------------------------------------------------------------
 	/*
 		use for test login
 		receive username, create user if not in db, and return JWT token
@@ -23,12 +24,14 @@ export class AuthController {
 		const resp = await this.service.login(body);
 		return resp;
 	}
+	// -----------------------------------------------------------------------
 
-	@Post('refresh')
-	@UseGuards(JwtAuthGuard)
-	private refresh(@Req() { user }: Request): Promise<string | never> {
-		return this.service.refresh(<User>user);
-	}
+	// @Post('refresh')
+	// @UseGuards(JwtAuthGuard)
+	// private refresh(@Req() { user }: Request): Promise<string | never> {
+	// 	console.log("refreshaaaa")
+	// 	return this.service.refresh(<User>user);
+	// }
 
 	/*
 		intra login strategy
@@ -40,8 +43,13 @@ export class AuthController {
 	@Get('/login')
 	@UseGuards(IntraAuthGuard)
 	loginIntra(@Res() res, @Req() req): any {
-		const url = new URL("http://localhost:3000/login");
-		url.searchParams.append('jwt', this.service.createToken(req.user));
+		var url = new URL("http://localhost:3000/login");
+		if (req.user.isTwoFactorAuthenticationEnabled){
+			url.searchParams.append('2fa', "true");
+			url.searchParams.append('id',(req.user.id).toString());
+		}
+		else
+			url.searchParams.append('jwt', this.service.createToken(req.user));
 		res.redirect(url);
 	}
 

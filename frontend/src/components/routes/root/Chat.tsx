@@ -14,7 +14,7 @@ import ChatBar from '../../message/chatBar';
 import ChatRooms from '../../room/ChatRooms';
 import RoomBar from '../../room/roomBar';
 import Room from "../../room/index";
-import Message from '../../message/index';
+import Message from '../../message/FloatingMessage';
 
 const Chat = () => {
 	const global = useSelector((state: any) => state.global)

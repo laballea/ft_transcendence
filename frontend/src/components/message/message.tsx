@@ -1,5 +1,5 @@
 import React from "react";
-import { MessageI } from './index';
+import { MessageI } from './FloatingMessage';
 
 
 type MessageProps = {

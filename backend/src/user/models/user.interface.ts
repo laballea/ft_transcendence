@@ -4,9 +4,17 @@ import { Conversation, GameData, Message, Room } from "./user.entity";
 export interface UserI {
 	id:number;
 
-	intraID:number;
+	twoFactorAuthenticationSecret?: string;
+
+	isTwoFactorAuthenticationEnabled: boolean;
 
 	username:string;
+
+	intraID:number;
+
+	email:string;
+
+	profilIntraUrl:string;
 	
 	profilPic:string;
 
@@ -21,7 +29,7 @@ export interface UserI {
 	gameData: GameData[];
 
 	friendsRequest:number[];
-	
+
 	pendingRequest:number[];
 	nullChecks():Promise<void>;
 }

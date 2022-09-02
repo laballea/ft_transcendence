@@ -21,6 +21,27 @@ export class UserService {
 
 	public connectedUser: UserSocket[] = [];
 
+	// TWO FACTOR
+	async setTwoFactorAuthenticationSecret(secret: string, userId: number) {
+		return this.userRepository.update(userId, {
+			twoFactorAuthenticationSecret: secret
+		});
+	}
+
+	// TWO FACTOR ENABLE
+	async turnOnTwoFactorAuthentication(userId: number) {
+		return this.userRepository.update(userId, {
+			isTwoFactorAuthenticationEnabled: true
+		});
+	}
+
+	// TWO FACTOR DISABLE
+	async turnOffTwoFactorAuthentication(userId: number) {
+		return this.userRepository.update(userId, {
+			isTwoFactorAuthenticationEnabled: false
+		});
+	}
+
 	/*
 		return list of user store in db
 	*/
@@ -39,11 +60,15 @@ export class UserService {
 		return res
 	}
 
+	getById(id: number):Promise<UserI | undefined> {
+		return this.userRepository.findOne({ where:{id: id} });
+	}
+
 	/*
 		find user by username
 	*/
 	findOne(username: string):Promise<UserI | undefined> {
-		return this.userRepository.findOne({ username });
+		return this.userRepository.findOne({ where:{username: username} });
 	}
 	/*
 		find user by username

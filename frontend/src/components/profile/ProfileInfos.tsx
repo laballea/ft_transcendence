@@ -94,7 +94,7 @@ const ProfileInfos = ({contact, userImage} : ProfileInfosProps) => {
 	return (
 		<div className='flex items-center mb-[64px]'>
 			<img src={userImage} width="200" height="200" alt="userimage" className="rounded-full mr-[16px]"></img>
-			<div >
+			<div className='relative'>
 				<div className='absolute mt-[-8px] font-space'>
 					{statusTag}
 				</div>

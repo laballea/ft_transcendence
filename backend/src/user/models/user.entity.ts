@@ -16,11 +16,23 @@ export class User {
 	@PrimaryGeneratedColumn()
 	id:number;
 
+	@Column({ nullable: true })
+	public twoFactorAuthenticationSecret?: string;
+
+	@Column({ default: false })
+	public isTwoFactorAuthenticationEnabled: boolean;
+
 	@Column()
 	username:string;
 
 	@Column("int", {nullable:true})
 	intraID:number;
+
+	@Column({ unique: true, nullable: true })
+	public email: string;
+
+	@Column({nullable:true})
+	profilIntraUrl:string;
 
 	@Column({nullable:true})
 	profilPic:string;
