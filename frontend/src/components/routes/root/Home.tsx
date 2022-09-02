@@ -51,6 +51,18 @@ export default function Home() {
 		})
 	}
 
+	const unset2fa = () => {
+		const requestOptions = {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json;charset=utf-8',
+				'Access-Control-Allow-Origin': '*',
+				'Authorization': 'bearer ' + global.token,
+			},
+		}
+		fetch("http://localhost:5000/2fa/turn-off", requestOptions)
+	}
+
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
 		setInput({
 			...image,
@@ -95,7 +107,14 @@ export default function Home() {
 								onClick={set2fa}
 								style={{color:'white'}}
 							>
-								Turn 2fa
+								Turn On 2fa
+							</button>
+							<button
+								className="add-chat"
+								onClick={unset2fa}
+								style={{color:'white'}}
+							>
+								Turn Off 2fa
 							</button>
 							{image.src ? <img src={image.src} style={{height:'250px', width:'250px'}} alt="" /> : null}
 						</div>

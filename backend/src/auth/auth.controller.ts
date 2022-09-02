@@ -6,7 +6,6 @@ import { AuthService } from './auth.service';
 import { Request } from 'express';
 import { UserService } from 'src/user/user.service';
 import { HTTP_STATUS, status } from 'src/common/types';
-import JwtTwoFactorGuard from '../twoFactor/jwt-two-factor.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -45,8 +44,6 @@ export class AuthController {
 	@UseGuards(IntraAuthGuard)
 	loginIntra(@Res() res, @Req() req): any {
 		var url = new URL("http://localhost:3000/login");
-		console.log("1 step");
-		console.log("req.user:", req.user.isTwoFactorAuthenticationEnabled)
 		if (req.user.isTwoFactorAuthenticationEnabled){
 			url.searchParams.append('2fa', "true");
 			url.searchParams.append('id',(req.user.id).toString());
@@ -62,7 +59,6 @@ export class AuthController {
 	@Get('/user')
 	@UseGuards(JwtAuthGuard)
 	async getUser(@Res() res, @Req() req): Promise<any> {
-		console.log("3 step")
 		if (this.userService.getUserStatus(req.user.id) != status.Disconnected)
 			throw new HttpException(HTTP_STATUS.ALREADY_CONNECTED, HttpStatus.CONFLICT);
 		res.status(HttpStatus.OK).send(await this.userService.parseUserInfo(req.user.id));

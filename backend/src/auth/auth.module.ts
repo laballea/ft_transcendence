@@ -5,7 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from '../user/models/user.entity';
 import { AuthController } from './auth.controller';
 import { AuthHelper } from './auth.helper';
-import { AuthService, JwtTwoFactorStrategy } from './auth.service';
+import { AuthService } from './auth.service';
 import { JwtStrategy } from './auth.strategy';
 import { ConfigService } from '@nestjs/config';
 import { UserService } from 'src/user/user.service';
@@ -37,7 +37,6 @@ import { TwoFactorAuthenticationService } from '../twoFactor/tfa.service';
 		AuthHelper,
 		JwtStrategy,
 		IntraStrategy,
-		JwtTwoFactorStrategy,
 		SessionSerializer],
 })
 export class AuthModule {}

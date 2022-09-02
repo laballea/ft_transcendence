@@ -2,7 +2,7 @@ import { Injectable, Inject } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { GAMES_SOCKET, status } from '../common/types';
 import { Repository, getConnection } from 'typeorm';
-import { ConversationI, UserI, UserSafeInfo, UserSocket, MessageI, safeConv, safeRoom } from './models/user.interface';
+import { UserI, UserSafeInfo, UserSocket, MessageI, safeConv, safeRoom } from './models/user.interface';
 import { User, Message, Conversation, GameData } from './models/user.entity';
 
 @Injectable()

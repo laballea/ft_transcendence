@@ -1,25 +1,19 @@
 import {
-	ClassSerializerInterceptor,
 	Controller,
-	Get,
 	Post,
-	UseInterceptors,
 	UseGuards,
 	Req,
-	HttpStatus,
 	Res,
 	Body,
 	UnauthorizedException, HttpCode, Redirect,
 } from '@nestjs/common';
 import { TwoFactorAuthenticationService } from './tfa.service';
-import {IntraAuthGuard, JwtAuthGuard} from '../auth/auth.guard';
+import { JwtAuthGuard } from '../auth/auth.guard';
 import RequestWithUser from '../auth/requestWithUser.interface';
 import { TwoFactorAuthenticationCodeDto } from '../auth/auth.dto'
 import { UserService } from '../user/user.service';
 import { AuthService } from '../auth/auth.service';
 import { Response } from 'express';
-import { Code } from 'typeorm';
-
 
 @Controller('2fa')
 export class TwoFactorAuthenticationController {
@@ -33,9 +27,11 @@ export class TwoFactorAuthenticationController {
 	@Post('generate')
 	@UseGuards(JwtAuthGuard)
 	async register(@Res() response: Response, @Req() request: RequestWithUser) {
-		const { otpauthUrl } = await this.twoFactorAuthenticationService.generateTwoFactorAuthenticationSecret(request.user);
-		console.log("optauthurl", otpauthUrl)
-		return this.twoFactorAuthenticationService.pipeQrCodeStream(response, otpauthUrl);
+		if (!request.user.isTwoFactorAuthenticationEnabled) {
+			const { otpauthUrl } = await this.twoFactorAuthenticationService.generateTwoFactorAuthenticationSecret(request.user);
+			console.log("optauthurl", otpauthUrl)
+			return this.twoFactorAuthenticationService.pipeQrCodeStream(response, otpauthUrl);
+		}
 	}
 
 	// if the code send by user is valid: turn on 2fa
@@ -43,8 +39,6 @@ export class TwoFactorAuthenticationController {
 	@UseGuards(JwtAuthGuard)
 	async turnOnTwoFactorAuthentication(@Req() request: RequestWithUser, @Body() { code } : TwoFactorAuthenticationCodeDto) {
 		try {
-			console.log("CODE", code)
-			console.log("REQUEST", request.user)
 			const isCodeValid = this.twoFactorAuthenticationService.isTwoFactorAuthenticationCodeValid(code, request.user);
 			if (!isCodeValid) {
 				throw new UnauthorizedException('Wrong authentication code');
@@ -55,19 +49,11 @@ export class TwoFactorAuthenticationController {
 		}
 	}
 
-	// @Post('turn-off')Redirect(@Res() res)
-	// 		console.log("CODE", code)
-	// 		console.log("REQUEST", request.user)
-	// 		const isCodeValid = this.twoFactorAuthenticationService.isTwoFactorAuthenticationCodeValid(code, request.user);
-	// 		if (!isCodeValid) {
-	// 			throw new UnauthorizedException('Wrong authentication code');
-	// 		}
-	// 		await this.userService.turnOffTwoFactorAuthentication(request.user.id);
-	// 	} catch (error) {
-	// 		console.error(error)
-	// 	}
-	// }
-
+	@Post('turn-off')
+	@UseGuards(JwtAuthGuard)
+	async turnOffTwoFactorAuthentication(@Req() request: RequestWithUser) {
+		await this.userService.turnOffTwoFactorAuthentication(request.user.id);
+	}
 
 	// route that allows the user to send the 2fa code.
 	@Post('authenticate')
