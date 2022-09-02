@@ -2,7 +2,7 @@ import { Injectable, Inject } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { GAMES_SOCKET, status } from '../common/types';
 import { Repository, getConnection } from 'typeorm';
-import { ConversationI, UserI, UserSafeInfo, UserSocket, MessageI, safeConv, safeRoom } from './models/user.interface';
+import { UserI, UserSafeInfo, UserSocket, MessageI, safeConv, safeRoom } from './models/user.interface';
 import { User, Message, Conversation, GameData } from './models/user.entity';
 
 @Injectable()
@@ -20,6 +20,27 @@ export class UserService {
 	){}
 
 	public connectedUser: UserSocket[] = [];
+
+	// TWO FACTOR
+	async setTwoFactorAuthenticationSecret(secret: string, userId: number) {
+		return this.userRepository.update(userId, {
+			twoFactorAuthenticationSecret: secret
+		});
+	}
+
+	// TWO FACTOR ENABLE
+	async turnOnTwoFactorAuthentication(userId: number) {
+		return this.userRepository.update(userId, {
+			isTwoFactorAuthenticationEnabled: true
+		});
+	}
+
+	// TWO FACTOR DISABLE
+	async turnOffTwoFactorAuthentication(userId: number) {
+		return this.userRepository.update(userId, {
+			isTwoFactorAuthenticationEnabled: false
+		});
+	}
 
 	/*
 		return list of user store in db
@@ -39,11 +60,15 @@ export class UserService {
 		return res
 	}
 
+	getById(id: number):Promise<UserI | undefined> {
+		return this.userRepository.findOne({ where:{id: id} });
+	}
+
 	/*
 		find user by username
 	*/
 	findOne(username: string):Promise<UserI | undefined> {
-		return this.userRepository.findOne({ username });
+		return this.userRepository.findOne({ where:{username: username} });
 	}
 	/*
 		find user by username

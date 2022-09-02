@@ -344,6 +344,11 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		}
 	}
 
+	@SubscribeMessage('turn-2fa')
+	async set2fa(@MessageBody() username: string) {
+		const user:User = await this.userRepository.findOne({ where:{username: username} })
+		this.userService.turnOnTwoFactorAuthentication(user.id);
+	}
 
 	/*
 		add user to queue

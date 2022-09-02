@@ -13,7 +13,7 @@ const ChatBar = () => {
 			{conv.users.length > 2 ? conv.name : conv.users.find((user:any) => user.username !== global.username).username}
 		</button>
 	): [];
-  	return (
+	return (
 		<div className="relative flex-row flex justify-end bg-slate-800 h-[30px] w-full">
 			{convList}
 		</div>

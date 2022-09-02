@@ -13,27 +13,30 @@ import { HttpModule } from '@nestjs/axios';
 import { IntraStrategy } from './intra.strategy';
 import { SessionSerializer } from './auth.serializer';
 import { UserModule } from 'src/user/user.module';
+import { TwoFactorAuthenticationController } from '../twoFactor/tfa.controller';
+import { TwoFactorAuthenticationService } from '../twoFactor/tfa.service';
 
 @Module({
-  imports: [
-    PassportModule.register({ defaultStrategy: 'jwt', property: 'user' }),
-	JwtModule.registerAsync({
-      inject: [ConfigService],
-      useFactory: (config: ConfigService) => ({
-        secret: process.env.SECRET_KEY || "randomString",
-        signOptions: { expiresIn: '60s' },
-      }),
-    }),
-    HttpModule,
-	forwardRef(() => UserModule),
-    TypeOrmModule.forFeature([User]),
-  ],
-  controllers: [AuthController],
-  providers: [
-	  AuthService,
-	  AuthHelper,
-	  JwtStrategy,
-	  IntraStrategy,
-	  SessionSerializer],
+	imports: [
+		PassportModule.register({ defaultStrategy: 'jwt', property: 'user' }),
+		JwtModule.registerAsync({
+		inject: [ConfigService],
+		useFactory: (config: ConfigService) => ({
+			secret: process.env.SECRET_KEY || "randomString",
+			signOptions: { expiresIn: '60s' },
+		}),
+		}),
+		HttpModule,
+		forwardRef(() => UserModule),
+		TypeOrmModule.forFeature([User]),
+	],
+	controllers: [AuthController, TwoFactorAuthenticationController],
+	providers: [
+		AuthService,
+		TwoFactorAuthenticationService,
+		AuthHelper,
+		JwtStrategy,
+		IntraStrategy,
+		SessionSerializer],
 })
 export class AuthModule {}
