@@ -1,16 +1,18 @@
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { setCurrentConv } from '../../store/global/reducer'
+import { truncateString } from '../commons/utils/truncateString'
 
 const ChatBar = () => {
 	const global = useSelector((state: any) => state.global)
 	const dispatch = useDispatch()
 	
 	const convList = global.conv.length > 0 ? global.conv.map((conv: any) =>  
-		<button className="bg-slate-700 flex flex-row justify-left items-end m-[2px] w-[80px] rounded" key={conv.id}
+		<button className={`bg-slate-700 flex flex-row justify-center items-end m-[2px] w-[80px] text-center rounded
+							${conv.id === global.convID ? "text-green-300" : "text-slate-400"}`} key={conv.id}
 			onClick={() => dispatch(setCurrentConv({id:conv.id}))}
 		>
-			{conv.users.length > 2 ? conv.name : conv.users.find((user:any) => user.username !== global.username).username}
+			{ truncateString(conv.users.length > 2 ? conv.name : conv.users.find((user:any) => user.username !== global.username).username, 9)}
 		</button>
 	): [];
 	return (

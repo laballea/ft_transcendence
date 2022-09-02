@@ -13,7 +13,7 @@ export interface MessageI {
 
 function Room() {
 	const global = useSelector((state: any) => state.global)
-	const room = global.roomID == -1 ? 
+	const room = global.roomID === -1 ? 
 				{
 					id:-1,
 					adminId:-1,
@@ -23,7 +23,7 @@ function Room() {
 					users:[{username:global.username}]
 				}
 				:
-				global.room.find((room:any) => room.id == global.roomID)
+				global.room.find((room:any) => room.id === global.roomID)
 	const [input, setInput] = useState({
 		member: "",
 	})
@@ -36,7 +36,6 @@ function Room() {
 	}
 
 	const addMember = () => {
-		console.log('add member', room.id, input.member, global.username)
 		socket.emit('addMember', {
 			roomId: room.id,
 			user: input.member,
@@ -48,13 +47,11 @@ function Room() {
 	}
 
 	const deleteRoom = () => {
-		console.log('delete room', room.id, global.username)
 		socket.emit('deleteRoom', {
 			roomId: room.id,
 			user: global.username,
 		});
 	}
-	console.log("room", room)
 	if (room) {
 		return (
 			<div className="chat" style={{margin:50, width:400, height:500, display:'flex', flexDirection:'column', justifyContent:"center"}}>

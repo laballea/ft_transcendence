@@ -14,8 +14,9 @@ export class Boost extends Pong {
 	private balltraj: {x:number, y:number}[]
 	private balltrajpos: number
 	ballTrajectory(){
-		for (let i=1; i < this.ball.speed / 5; i++) {
-			let speed = this.ball.speed / 5
+		let factor = this.ball.speed / 10
+		for (let i=1; i < factor; i++) {
+			let speed = this.ball.speed / factor
 			let newPosx = this.ball.posx + speed * this.ball.d.x
 			let newPosy = this.ball.posy + speed * this.ball.d.y
 			let bounce = false

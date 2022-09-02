@@ -1,4 +1,4 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { GAMES_SOCKET, status } from '../common/types';
 import { Repository, getConnection } from 'typeorm';
@@ -139,6 +139,25 @@ export class UserService {
 		return status.Disconnected
 	}
 
+	async editUsername(id:number, newUsername:string){
+		const userRepo: User = await this.userRepository.findOne({ where:{id:id}})
+		const isExist: User = await this.userRepository.findOne({ where:{username:newUsername}})
+		if (isExist) {
+			return -1;
+		} else {
+			userRepo.username = newUsername
+			await this.userRepository.save(userRepo)
+			return 1
+		}
+	}
+	async changePic(id:number, pathToPic:string){
+		const userRepo: User = await this.userRepository.findOne({ where:{id:id}})
+		const userSocket:UserSocket = this.findConnectedUserById(id);
+		userRepo.profilPic = pathToPic
+		await this.userRepository.save(userRepo)
+		userSocket.socket.emit("UPDATE_DB", await this.parseUserInfo(id))
+	}
+
 	/*
 	*/
 	async updateUserDB(users:User[]) {
@@ -160,6 +179,7 @@ export class UserService {
 		game.duration = _game.pong.getDuration()
 		game.maxSpeed = Math.ceil(_game.pong.getMaxBallSpeed())
 		game.score = _game.pong.getScore()
+		game.mode = _game.pong.getMode()
 		await this.gameRepository.save(game)
 	}
 

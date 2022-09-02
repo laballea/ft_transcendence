@@ -31,7 +31,7 @@ export class User {
 	@Column({ unique: true, nullable: true })
 	public email: string;
 
-	@Column()
+	@Column({nullable:true})
 	profilIntraUrl:string;
 
 	@Column({nullable:true})
@@ -132,6 +132,9 @@ export class GameData {
 
 	@Column("int", { array: true, default: '{}', nullable:true})
 	score: number[];
+
+	@Column()
+	mode: string;
 }
 
 @Entity()

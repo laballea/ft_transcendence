@@ -2,7 +2,6 @@ import React from 'react'
 
 // Components
 import NavBar from '../../navbar/NavBar'
-import ContactList from '../../contactList/ContactList';
 import Footer from '../../commons/footer/Footer';
 
 // CSS
@@ -14,8 +13,6 @@ import ChatBar from '../../message/chatBar';
 import ChatRooms from '../../room/ChatRooms';
 import RoomBar from '../../room/roomBar';
 import Room from "../../room/index";
-import Game from '../../game/Game';
-import { status } from '../../../common/types';
 
 const Message = () => {
 	const global = useSelector((state: any) => state.global)

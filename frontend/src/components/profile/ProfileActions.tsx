@@ -22,6 +22,7 @@ type ProfileActionsProps = {
 	}
 }
 
+// eslint-disable-next-line
 const ProfileActions = ({contact} : ProfileActionsProps) => {
 	
 	const global = useSelector((state: any) => state.global)

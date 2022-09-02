@@ -1,8 +1,8 @@
 import React from 'react'
+
 // Components
 import NavBar from '../../navbar/NavBar'
 import Footer from '../../commons/footer/Footer';
-import Message from '../../message/FloatingMessage';
 import ContactList from '../../contactList/ContactList';
 import SettingsProfile from '../../settings/SettingsProfile';
 import Settings2FA from '../../settings/Settings2FA';
@@ -15,12 +15,12 @@ import { useSelector } from 'react-redux';
 
 // Assets
 type SettingsProps = {
+
 }
 
+// eslint-disable-next-line
 const Settings = ({} : SettingsProps) => {
-
 	const global = useSelector((state: any) => state.global)
-
 	return (
 		<div className="w-full h-screen relative bg-slate-900">
 			<NavBar/>

@@ -14,12 +14,11 @@ import { Navigate, Routes, Route } from 'react-router-dom';
 import Profile from './Profile';
 import Popup from 'reactjs-popup'; 
 import PopUpWindow from '../../commons/popup/PopUpWindow';
-import Message from './Message';
+import Chat from './Chat';
 import Settings from './Settings';
 
 // Types
 import { status } from '../../../common/types'
-import Contact from '../../contactList/Contact';
 
 type contact = {
 		username:string,
@@ -47,7 +46,6 @@ const SocketConnection = (props:any) => {
 			socket.on("connect", () => {
 				socket.emit("CONNECT", {socketID: socket.id, id:global.id, username:global.username});
 				socket.on("UPDATE_DB", (data) => {
-					console.log("HERE", data)
 					dispatch(updateDB(data))
 				});
 				socket.on("PopUp", (data) => {
@@ -63,11 +61,9 @@ const SocketConnection = (props:any) => {
 					dispatch(gameEnd())
 				});
 				socket.on("JOIN_SPECTATE", (data) => {
-					console.log("HERE")
 					dispatch(spectate(data.gameId))
 				});
 				socket.on("CHALLENGED", (data) => {
-					console.log("HERE", data)
 					dispatch(challenged(data))
 				});
 			});
@@ -94,13 +90,11 @@ const SocketConnection = (props:any) => {
 		status : status.Connected,
 	};
 	document.title = "FT_TRANS "+ global.username;
-
-
 	return (
 		<>
 			<Routes>
 				<Route path="/" element={<Home/>}/>
-				<Route path="/message" element={<Message/>}/>
+				<Route path="/message" element={<Chat/>}/>
 				<Route path="/profile/*" element={<Profile contact={userContact}/>}/>
 				<Route path="/settings" element={<Settings/>}/>
 				<Route path="*" element={<Error404/>}/>

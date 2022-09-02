@@ -193,7 +193,6 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 	async handleRoom(@MessageBody() data: ROOM_DATA) {
 		const user_send: UserSocket = this.userService.findConnectedUserByUsername(data.admin);
 		const db_user_send: User = await this.userRepository.findOne({ where:{username:data.admin} })
-		console.log("NEW CHAT ROOM")
 		/* does Room exist else create it */
 		let room : Room = await this.roomRepository.findOne({ where:{name: data.name} })
 		if (!room) {
@@ -212,7 +211,6 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 
 	@SubscribeMessage('addMember')
 	async addMember(@MessageBody() data: NEW_MEMBER) {
-		console.log("new member : ", data.roomId, data.user, data.admin)
 		const admin: UserSocket = this.userService.findConnectedUserByUsername(data.admin);
 		const db_admin: User = await this.userRepository.findOne({ where:{username:data.admin} })
 		let room : Room = await this.roomRepository.findOne({
@@ -222,12 +220,9 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		let newUser:User = await this.userRepository.findOne({ where:{username:data.user} })
 		if (!room || !newUser)
 			return this.emitPopUp([admin], {error:true, message: `User ${data.user} doesn't exist.`});
-		console.log("my room: ", room)
 		room.users.push(newUser)
-		console.log("my room: ", room)
 		await this.roomRepository.save(room);
 		for (let idx in room.users){
-			console.log(room.users[idx].username)
 			let userSocket = this.userService.findConnectedUserByUsername(room.users[idx].username)
 			if (userSocket)
 				userSocket.socket.emit('UPDATE_DB', await this.userService.parseUserInfo(room.users[idx].id))
@@ -237,7 +232,6 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 	@SubscribeMessage('deleteRoom')
 	async deleteRoom(@MessageBody() data: {roomId: number, user: string}) {
 		const db_user: User = await this.userRepository.findOne({ where:{username:data.user} })
-		console.log('delete room')
 		let room : Room = await this.roomRepository.findOne({
 			where:{id: data.roomId},
 			relations:['users', 'users.rooms'],
@@ -258,7 +252,6 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		.andWhere("adminId = :adminId", {adminId: db_user.id})
 		.execute();
 		for (let idx in room.users){
-			console.log(room.users[idx].username)
 			let userSocket = this.userService.findConnectedUserByUsername(room.users[idx].username)
 			if (userSocket)
 				userSocket.socket.emit('UPDATE_DB', await this.userService.parseUserInfo(room.users[idx].id))
@@ -267,7 +260,6 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 
 	@SubscribeMessage('joinRoom')
 	async joinRoom(@MessageBody() data: {joinRoom:string, passRoom:string, user:string}) {
-		console.log("joinRoom", data.joinRoom, data.passRoom, data.user)
 		const user: UserSocket = this.userService.findConnectedUserByUsername(data.user);
 		const newUser: User = await this.userRepository.findOne({ where:{username:data.user} })
 		let room : Room = await this.roomRepository.findOne({
@@ -281,7 +273,6 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		room.users.push(newUser)
 		await this.roomRepository.save(room);
 		for (let idx in room.users){
-			console.log(room.users[idx].username)
 			let userSocket = this.userService.findConnectedUserByUsername(room.users[idx].username)
 			if (userSocket)
 				userSocket.socket.emit('UPDATE_DB', await this.userService.parseUserInfo(room.users[idx].id))
@@ -291,7 +282,6 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 	@SubscribeMessage('deleteMember')
 	async deleteMember(@MessageBody() data: {roomId: number, userId: number, admin: string}) {
 		const db_admin: User = await this.userRepository.findOne({ where:{username:data.admin} })
-		console.log('delete Member', data.roomId, data.userId, data.admin)
 		if (data.userId == db_admin.id)
 			this.deleteRoom({roomId: data.roomId, user: data.admin})
 		else {
@@ -305,7 +295,6 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 			.of(data.roomId)
 			.remove(data.userId)
 			for (let idx in room.users){
-				console.log(room.users[idx].username)
 				let userSocket = this.userService.findConnectedUserByUsername(room.users[idx].username)
 				if (userSocket)
 					userSocket.socket.emit('UPDATE_DB', await this.userService.parseUserInfo(room.users[idx].id))
@@ -337,7 +326,6 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		await this.roomRepository.save(room);
 
 		for (let idx in room.users){
-			console.log(room.users[idx].username)
 			let userSocket = this.userService.findConnectedUserByUsername(room.users[idx].username)
 			if (userSocket)
 				userSocket.socket.emit('UPDATE_DB', await this.userService.parseUserInfo(room.users[idx].id))
@@ -368,7 +356,7 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 				if (otherUser){
 					let game = this.gameService.createGame([user_send, otherUser], data.mode)
 					this.emitPopUp([user_send,otherUser], {error:false, message: `Game founded.`});
-					this.server.to(game.id).emit("GAME_FOUND", {gameID:game.id})
+					this.server.to(game.id).emit("GAME_FOUND", {gameID:game.id, mode:data.mode})
 					user_send.status = status.InGame
 					otherUser.status = status.InGame
 					game.pong.run()
@@ -412,7 +400,7 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 
 					let game = this.gameService.createGame([user_asking, user_receiving], data.mode)
 					this.emitPopUp([user_asking,user_receiving], {error:false, message: `Game founded.`});
-					this.server.to(game.id).emit("GAME_FOUND", {gameID:game.id})
+					this.server.to(game.id).emit("GAME_FOUND", {gameID:game.id, mode:data.mode})
 					user_asking.status = status.InGame
 					user_receiving.status = status.InGame
 					game.pong.run()
@@ -447,5 +435,24 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 			user.socket.emit("JOIN_SPECTATE", {gameId})
 		}
 		
+	}
+
+	@SubscribeMessage('EDIT_USERNAME')
+	async editUsername(@MessageBody() data:{id:number, newUsername:string, token:string}) {
+		const userSocket:UserSocket = this.userService.findConnectedUserById(data.id);
+		let ret = await this.userService.editUsername(data.id, data.newUsername)
+		if (ret == 1) {
+			this.emitPopUp([userSocket], {error:false, message: `Username successfuly changed.`});
+			userSocket.socket.emit("UPDATE_DB", await this.userService.parseUserInfo(data.id))
+		}
+		else
+			this.emitPopUp([userSocket], {error:true, message: `Username already exist.`});
+
+	}
+	@SubscribeMessage('EDIT_PROFILPIC')
+	async editProfilPic(@MessageBody() data:{id:number, url:string, token:string}) {
+		this.userService.changePic(data.id, data.url)
+		const userSocket:UserSocket = this.userService.findConnectedUserById(data.id);
+		this.emitPopUp([userSocket], {error:false, message: `Profil successfuly changed.`});
 	}
 }

@@ -17,7 +17,6 @@ const Chat = ({ msg, username } : ChatProps) => {
 	}
 
 	const test = () => {
-		console.log("test", msg)
 		return (
 			<p>Send the first message !</p>
 		)

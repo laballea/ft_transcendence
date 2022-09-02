@@ -3,7 +3,6 @@ import { FiArrowRight } from "react-icons/fi";
 import { useSelector } from 'react-redux'
 import { SocketContext } from '../../context/socket';
 import IconButton from "../commons/buttons/IconButton";
-import Room from "../room";
 
 interface IProps {
 	conv: any
@@ -25,8 +24,7 @@ const Com: React.FC<IProps> = ({ conv }) => {
 	}
 
 	const sendMessage = (): void => {
-		console.log("Send msg")
-		if (conv.adminId != undefined) {
+		if (conv.adminId !== undefined) {
 			socket.emit('roomMsg', {
 				content: input.content,
 				client_send: global.username,

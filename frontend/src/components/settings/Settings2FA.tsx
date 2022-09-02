@@ -6,15 +6,15 @@ import {useState} from 'react'
 import {FiShield, FiShieldOff} from 'react-icons/fi'
 
 type Settings2FAProps = {
+
 }
 
+// eslint-disable-next-line
 const Settings2FA = ({} : Settings2FAProps) => {
-
 	const [twoFA,setTwoFA] = useState(false)
 
 	const handleTwoFA = (twoFA : boolean) => {
 		setTwoFA(!twoFA)
-		console.log(twoFA)
 	}
 
 	if (twoFA === true) {
@@ -22,7 +22,7 @@ const Settings2FA = ({} : Settings2FAProps) => {
 			<>
 				<div  className='w-full border h-[2px] border-slate-700'></div>
 				<h2 className='font-pilowlava text-[64px] text-transparent backgroundTextOutline'>2FA</h2>	
-				<div onClick={ () => { handleTwoFA(twoFA); console.log(twoFA) }} className='relative inline-block h-[64px] w-[195px] bg-slate-700 rounded-full'>
+				<div onClick={ () => { handleTwoFA(twoFA) }} className='relative inline-block h-[64px] w-[195px] bg-slate-700 rounded-full'>
 					<span className='absolute top-0 left-[20px] h-full flex items-center justify-start z-10 gap-[4px]
 										text-red-500 cursor-pointer' >
 						<FiShieldOff className="w-[24px] h-[24px] cursor-pointer "/>

@@ -40,9 +40,11 @@ export const globalSlice = createSlice({
 			Object.assign(state, InitialState)
 		},
 		updateDB: (state:any, data:any) => {
+			state.username = data.payload.username
 			state.status = data.payload.status
 			state.friendsRequest = data.payload.friendsRequest
-			state.pendingRequest = data.payload.pendingRequest
+			state.pendingRequest = getProfilImg(data.payload.pendingRequest)
+			state.userImage = data.payload.profilPic
 			state.friends = data.payload.friends
 			state.bloqued = data.payload.bloqued
 			state.conv = data.payload.conv
@@ -61,7 +63,7 @@ export const globalSlice = createSlice({
 		},
 		setCurrentConv: (state:any, data:any) => {
 			var {id, username} = data.payload
-			if (id === undefined && username === undefined){
+			if ((id === undefined && username === undefined) || (state.convID === id && id !== undefined)){
 				state.convID = undefined
 				state.clientChat = undefined
 			}
@@ -103,6 +105,7 @@ export const globalSlice = createSlice({
 		},
 		gameFound: (state:any, data:any) => {
 			state.gameID = data.payload.gameID
+			state.gamemode = data.payload.mode
 			state.status = status.InGame
 		},
 		gameEnd: (state:any) => {
@@ -114,11 +117,9 @@ export const globalSlice = createSlice({
 			state.status = status.Spectate
 		},
 		challenged: (state:any, data) => {
-			console.log(data.payload.who)
 			state.challenged = data.payload.who
 		},
 		setGameMode: (state:any, data:any) => {
-			console.log(data.payload)
 			state.gamemode = data.payload
 		},
 	},
