@@ -2,7 +2,8 @@ export enum status {
 	Connected = 'Connected',
 	Disconnected = 'Disconnected',
 	InGame = 'InGame',
-	InQueue = 'InQueue'
+	InQueue = 'InQueue',
+	Spectate = 'Spectate'
 }
 
 export interface user {
@@ -20,6 +21,10 @@ export interface user {
 	room?:Room[];
 	twoFactor?:boolean;
 	gameID?:string
+	challenged?:{id:number, username:string},
+	contactList:any[],
+	gamemode:gamemode
+
 }
 
 export enum FRIEND_REQUEST_ACTIONS {
@@ -27,6 +32,11 @@ export enum FRIEND_REQUEST_ACTIONS {
 	REMOVE = 'REMOVE',
 	DECLINE = 'DECLINE',
 	ACCEPT = 'ACCEPT',
+}
+
+export enum gamemode {
+	normal = 'normal',
+	boost = 'boost',
 }
 
 export interface FRIEND_REQUEST_DATA {

@@ -1,6 +1,6 @@
 import { GameI, GameUserI, GameBallI, GAME_STATUS, gamemode } from 'src/common/types';
 
-export class PongInstance {
+export class Pong {
 	constructor(
 		game:GameI,
 		gameEnd:any,
@@ -8,28 +8,62 @@ export class PongInstance {
 	) {
 		this.users = game.users
 		this.mode = game.mode
-		this.status = game.status
-		this.ball = game.ball
-		this.ball.d = this.randomDir(0)
+		this.status = GAME_STATUS.COUNTDOWN
 		this.map = {width:1900, height:1000}
 		this.timeBegin = game.time
-		this.countDown = game.countDown
+		this.countDown = 5
 		this.winner = {username:undefined, id:-1}
 		this.gameEnd = gameEnd
 		this.gameID = gameID
 		this.maxBallSpeed = 0
+		this.ball
+		this.init()
 	}
-	private users:GameUserI[]
-	private mode:gamemode
-	private status:GAME_STATUS
-	private ball:GameBallI
-	private map: {width:number, height:number}
-	private timeBegin: number
-	private countDown: number
-	private winner: {username:string,id:number}
-	private gameEnd:any
-	private gameID:string
-	private maxBallSpeed:number
+	protected mode:gamemode
+	protected users:GameUserI[]
+	public status:GAME_STATUS
+	protected ball:GameBallI
+	protected map: {width:number, height:number}
+	protected timeBegin: number
+	protected countDown: number
+	protected winner: {username:string,id:number}
+	protected gameEnd:any
+	protected gameID:string
+	protected maxBallSpeed:number
+
+	angle(ax, ay, bx, by) {
+		var dy = by - ay;
+		var dx = bx - ax;
+		var theta = Math.atan2(dy, dx); // range [-PI, PI]
+
+		return theta;
+	}
+	
+	init(){
+		this.users = this.users.map((user, index)=> {
+			return {
+				id:user.id,
+				username:user.username,
+				posx:[50, 1900 - 55][index],
+				pos:["left", "right"][index],
+				posy:1000/2 - 150,
+				point:0,
+				speed:33,
+				clickpos:[],
+				keyPress: 0//0=none, -1=up, 1=down
+			}
+		})
+		this.ball = {
+			posx:1900 / 2,
+			posy: 1000 / 2,
+			speed:20,
+			angle:45* (Math.PI/180),
+			d:{x:0, y:0},
+			size:30 //rayon
+		}
+		this.ball.d = {x:Math.cos(this.ball.angle), y:Math.sin(this.ball.angle)}
+		//this.ball.d = this.randomDir(0)
+	}
 
 	between(x:number, min:number, max:number) {
 		return x >= min && x <= max;
@@ -85,8 +119,8 @@ export class PongInstance {
 	ballTrajectory(){
 		for (let i=1; i < this.ball.speed / 5; i++) {
 			let speed = this.ball.speed / 5
-			let newPosx = this.ball.posx + speed * this.ball.d.x
-			let newPosy = this.ball.posy + speed * this.ball.d.y
+			let newPosx = this.ball.posx + (this.ball.d.x) * speed
+			let newPosy = this.ball.posy + (this.ball.d.y) * speed
 			let bounce = false
 			let hit = {
 				bot:newPosy < this.ball.size,
@@ -126,7 +160,8 @@ export class PongInstance {
 				newPosx = this.map.width / 2
 				newPosy = this.map.height / 2
 				this.ball.speed = 20
-				this.ball.d = this.randomDir(newPosx < this.ball.size ? 1 : 0)
+				this.ball.angle = this.randomNumber(0, 360)
+				//this.ball.d = this.randomDir(newPosx < this.ball.size ? 1 : 0)
 				bounce = true
 			}
 			this.ball.posx = newPosx
@@ -144,7 +179,7 @@ export class PongInstance {
 			time:this.timeBegin,
 			countDown:this.countDown,
 			winner:this.winner,
-			mode:this.mode
+			mode:this.mode,
 		}
 	}
 
@@ -154,6 +189,26 @@ export class PongInstance {
 			user.keyPress = dir
 		} else if (user.keyPress == dir) {
 			user.keyPress = 0
+		}
+	}
+
+	mouseclick(userID:number, pos:{x:number, y:number}){
+		let user = this.users.find((user) => user.id == userID)
+		if (user.clickpos.length < 3) {
+			if (user.clickpos.length < 1)
+				user.clickpos.push(pos)
+			else {
+				let last = user.clickpos[user.clickpos.length - 1]
+				if (last) {
+					if (user.pos == "left") {
+						if (pos.x > last.x)
+							user.clickpos.push(pos)
+					}else {
+						if (pos.x < last.x)
+							user.clickpos.push(pos)
+					}
+				}
+			}
 		}
 	}
 

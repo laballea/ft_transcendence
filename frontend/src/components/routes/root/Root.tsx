@@ -2,11 +2,11 @@ import React, { useState, useEffect, useContext } from 'react'
 
 // Components
 import Home from './Home';
-import Error_404 from '../Error/Error_404';
+import Error404 from '../Error/Error404';
 
 // Hooks
 import {useDispatch, useSelector } from 'react-redux';
-import { logout, updateDB, gameFound, gameEnd } from '../../../store/global/reducer';
+import { logout, updateDB, gameFound, gameEnd, spectate, challenged } from '../../../store/global/reducer';
 
 //socket
 import { SocketContext, socket} from '../../../context/socket';
@@ -47,6 +47,7 @@ const SocketConnection = (props:any) => {
 			socket.on("connect", () => {
 				socket.emit("CONNECT", {socketID: socket.id, id:global.id, username:global.username});
 				socket.on("UPDATE_DB", (data) => {
+					console.log("HERE", data)
 					dispatch(updateDB(data))
 				});
 				socket.on("PopUp", (data) => {
@@ -61,6 +62,14 @@ const SocketConnection = (props:any) => {
 				socket.on("GAME_END", () => {
 					dispatch(gameEnd())
 				});
+				socket.on("JOIN_SPECTATE", (data) => {
+					console.log("HERE")
+					dispatch(spectate(data.gameId))
+				});
+				socket.on("CHALLENGED", (data) => {
+					console.log("HERE", data)
+					dispatch(challenged(data))
+				});
 			});
 		
 		return () => {
@@ -72,6 +81,7 @@ const SocketConnection = (props:any) => {
 			socket.off("GAME_END")
 			socket.off("PopUp")
 			socket.off("UPDATE_DB")
+			socket.off("JOIN_SPECTATE")
 			socket.disconnect()
 		};
 	// eslint-disable-next-line
@@ -83,6 +93,7 @@ const SocketConnection = (props:any) => {
 		id : global.id,
 		status : status.Connected,
 	};
+	document.title = "FT_TRANS "+ global.username;
 
 
 	return (
@@ -90,9 +101,9 @@ const SocketConnection = (props:any) => {
 			<Routes>
 				<Route path="/" element={<Home/>}/>
 				<Route path="/message" element={<Message/>}/>
-				<Route path="/profile" element={<Profile contact={userContact}/>}/>
+				<Route path="/profile/*" element={<Profile contact={userContact}/>}/>
 				<Route path="/settings" element={<Settings/>}/>
-				<Route path="*" element={<Error_404/>}/>
+				<Route path="*" element={<Error404/>}/>
 			</Routes>
 			<Popup open={popup.open} contentStyle={{position:'absolute', bottom:0, left:0}}>
 				<PopUpWindow content={popup.message} error={popup.error}/>

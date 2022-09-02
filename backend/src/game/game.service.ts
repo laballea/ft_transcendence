@@ -1,9 +1,12 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { GameI, GAMES_SOCKET, GAME_STATUS, status } from 'src/common/types';
+import { GameI, gamemode, GAMES_SOCKET, GAME_STATUS, status } from 'src/common/types';
 import { User } from 'src/user/models/user.entity';
 import { UserSocket } from 'src/user/models/user.interface';
 import { UserService } from 'src/user/user.service';
-import { PongInstance } from './pongInstance';
+import { Pong } from './pong';
+import { Boost } from './mode/pongBoost';
+import { Normal } from './mode/pongNormal';
+import { Queue } from './Queue';
 
 let s4 = () => {
 	return Math.floor((1 + Math.random()) * 0x10000)
@@ -15,22 +18,21 @@ let s4 = () => {
 export class GameService {
 	constructor(
 		private userService:UserService,
-	){}
+	){
+		this.Queue = new Queue()
+		this.mode = new Map()
+		this.mode[gamemode.normal] = Normal
+		this.mode[gamemode.boost] = Boost
+	}
 	public Games: GAMES_SOCKET[] = [];
-	public Queue: number[] = [];
+	public Queue: Queue
+	private mode: Map<gamemode, Pong>
 
-	addToQueue(user:UserSocket):boolean{
-		if (!this.Queue.includes(user.id)){
-			this.Queue.push(user.id)
-			return true
-		}
-		return false
+	addToQueue(user:UserSocket, mode:gamemode):boolean{
+		return this.Queue.addToQueue(user, mode)
 	}
 	removeFromQueue(userID:number[]){
-		for (let id of userID){
-			if (this.Queue.includes(id))
-				this.Queue.splice(this.Queue.indexOf(id), 1)
-		}
+		this.Queue.removeFromQueue(userID)
 	}
 	removeGame(gameID:string):boolean{
 		if (this.Games.find((game)=>game.id==gameID)){
@@ -40,18 +42,24 @@ export class GameService {
 		return false
 	}
 
-	findOtherPlayer(user:UserSocket):number{
-		if (this.Queue.length > 1) {
-			let other = this.Queue.find((id)=>id !== user.id && this.userService.getUserStatus(id))
-			return other
-		}
-		return -1
+	findOtherPlayer(user:UserSocket, mode:gamemode):number{
+		return (this.Queue.findOtherPlayer(user, mode))
 	}
 
 	findGame(id:string):GAMES_SOCKET{
 		let res = this.Games.find(game => {return game.id == id})
 		return res
 	}
+	spectate(userID:number, spectateID:number):string{
+		let game = this.Games.find((game)=>game.usersID.includes(spectateID))
+		if (game){
+			game.spectatesID.push(userID)
+			return game.id
+		}
+		else
+			return undefined
+	}
+
 	reconnect(userID:number):string{
 		let game = this.Games.find((game)=>game.usersID.includes(userID))
 		if (game){
@@ -68,11 +76,13 @@ export class GameService {
 			this.removeFromQueue([user.id])
 			if (user.gameID){
 				let game:GAMES_SOCKET = this.findGame(user.gameID)
+				if (game.pong.status === GAME_STATUS.PAUSE)
+					this.gameEnd(user.gameID)
 				game.pong.pause(true);
 			}
 		}
 	}
-	createGame(users:UserSocket[]):GAMES_SOCKET{
+	createGame(users:UserSocket[], mode:gamemode):GAMES_SOCKET{
 		let gameID = "game_" + s4()
 		if (this.Games.length){
 			while (this.Games.find((game) => {return game.id === gameID}))
@@ -80,30 +90,9 @@ export class GameService {
 		}
 		let game:GAMES_SOCKET = {
 			id:gameID,
+			spectatesID:[],
 			usersID:users.map(user => {return user.id}),
-			pong:new PongInstance ({
-				users:users.map((user, index)=> {
-					return {
-						id:user.id,
-						username:user.username,
-						posx:[50, 1900 - 55][index],
-						posy:1000/2 - 150,
-						point:0,
-						speed:33,
-						keyPress: 0//0=none, -1=up, 1=down
-					}
-				}),
-				ball:{
-					posx:1900 / 2,
-					posy: 1000 / 2,
-					speed:30,
-					d:{x:0, y:0},
-					size:30 //rayon
-				},
-				status:GAME_STATUS.COUNTDOWN,
-				time:Date.now(),
-				countDown:5,
-			}, this.gameEnd.bind(this), gameID)
+			pong:this.initPong(users, mode, gameID)
 		}
 		this.Games.push(game)
 		for (let idx in users){
@@ -113,10 +102,30 @@ export class GameService {
 		return game
 	}
 
+	initPong(users:UserSocket[], mode:gamemode, gameID:string):Pong{
+		let pongUser = users.map((user, index)=> {
+			return {
+				id:user.id,
+				username:user.username,
+			}
+		})
+		return new this.mode[mode]({users:pongUser,time:Date.now(), mode}, this.gameEnd.bind(this), gameID)
+	}
+
 	gameEnd(gameID:string){
 		let game:GAMES_SOCKET = this.findGame(gameID)
 		this.userService.saveGame(game)
 		for (let id of game.usersID){
+			let user:UserSocket = this.userService.findConnectedUserById(id)
+			if (user){
+				user.socket.emit("GAME_END")
+				user.challenged = false
+				user.socket.leave(gameID)
+				user.status = status.Connected
+				user.gameID = undefined
+			}
+		}
+		for (let id of game.spectatesID){
 			let user:UserSocket = this.userService.findConnectedUserById(id)
 			if (user){
 				user.socket.emit("GAME_END")

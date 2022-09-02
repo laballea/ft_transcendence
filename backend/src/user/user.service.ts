@@ -87,7 +87,8 @@ export class UserService {
 				username:data.username,
 				socket: data.socket,
 				status:status.Connected,
-				gameID:data.gameID
+				gameID:data.gameID,
+				challenged:false
 			})
 		}
 		console.log(data.username, "connected");
@@ -157,9 +158,19 @@ export class UserService {
 		game.users = _game.usersID.map(id => usersRepo.find(el => el.id == id))
 		game.winner = _game.pong.getWinner().id
 		game.duration = _game.pong.getDuration()
-		game.maxSpeed = _game.pong.getMaxBallSpeed()
+		game.maxSpeed = Math.ceil(_game.pong.getMaxBallSpeed())
 		game.score = _game.pong.getScore()
 		await this.gameRepository.save(game)
+	}
+
+	async getGameStatByUserId(userId:number):Promise<any>{
+		const userRepo: User = await this.userRepository.findOne({ where:{id:userId}, relations: ['gameData', 'gameData.users']})
+		return {
+			gameStats:userRepo.gameData,
+			username:userRepo.username,
+			id:userRepo.id,
+			status:this.getUserStatus(userRepo.id)
+		};
 	}
 
 	async getConversationByUserId(user:User):Promise<safeConv[]>{
@@ -212,7 +223,7 @@ export class UserService {
 			id: userRepo.id,
 			username: userRepo.username,
 			status: userInfo ? userInfo.status : status.Disconnected,
-			profilIntraUrl: userRepo.profilIntraUrl,
+			profilPic: userRepo.profilPic,
 			gameID: userInfo ? userInfo.gameID : undefined,
 		};
 		UserSafeInfo.friends = userRepo.friends.map(id => ({ id: id, username: usersRepo.find(el => el.id == id).username}));
