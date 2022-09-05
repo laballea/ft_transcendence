@@ -9,10 +9,7 @@ import {
 	OnGatewayInit,
 	ConnectedSocket
 } from '@nestjs/websockets';
-import {
-	Repository,
-	getConnection
-} from 'typeorm';
+import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Conversation, Message, User, Room } from './models/user.entity';
 import { gamemode, status } from 'src/common/types';
@@ -237,14 +234,14 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 			relations:['users', 'users.rooms'],
 		})
 		//delete msg then delete room
-		await getConnection()
+		await this.messageRepository
 		.createQueryBuilder()
 		.delete()
 		.from(Message)
 		.where("roomId = :roomId", { roomId: data.roomId })
 		.execute();
 		//delete room empty
-		await getConnection()
+		await this.roomRepository
 		.createQueryBuilder()
 		.delete()
 		.from(Room)
@@ -289,7 +286,7 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 				where:{id: data.roomId},
 				relations:['users', 'users.rooms'],
 			})
-			await getConnection()
+			await this.roomRepository
 			.createQueryBuilder()
 			.relation(Room, "users")
 			.of(data.roomId)
@@ -331,12 +328,6 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 				userSocket.socket.emit('UPDATE_DB', await this.userService.parseUserInfo(room.users[idx].id))
 		}
 	}
-
-	// @SubscribeMessage('turn-2fa')
-	// async set2fa(@MessageBody() username: string) {
-	// 	const user:User = await this.userRepository.findOne({ where:{username: username} })
-	// 	this.userService.turnOnTwoFactorAuthentication(user.id);
-	// }
 
 	/*
 		add user to queue

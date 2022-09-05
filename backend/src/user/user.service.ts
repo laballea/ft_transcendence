@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { GAMES_SOCKET, status } from '../common/types';
-import { Repository, getConnection } from 'typeorm';
+import { Repository } from 'typeorm';
 import { UserI, UserSafeInfo, UserSocket, MessageI, safeConv, safeRoom } from './models/user.interface';
 import { User, Message, Conversation, GameData } from './models/user.entity';
 
@@ -166,7 +166,7 @@ export class UserService {
 	*/
 	async updateUserDB(users:User[]) {
 		for (let user of users){
-			await getConnection()
+			await this.userRepository
 				.createQueryBuilder()
 				.update(User)
 				.set(user)
