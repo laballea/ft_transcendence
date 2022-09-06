@@ -278,24 +278,35 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 
 	@SubscribeMessage('deleteMember')
 	async deleteMember(@MessageBody() data: {roomId: number, userId: number, admin: string}) {
+		const user: UserSocket = this.userService.findConnectedUserByUsername(data.admin);
 		const db_admin: User = await this.userRepository.findOne({ where:{username:data.admin} })
-		if (data.userId == db_admin.id)
-			this.deleteRoom({roomId: data.roomId, user: data.admin})
-		else {
-			let room : Room = await this.roomRepository.findOne({
-				where:{id: data.roomId},
-				relations:['users', 'users.rooms'],
-			})
+		let room : Room = await this.roomRepository.findOne({
+			where:{id: data.roomId},
+			relations:['users', 'users.rooms'],
+		})
+		if (data.userId == db_admin.id && db_admin.id == room.adminId)
+			return this.deleteRoom({roomId: data.roomId, user: data.admin})
+		if (db_admin.id == room.adminId) {
 			await this.roomRepository
 			.createQueryBuilder()
 			.relation(Room, "users")
 			.of(data.roomId)
 			.remove(data.userId)
-			for (let idx in room.users){
-				let userSocket = this.userService.findConnectedUserByUsername(room.users[idx].username)
-				if (userSocket)
-					userSocket.socket.emit('UPDATE_DB', await this.userService.parseUserInfo(room.users[idx].id))
-			}
+		}
+		else if (data.userId == db_admin.id) {
+			await this.roomRepository
+			.createQueryBuilder()
+			.relation(Room, "users")
+			.of(data.roomId)
+			.remove(data.userId)
+		}
+		else {
+			return this.emitPopUp([user], {error:true, message: `Permission denied !`});
+		}
+		for (let idx in room.users){
+			let userSocket = this.userService.findConnectedUserByUsername(room.users[idx].username)
+			if (userSocket)
+				userSocket.socket.emit('UPDATE_DB', await this.userService.parseUserInfo(room.users[idx].id))
 		}
 	}
 
