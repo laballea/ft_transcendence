@@ -52,6 +52,7 @@ export const globalSlice = createSlice({
 			state.userImage = data.payload.profilPic
 			state.friends = data.payload.friends
 			state.bloqued = data.payload.bloqued
+			console.log(data.payload)
 			state.conv = data.payload.conv.concat(data.payload.room)
 			state.gameID = data.payload.gameID
 			state.twoFactor = data.payload.twoFactor
@@ -68,7 +69,6 @@ export const globalSlice = createSlice({
 				})
 			}
 			state.room = data.payload.room
-
 		},
 		setCurrentConv: (state:any, data:any) => {
 			var {username, conv} = data.payload

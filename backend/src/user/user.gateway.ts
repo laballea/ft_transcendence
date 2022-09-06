@@ -250,8 +250,11 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		.execute();
 		for (let idx in room.users){
 			let userSocket = this.userService.findConnectedUserByUsername(room.users[idx].username)
+			console.log("HERE")
+			let res = await this.userService.parseUserInfo(room.users[idx].id)
+			console.log("res", res)
 			if (userSocket)
-				userSocket.socket.emit('UPDATE_DB', await this.userService.parseUserInfo(room.users[idx].id))
+				userSocket.socket.emit('UPDATE_DB',res )
 		}
 	}
 
@@ -265,7 +268,7 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		})
 		if (!room)
 			return this.emitPopUp([user], {error:true, message: `Room doesn't exist !`});
-		else if (!bcrypt.compare(data.passRoom, room.password))
+		else if (await bcrypt.compare(data.passRoom, room.password) === false)
 			return this.emitPopUp([user], {error:true, message: `Password doesn't match with the room !`});
 		room.users.push(newUser)
 		await this.roomRepository.save(room);
