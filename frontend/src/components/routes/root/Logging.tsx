@@ -51,7 +51,6 @@ const Logging = () => {
 		fetch("http://localhost:5000/auth/login", requestOptions)
 		.then(async response=>{
 			const resp:any = await response.json()
-			console.log("login", resp)
 			if (response.ok){
 				navigate(`/login?jwt=${resp.token}`)
 			} else {
@@ -74,7 +73,6 @@ const Logging = () => {
 				id:id
 			})
 		}
-		console.log("intra", jwt)
 		fetch("http://localhost:5000/2fa/authenticate", requestOptions)
 		.then(async response=>{
 			const resp:any = await response.json()

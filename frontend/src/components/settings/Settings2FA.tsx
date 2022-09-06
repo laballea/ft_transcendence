@@ -46,7 +46,6 @@ const Settings2FA = ({} : Settings2FAProps) => {
 	}
 
 	const handleTwoFA = (twoFA : boolean) => {
-		console.log(twoFA)
 		if (twoFA) {
 			const requestOptions = {
 				method: 'POST',
@@ -74,7 +73,6 @@ const Settings2FA = ({} : Settings2FAProps) => {
 	}
 
 	const sendCode = (): void => {
-		console.log("Send code")
 		const requestOptions = {
 			method: 'POST',
 			headers: {
@@ -119,7 +117,6 @@ const Settings2FA = ({} : Settings2FAProps) => {
 			</>
 		)
 	}
-	console.log(image)
 	return (
 		<>
 			<div  className='w-full border h-[2px] border-slate-700'></div>

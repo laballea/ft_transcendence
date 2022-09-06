@@ -1,11 +1,13 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import Chat from './chat'
 import Com from './com'
 import { useDispatch, useSelector } from 'react-redux'
 import IconButton from '../commons/buttons/IconButton';
-import { FiX } from 'react-icons/fi';
+import { FiSettings, FiX } from 'react-icons/fi';
 import { setCurrentConv } from '../../store/global/reducer';
 import './noScrollBar.css'
+import { truncateString } from '../commons/utils/truncateString';
+import { deleteMember } from '../../context/socket';
 
 export interface MessageI {
 		author: string
@@ -16,7 +18,8 @@ export interface MessageI {
 function FloatingMessage() {
 	const global = useSelector((state: any) => state.global)
 	const dispatch = useDispatch();
-	const conv = global.convID === -1 ? 
+	const [settings, setSettings] = useState(false)
+	const conv = global.currentConv === -1 ? 
 				{
 					id:-1,
 					msg:[],
@@ -24,28 +27,48 @@ function FloatingMessage() {
 					users:[{username:global.clientChat}]
 				}
 				:
-				global.conv.find((conv:any) => conv.id === global.convID)
+				global.currentConv
+
 	useEffect(() => {
 		var element = document.getElementById("someRandomID");
 		if (element != null)
 			element.scrollTop = element.scrollHeight;
 	  });
+	  console.log(conv.adminId)
+	const users = conv.adminId !== undefined ? conv.users.map((user: {id:number, username:string}, index:number) =>
+		<div className={`bg-slate-700 flex flex-row justify-center items-end m-[2px] w-[80px] text-center rounded text-slate-400`} key={index}>
+			<h3>{ truncateString(user.username, 9)}</h3>
+			{conv.adminId === global.id &&
+				<IconButton icon={FiX} onClick={()=>{deleteMember(global, conv.id, user.id)}}></IconButton>
+			}
+		</div>): [];
+
 	return (
-		<div className='w-[340px] h-[400px] 
+		<div className='w-[400px] h-[460px] 
 						flex justify-center flex-col
 						rounded-md
 						drop-shadow-custom1
 						bg-slate-700'>
 			<div className='w-full h-auto p-[8px] flex items-center justify-between bg-slate-700 drop-shadow-custom2'>
+				{conv.adminId !== undefined &&
+					<IconButton icon={FiSettings} onClick={()=>{setSettings(!settings)}}></IconButton>
+				}
 				<h3 className='font-space text-slate-200'>
-					{conv.users.length > 2 ? conv.name : conv.users.find((user:any) => user.username !== global.username).username}
+					{conv.adminId !== undefined ? conv.name : conv.users.find((user:any) => user.username !== global.username).username}
 				</h3>
-				<IconButton icon={FiX} onClick={()=>{dispatch(setCurrentConv({convID:undefined}))}}></IconButton>
+				<IconButton icon={FiX} onClick={()=>{dispatch(setCurrentConv({conv:undefined}))}}></IconButton>
 			</div>
-			<div id="someRandomID" 
-					className='overflow-y-scroll flex-grow'>
-				<Chat msg={conv.msg} username={global.username}/>
-			</div>
+			{settings ?
+				<div className='flex flex-col flex-grow items-center'>
+					<div id="someRandomID" className='overflow-y-scroll flex-grow'>
+						{users}
+					</div>
+				</div>
+				:
+				<div id="someRandomID" className='overflow-y-scroll flex-grow'>
+					<Chat msg={conv.msg} username={global.username}/>
+				</div>
+			}
 			<div className='w-full h-auto p-[4px] 
 							flex items-center bg-slate-700
 							drop-shadow-custom1'>

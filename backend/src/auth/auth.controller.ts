@@ -29,7 +29,6 @@ export class AuthController {
 	// @Post('refresh')
 	// @UseGuards(JwtAuthGuard)
 	// private refresh(@Req() { user }: Request): Promise<string | never> {
-	// 	console.log("refreshaaaa")
 	// 	return this.service.refresh(<User>user);
 	// }
 

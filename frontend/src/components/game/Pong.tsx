@@ -57,7 +57,7 @@ const Pong = () => {
 
 	useEffect(() => {
 		// eslint-disable-next-line
-		eventSource = new EventSource('http://localhost:5000/game/' + global.gameID);
+		eventSource = new EventSource(`http://localhost:5000/game/` + global.gameID);
 
 		eventSource.onmessage = async ({ data }) => {
 			const json = await JSON.parse(data)

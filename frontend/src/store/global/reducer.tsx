@@ -1,6 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { user, status, gamemode } from '../../common/types'
 import getProfilImg from '../../components/commons/utils/getProfilImg'
+
 const InitialState: user = {
 	logged:false,
 	username:undefined,
@@ -18,6 +19,8 @@ const InitialState: user = {
 	contactList:[],
 	gamemode:gamemode.normal,
 	twoFactor:false,
+	currentConv:undefined,
+	createRoom:false,
 }
 
 export const globalSlice = createSlice({
@@ -33,7 +36,7 @@ export const globalSlice = createSlice({
 			state.friendsRequest = data.payload.user.friendsRequest
 			state.pendingRequest = data.payload.user.pendingRequest
 			state.userImage = getProfilImg(data.payload.user.profilPic)
-			state.conv = data.payload.user.conv
+			state.conv = data.payload.user.conv.concat(data.payload.user.room)
 			state.room = data.payload.user.room
 			state.gameID = data.payload.user.gameID
 			state.twoFactor = data.payload.twoFactor
@@ -49,57 +52,51 @@ export const globalSlice = createSlice({
 			state.userImage = data.payload.profilPic
 			state.friends = data.payload.friends
 			state.bloqued = data.payload.bloqued
-			state.conv = data.payload.conv
+			state.conv = data.payload.conv.concat(data.payload.room)
 			state.gameID = data.payload.gameID
 			state.twoFactor = data.payload.twoFactor
-			console.log("2fa:", state.twoFactor, data.payload.twoFactor)
+			if (state.currentConv !== undefined && state.currentConv !== -1)
+				state.currentConv = state.conv.find((conv:any) => conv.adminId = state.currentConv.adminId && conv.id == state.currentConv.id)
 			if (state.convID === -1){
 				state.convID = state.conv.find((conv:any) => {
 					return conv.users.length === 2 && conv.users.findIndex((user:any) => user.username === state.clientChat) >= 0
 				}).id
 			}
-			state.room = data.payload.room
-			if (state.roomID === -1){
-				state.roomID = state.room.find((room:any) => {
-					return room.users.length === 1 && room.users.findIndex((user:any) => user.username === state.clientChat) >= 0
-				}).id
+			if (state.currentConv === -1){
+				state.currentConv = state.conv.find((conv:any) => {
+					return conv.users.length === 2 && conv.users.findIndex((user:any) => user.username === state.clientChat) >= 0
+				})
 			}
+			state.room = data.payload.room
+
 		},
 		setCurrentConv: (state:any, data:any) => {
-			var {id, username} = data.payload
-			if ((id === undefined && username === undefined) || (state.convID === id && id !== undefined)){
-				state.convID = undefined
+			var {username, conv} = data.payload
+			if ((conv === undefined && username === undefined) || (state.currentConv && conv != undefined && state.currentConv.id === conv.id)){
+				state.currentConv = undefined
 				state.clientChat = undefined
 			}
-			else if (id === undefined) {
-				let conv = state.conv.find((conv:any) => {
+			else if (conv === undefined) {
+				let tmp_conv = state.conv.find((conv:any) => {
 					return conv.users.length === 2 && conv.users.findIndex((user:any) => user.username === username) >= 0
 				})
-				if (conv === undefined){
+				if (tmp_conv === undefined){
 					state.clientChat = username
-					state.convID = -1;
+					state.currentConv = -1;
 				}
 				else
-					state.convID = conv.id
+					state.currentConv = tmp_conv
 				
 			} else
-				state.convID = id
+				state.currentConv = conv
 		},
 		setCurrentRoom: (state:any, data:any) => {
-			var {id, username} = data.payload
-			if (id === undefined) {
-				let room = state.room.find((room:any) => {
-					return room.users.length === 1 && room.users.findIndex((user:any) => user.username === username) >= 0
-				})
-				if (room === undefined){
-					state.clientChat = username
-					state.roomID = -1;
-				}
-				else
-					state.roomID = room.id
-				
-			} else
+			var {id} = data.payload
+			if (id === undefined  || state.roomID === id){
+				state.roomID = undefined
+			} else {
 				state.roomID = id
+			}
 		},
 		setContactList: (state:any, data:any) => {
 			state.contactList = data.payload
@@ -126,6 +123,9 @@ export const globalSlice = createSlice({
 		setGameMode: (state:any, data:any) => {
 			state.gamemode = data.payload
 		},
+		setCreateRoom: (state:any, data:any) => {
+			state.createRoom = !state.createRoom
+		},
 	},
 })
 
@@ -143,6 +143,7 @@ export const {
 	challenged,
 	setContactList,
 	setGameMode,
+	setCreateRoom
 	} = globalSlice.actions
 
 export default globalSlice.reducer

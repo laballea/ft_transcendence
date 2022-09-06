@@ -135,7 +135,7 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		const list = await this.userRepository.find(); // retrieve all users in db
 		const user: User = await this.userRepository.findOne({ where:{username:username} }); // find user by his username
 		
-		return user.friends.map(id => ({ id: id, username: list.find(el => el.id == id).username, status:this.userService.getUserStatus(list.find(el => el.id == id).id)}));
+		return user.friends.map(id => ({ id: id, username: list.find(el => el.id == id).username, profilPic: list.find(el => el.id == id).profilPic, status:this.userService.getUserStatus(list.find(el => el.id == id).id)}));
 	}
 
 	emitPopUp(users:UserSocket[], data:POPUP_DATA):void{
