@@ -23,7 +23,7 @@ type ProfileInfosProps = {
 
 const ProfileInfos = ({contact, userImage} : ProfileInfosProps) => {
 	const global = useSelector((state: any) => state.global)
-
+	console.log(userImage)
 	let statusTag : JSX.Element;
 	let actions : JSX.Element;
 

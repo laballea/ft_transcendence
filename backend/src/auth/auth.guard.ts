@@ -33,7 +33,6 @@ export class IntraAuthGuard extends AuthGuard('intra-oauth') {
 
 	handleRequest(err: any, user: any) {
 		if (err || !user) {
-			console.log("ca bloque", user, err)
 			throw new HttpException(HTTP_STATUS.LOGIN_FAILED, err.status);
 		}
 		return user;

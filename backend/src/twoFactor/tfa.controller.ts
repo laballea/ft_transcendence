@@ -29,7 +29,6 @@ export class TwoFactorAuthenticationController {
 	async register(@Res() response: Response, @Req() request: RequestWithUser) {
 		if (!request.user.isTwoFactorAuthenticationEnabled) {
 			const { otpauthUrl } = await this.twoFactorAuthenticationService.generateTwoFactorAuthenticationSecret(request.user);
-			console.log("optauthurl", otpauthUrl)
 			return this.twoFactorAuthenticationService.pipeQrCodeStream(response, otpauthUrl);
 		}
 	}
@@ -66,7 +65,6 @@ export class TwoFactorAuthenticationController {
 		if (!isCodeValid) {
 			throw new UnauthorizedException('Wrong authentication code');
 		}
-		console.log(user)
 		return {token:this.authenticationService.createToken(user)}
 	}
 }

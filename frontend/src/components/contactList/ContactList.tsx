@@ -27,13 +27,13 @@ const ContactList = () => {
 		eventSource.onmessage = ({ data }) => {
 			const json = JSON.parse(data)
 			dispatch(setContactList(json.contactList))
-			}
+		}
 		return () => {
 			eventSource.close()
 		};
 	}, []);
 	const friendsRequestList = global.friendsRequest.length > 0 ? global.friendsRequest.map((user: {id:number, username:string}, index:number) =>  <FriendRequestIn key={index} username={user.username}/>): [];
-	const friendsList = global.contactList.length > 0 ? global.contactList.map((contact: any, index:number) =>  <Contact key={index} contact={contact}/>): [];
+	const friendsList = global.contactList.length > 0 ? global.contactList.map((contact: any, index:number) =>  <Contact key={index} contact={contact} userImage={contact.profilPic}/>): [];
 	const pendingRequest = global.pendingRequest.length > 0 ? global.pendingRequest.map((contact: any, index:number) =>  <FriendRequestOut key={index} username={contact.username}/>): [];
 	return (
 		<div className="relative overflow-scroll w-full bg-slate-800 sm:w-[400px] flex-1 p-[16px] mx-[16px] sm:mx-0 rounded sm:rounded-l ">

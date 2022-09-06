@@ -23,12 +23,11 @@ export class AuthService {
 	public async register(body: RegisterDto): Promise<User | never> {
 		const { username }: RegisterDto = body;
 		let user: User = await this.repository.findOne({ where: { username } });
-		console.log("step2");
 		if (user) 
 			throw new HttpException(HTTP_STATUS.ALREADY_EXIST, HttpStatus.CONFLICT);
 		user = new User();
 		user.username = username;
-		user.profilPic = "default";
+		user.profilPic = "http://localhost:5000/users/image/default.png";
 		return this.repository.save(user);
 	}
 
@@ -38,7 +37,6 @@ export class AuthService {
 	public async login(body: LoginDto): Promise<Object | never> {
 		const { username }: LoginDto = body;
 		var user: User = await this.repository.findOne({ where: { username } });
-		console.log("step1");
 		if (!user) {
 			await this.register(body);
 			user = await this.repository.findOne({ where: { username } });
@@ -50,7 +48,6 @@ export class AuthService {
 	// --------------------------------------------------------------------------------------------------
 
 	public createToken(user: User): string{
-		console.log("2 step");
 		let tmp = this.helper.generateToken(user);
 		return tmp;
 	}
@@ -75,7 +72,6 @@ export class AuthService {
 	}
 
 	// public async refresh(user: User): Promise<string> {
-	// 	console.log("service refreshaa")
 	// 	return this.helper.generateToken(user);
 	// }
 }

@@ -22,7 +22,6 @@ type ContactProps = {
 		username:string,
 		id:number,
 		status:status,
-		
 	},
 	userImage:string
 }

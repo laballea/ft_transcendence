@@ -83,3 +83,29 @@ export function editProfilPicSocket(global:any,url:string){
 		jwt: global.token
 	})
 }
+
+export function deleteMember(global:any,roomId:number, userId:number){
+	socket.emit('deleteMember', {
+		roomId: roomId,
+		userId: userId,
+		admin: global.username,
+		jwt: global.token
+	});
+}
+
+export function newChatRoom(global:any,name:string, password:string){
+	socket.emit('newChatRoom', {
+		name,
+		password,
+		admin: global.username,
+		jwt: global.token
+	});
+}
+
+export function joinRoomSocket(global:any,joinRoom:string, passRoom:string){
+	socket.emit('joinRoom', {
+		joinRoom,
+		passRoom,
+		user: global.username,
+	});
+}
