@@ -27,10 +27,9 @@ type ProfileProps = {
 		id:number,
 		status:status,
 	},
-	userImage: string,
 }
 
-const Profile = ({contact, userImage} : ProfileProps) => {
+const Profile = ({contact} : ProfileProps) => {
 	const param:any = useLocation()
 	const id = param.state !== null ? param.state.id : contact.id
 	const [user, setUser] = useState(null)
@@ -63,7 +62,7 @@ const Profile = ({contact, userImage} : ProfileProps) => {
 							user && id ?
 							<div className=''>
 							<ProfileActions contact={user}/>
-							<ProfileInfos	contact={user} userImage={userImage}/>
+							<ProfileInfos	contact={user}/>
 							<ProfileHistory	contact={user}/>
 							<ProfileStats	contact={user}/>
 							</div>

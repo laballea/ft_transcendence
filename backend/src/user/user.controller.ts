@@ -86,8 +86,10 @@ export class UserController {
 	}
 
 	@Get('image/')
-	getFile() {
+	@UseGuards(JwtAuthGuard)
+	getFile(@Req() req) {
 		let res = []
+		res.push(req.user.profilIntraUrl)
 		let filenames = readdirSync(process.cwd() + '/uploads/profilpic');
 		filenames.forEach((file) => {
 			res.push("http://localhost:5000/users/image/" + file)

@@ -57,6 +57,7 @@ export class AuthService {
 		user.username = userData.login;
 		user.intraID = userData.id;
 		user.profilPic = userData.image_url;
+		user.profilIntraUrl = userData.image_url;
 		return this.repository.save(user);
 	}
 
