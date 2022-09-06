@@ -26,7 +26,7 @@ const Settings = ({} : SettingsProps) => {
 			<NavBar/>
 			<div className="absolute flex justify-between
 							w-full top-[80px] sm:top-[112px] bottom-0 sm:bottom-[48px]">
-				<div className="w-[calc(100%-400px)] overflow-hidden h-full flex sm:block justify-between z-10 p-[40px]">
+				<div className="w-[calc(100%-400px)] overflow-y-scroll h-full flex sm:block justify-between z-10 p-[40px]">
 					<div className=''>
 						<SettingsProfile username={global.username} userImage={global.userImage}/>
 						<Settings2FA/>
