@@ -1,12 +1,12 @@
 import React from 'react'
 import { FiAlertOctagon, FiSmile } from 'react-icons/fi'
 
-type PopUpWindowProps = {
+type PopUpToasterProps = {
 	content : string,
 	error:boolean
 }
 
-const PopUpWindow = ({ content, error } : PopUpWindowProps) => {
+const PopUpToaster = ({ content, error } : PopUpToasterProps) => {
 
 	return (
 		<>
@@ -30,9 +30,9 @@ const PopUpWindow = ({ content, error } : PopUpWindowProps) => {
 	) 
 }
 
-PopUpWindow.defaultProps = {
+PopUpToaster.defaultProps = {
 	content: "",
 	error:true
 }
 
-export default PopUpWindow
+export default PopUpToaster

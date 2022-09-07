@@ -9,7 +9,7 @@ import { useSearchParams } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import Popup from 'reactjs-popup'; 
 import { useDispatch, useSelector } from 'react-redux';
-import PopUpWindow from '../../commons/popup/PopUpWindow';
+import PopUpToaster from '../../commons/popup/PopUpToaster';
 
 const Logging = () => {
 	const [username, setUsername] = useState("");
@@ -152,7 +152,7 @@ const Logging = () => {
 						Log in with 42 account
 				</button>
 				<Popup open={popup.open} contentStyle={{position:'absolute', bottom:0, left:0}}>
-					<PopUpWindow content={popup.message}/>
+					<PopUpToaster content={popup.message}/>
 				</Popup>
 			</div>
 			<Footer/>
