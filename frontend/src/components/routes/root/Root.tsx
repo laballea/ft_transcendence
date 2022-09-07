@@ -64,6 +64,7 @@ const SocketConnection = (props:any) => {
 					dispatch(spectate(data.gameId))
 				});
 				socket.on("CHALLENGED", (data) => {
+					console.log("CHALLENGED")
 					dispatch(challenged(data))
 				});
 			});

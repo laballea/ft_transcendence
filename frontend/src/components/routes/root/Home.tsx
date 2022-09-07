@@ -1,9 +1,9 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 // Components
 import NavBar from '../../navbar/NavBar'
 import ContactList from '../../contactList/ContactList';
-import Message from '../../message/FloatingMessage';
+import FloatingMessage from '../../message/FloatingMessage';
 import Footer from '../../commons/footer/Footer';
 import BackgroundLobby from '../../commons/backgrounds/BackgroundLobby';
 
@@ -16,11 +16,18 @@ import ChatBar from '../../message/chatBar';
 import Game from '../../game/Game';
 import { status } from '../../../common/types';
 import CreateRoom from '../../message/CreateRoom';
+import { UNSAFE_NavigationContext, useNavigate } from "react-router-dom";
 
 export default function Home() {
 	const global = useSelector((state: any) => state.global)
 	document.title = "FT_TRANS "+ global.username;
+	let navigate = useNavigate();
 
+	useEffect(() => {
+		window.onpopstate = () => {
+			navigate("/login");
+		  }
+	}, []);
 	return (
 		<div className="w-full h-screen relative bg-slate-900">
 			<NavBar/>
@@ -42,7 +49,7 @@ export default function Home() {
 					
 						<div className="relative flex-initial flex w-full bg-slate-800 sm:w-[400px] flex-col h-full">
 							<ContactList/>
-							{global.createRoom ? <CreateRoom/> : global.currentConv != undefined && <Message/>}
+							{global.createRoom ? <CreateRoom/> : global.currentConv != undefined && <FloatingMessage/>}
 						</div>
 					</div>
 					<ChatBar/>

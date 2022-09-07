@@ -4,7 +4,7 @@ import React, { useState } from 'react'
 import BackgroundLogging from '../../commons/backgrounds/BackgroundLogging';
 import Footer from '../../commons/footer/Footer';
 // Hooks
-import { login } from '../../../store/global/reducer'
+import { login, logout } from '../../../store/global/reducer'
 import { useSearchParams } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import Popup from 'reactjs-popup'; 
@@ -32,6 +32,33 @@ const Logging = () => {
 			}, 2000);
 		}
 	  }, [popup]);
+
+	const validToken = async (token:string) => {
+		const requestOptions = {
+			method: 'GET',
+			headers: {
+				'Content-Type': 'application/json;charset=utf-8',
+				'Access-Control-Allow-Origin': '*',
+				'Authorization': 'bearer ' + token,
+			},
+		}
+		fetch("http://localhost:5000/auth/user", requestOptions)
+		.then(async response=>{
+			let resp = await response.json();
+			if (response.ok){
+				navigate('/app')
+				dispatch(login({user:resp, token:jwt}))
+			}
+			else {
+				if (searchParams.get("jwt")){
+					searchParams.delete("jwt");
+					setSearchParams(searchParams);
+				}
+				setPopup({open:true, error:true, message:resp.message})
+			}
+		})
+	}
+	
 	/*
 		POST username at auth/login, back respond with jwt token
 		and we redirect to home with jwt in query
@@ -52,7 +79,7 @@ const Logging = () => {
 		.then(async response=>{
 			const resp:any = await response.json()
 			if (response.ok){
-				navigate(`/login?jwt=${resp.token}`)
+				validToken(resp.token)
 			} else {
 				setPopup({open:true, error:true, message:resp.message})
 			}
@@ -77,7 +104,7 @@ const Logging = () => {
 		.then(async response=>{
 			const resp:any = await response.json()
 			if (response.ok){
-				navigate(`/login?jwt=${resp.token}`)
+				validToken(resp.token)
 			} else {
 				setPopup({open:true, error:true, message:resp.message})
 			}
@@ -100,9 +127,7 @@ const Logging = () => {
 				</form>
 			</div>
 		)
-	}
-
-	if (jwt && !global.token){ // if token exist in redux user is already logged
+	} else if (jwt && !global.token){ // if token exist in redux user is already logged
 		const requestOptions = {
 			method: 'GET',
 			headers: {
@@ -115,6 +140,10 @@ const Logging = () => {
 		.then(async response=>{
 			let resp = await response.json();
 			if (response.ok){
+				if (searchParams.get("jwt")){
+					searchParams.delete("jwt");
+					setSearchParams(searchParams);
+				}
 				navigate('/app')
 				dispatch(login({user:resp, token:jwt}))
 			}

@@ -47,8 +47,10 @@ export class AuthController {
 			url.searchParams.append('2fa', "true");
 			url.searchParams.append('id',(req.user.id).toString());
 		}
-		else
-			url.searchParams.append('jwt', this.service.createToken(req.user));
+		else{
+			let token = this.service.createToken(req.user)
+			url.searchParams.append('jwt', token);
+		}
 		res.redirect(url);
 	}
 

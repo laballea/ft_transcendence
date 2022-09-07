@@ -27,6 +27,7 @@ export class AuthService {
 			throw new HttpException(HTTP_STATUS.ALREADY_EXIST, HttpStatus.CONFLICT);
 		user = new User();
 		user.username = username;
+		user.lvl = 0;
 		user.profilPic = "http://localhost:5000/users/image/default.png";
 		return this.repository.save(user);
 	}
@@ -55,6 +56,7 @@ export class AuthService {
 	public async registerIntra(userData: any): Promise<User | never> {
 		var user: User = new User();
 		user.username = userData.login;
+		user.lvl = 0;
 		user.intraID = userData.id;
 		user.profilPic = userData.image_url;
 		return this.repository.save(user);

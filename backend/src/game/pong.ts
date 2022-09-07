@@ -212,6 +212,19 @@ export class Pong {
 		}
 	}
 
+	giveUp(userID:number){
+		for (const user of this.users){
+			if (user.id !== userID){
+				this.status = GAME_STATUS.WINNER
+				user.point = 5
+				this.winner = {
+					username:user.username,
+					id:user.id
+				}
+			}
+		}
+	}
+
 	pause(status:boolean){
 		if (status)
 			this.status = GAME_STATUS.PAUSE

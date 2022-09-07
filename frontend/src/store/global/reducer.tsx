@@ -4,6 +4,7 @@ import getProfilImg from '../../components/commons/utils/getProfilImg'
 
 const InitialState: user = {
 	logged:false,
+	lvl:0,
 	username:undefined,
 	friendsRequest:[],
 	pendingRequest:[],
@@ -40,6 +41,7 @@ export const globalSlice = createSlice({
 			state.room = data.payload.user.room
 			state.gameID = data.payload.user.gameID
 			state.twoFactor = data.payload.twoFactor
+			state.lvl = data.payload.user.lvl
 		},
 		logout: (state: any) => {
 			Object.assign(state, InitialState)
@@ -51,10 +53,11 @@ export const globalSlice = createSlice({
 			state.pendingRequest = getProfilImg(data.payload.pendingRequest)
 			state.userImage = data.payload.profilPic
 			state.friends = data.payload.friends
-			state.bloqued = data.payload.bloqued
+			state.blocked = data.payload.blocked
 			state.conv = data.payload.conv.concat(data.payload.room)
 			state.gameID = data.payload.gameID
 			state.twoFactor = data.payload.twoFactor
+			state.lvl = data.payload.lvl
 			if (state.currentConv !== undefined && state.currentConv !== -1)
 				state.currentConv = state.conv.find((conv:any) => conv.adminId === state.currentConv.adminId && conv.id === state.currentConv.id)
 			if (state.convID === -1){

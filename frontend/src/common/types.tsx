@@ -10,6 +10,7 @@ export interface user {
 	username?: string;
 	status?: string;
 	token?: string;
+	lvl?:number;
 	logged?:boolean;
 	friendsRequest?:Array<number>;
 	pendingRequest?:Array<number>;

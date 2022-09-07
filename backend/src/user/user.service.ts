@@ -154,6 +154,7 @@ export class UserService {
 			return 1
 		}
 	}
+
 	async changePic(id:number, pathToPic:string){
 		const userRepo: User = await this.userRepository.findOne({ where:{id:id}})
 		const userSocket:UserSocket = this.findConnectedUserById(id);
@@ -192,10 +193,27 @@ export class UserService {
 		return {
 			gameStats:userRepo.gameData,
 			username:userRepo.username,
+			lvl:userRepo.lvl,
 			id:userRepo.id,
 			status:this.getUserStatus(userRepo.id)
 		};
 	}
+
+	async lvlUp(id:number){
+		const userRepo: User = await this.userRepository.findOne({ where:{id:id}, relations: ['gameData', 'gameData.users']})
+		let res = 0
+		for (var i = userRepo.gameData.length - 1; i >= 0; i--) {
+			let game = userRepo.gameData[i]
+			if (game.winner === userRepo.id)
+				res++;
+			else
+				break ;
+		}
+		if (res === userRepo.lvl + 1)
+			userRepo.lvl++;
+		await this.userRepository.save(userRepo)
+	}
+
 
 	async getConversationByUserId(user:User):Promise<safeConv[]>{
 		var _conv:safeConv[] = [];
@@ -245,6 +263,7 @@ export class UserService {
 
 		var UserSafeInfo:UserSafeInfo = {
 			id: userRepo.id,
+			lvl:userRepo.lvl,
 			username: userRepo.username,
 			status: userInfo ? userInfo.status : status.Disconnected,
 			profilPic: userRepo.profilPic,
@@ -252,7 +271,7 @@ export class UserService {
 			twoFactor: userRepo.isTwoFactorAuthenticationEnabled,
 		};
 		UserSafeInfo.friends = userRepo.friends.map(id => ({ id: id, username: usersRepo.find(el => el.id == id).username}));
-		UserSafeInfo.bloqued = userRepo.bloqued.map(id => ({ id: id, username: usersRepo.find(el => el.id == id).username}));
+		UserSafeInfo.blocked = userRepo.blocked.map(id => ({ id: id, username: usersRepo.find(el => el.id == id).username}));
 		UserSafeInfo.friendsRequest = userRepo.friendsRequest.map(id => ({ id: id, username: usersRepo.find(el => el.id == id).username}));
 		UserSafeInfo.pendingRequest = userRepo.pendingRequest.map(id => ({ id: id, username: usersRepo.find(el => el.id == id).username}));
 		UserSafeInfo.conv = await this.getConversationByUserId(userRepo);

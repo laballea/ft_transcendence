@@ -112,9 +112,10 @@ export class GameService {
 		return new this.mode[mode]({users:pongUser,time:Date.now(), mode}, this.gameEnd.bind(this), gameID)
 	}
 
-	gameEnd(gameID:string){
+	async gameEnd(gameID:string){
 		let game:GAMES_SOCKET = this.findGame(gameID)
-		this.userService.saveGame(game)
+		await this.userService.saveGame(game)
+		this.userService.lvlUp(game.pong.getWinner().id)
 		for (let id of game.usersID){
 			let user:UserSocket = this.userService.findConnectedUserById(id)
 			if (user){
@@ -135,5 +136,18 @@ export class GameService {
 			}
 		}
 		this.removeGame(gameID)
+	}
+
+	quitGame(gameID:string, user:UserSocket){
+		let game:GAMES_SOCKET = this.findGame(gameID)
+		user.socket.leave(gameID)
+		user.socket.emit("GAME_END")
+		user.status = status.Connected
+		user.gameID = undefined
+		for (let id of game.usersID){
+			if (user.id === id){
+				game.pong.giveUp(id)
+			}
+		}
 	}
 }
