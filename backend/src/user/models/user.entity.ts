@@ -86,7 +86,13 @@ export class Room {
 	password: string;
 
 	@Column()
-	adminId: number;
+	ownerId: number;
+
+	@Column("int", { array: true, default: '{}',nullable: true})
+	adminId: number[];
+
+	@Column("int", { array: true, default: '{}',nullable: true})
+	bannedId: number[];
 
 	@ManyToMany(() => User, user => user.rooms)
 	@JoinTable()
@@ -94,6 +100,9 @@ export class Room {
 
 	@OneToMany(() => Message, message => message.room, {cascade: ['insert', 'update', 'remove']})
 	messages: Message[];
+
+	@OneToMany(() => Muted, muted => muted.room, {cascade: ['insert', 'update', 'remove']})
+	muteds: Muted[];
 }
 
 @Entity()
@@ -158,5 +167,20 @@ export class Message {
 	conversation: Conversation;
 
 	@ManyToOne(() => Room, room => room.messages)
+	room: Room;
+}
+
+@Entity()
+export class Muted {
+	@PrimaryGeneratedColumn()
+	id: number;
+
+	@Column()
+	userId: number;
+
+	@Column({nullable:true})
+	date: string;
+
+	@ManyToOne(() => Room, room => room.muteds)
 	room: Room;
 }

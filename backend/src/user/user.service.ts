@@ -219,12 +219,14 @@ export class UserService {
 			for (let room of user.rooms) {
 				_room.push({
 					id: room.id,
+					ownerId: room.ownerId,
 					adminId: room.adminId,
-					troglodite:room.adminId,
+					bannedId: room.bannedId,
 					name: room.name,
 					password: room.password,
 					users: room.users.map(user => ({id:user.id, username:user.username})),
 					msg: room.messages,
+					muteds: room.muteds,
 				})
 			}
 		}
