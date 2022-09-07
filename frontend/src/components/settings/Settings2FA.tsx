@@ -5,6 +5,7 @@ import { useSearchParams } from 'react-router-dom';
 
 // Assets
 import {FiShield, FiShieldOff} from 'react-icons/fi'
+import PopUp2FAModal from '../commons/popup/PopUp2FAModal';
 
 type Settings2FAProps = {
 
@@ -119,6 +120,9 @@ const Settings2FA = ({} : Settings2FAProps) => {
 	}
 	return (
 		<>
+			{
+				<PopUp2FAModal></PopUp2FAModal>
+			}
 			<div  className='w-full border h-[2px] border-slate-700'></div>
 			<h2 className='font-pilowlava text-[64px] text-transparent backgroundTextOutline'>2FA</h2>	
 			<div onClick={ () => { handleTwoFA(twoFA); }} className='relative inline-block h-[64px] w-[195px] bg-slate-700 rounded-full'>
