@@ -78,6 +78,7 @@ function PopUp2FAModal() {
 			})
 		}
 		fetch("http://localhost:5000/2fa/turn-on", requestOptions).then(resp => {
+			console.log(resp)
 			if (resp.ok)
 				setTwoFA(true)
 		})
