@@ -278,14 +278,14 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 
 	@SubscribeMessage('deleteMember')
 	async deleteMember(@MessageBody() data: {roomId: number, userId: number, admin: string}) {
-		const db_admin: User = await this.userRepository.findOne({ where:{username:data.admin} })
+		let room : Room = await this.roomRepository.findOne({
+			where:{id: data.roomId},
+			relations:['users', 'users.rooms'],
+		})
+		const db_admin: User = await this.userRepository.findOne({ where:{id:room.adminId} })
 		if (data.userId == db_admin.id)
 			this.deleteRoom({roomId: data.roomId, user: data.admin})
 		else {
-			let room : Room = await this.roomRepository.findOne({
-				where:{id: data.roomId},
-				relations:['users', 'users.rooms'],
-			})
 			await this.roomRepository
 			.createQueryBuilder()
 			.relation(Room, "users")

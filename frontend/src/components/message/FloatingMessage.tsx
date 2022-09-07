@@ -3,11 +3,12 @@ import Chat from './chat'
 import Com from './com'
 import { useDispatch, useSelector } from 'react-redux'
 import IconButton from '../commons/buttons/IconButton';
-import { FiSettings, FiX } from 'react-icons/fi';
+import { FiDelete, FiLogOut, FiSettings, FiTrash2, FiX } from 'react-icons/fi';
 import { setCurrentConv } from '../../store/global/reducer';
 import './noScrollBar.css'
 import { truncateString } from '../commons/utils/truncateString';
 import { deleteMember } from '../../context/socket';
+import NavBarButtonSecondary from '../commons/buttons/NavBarButtonSecondary';
 
 export interface MessageI {
 		author: string
@@ -34,11 +35,10 @@ function FloatingMessage() {
 		if (element != null)
 			element.scrollTop = element.scrollHeight;
 	  });
-	  console.log(conv.adminId)
 	const users = conv.adminId !== undefined ? conv.users.map((user: {id:number, username:string}, index:number) =>
 		<div className={`bg-slate-700 flex flex-row justify-center items-end m-[2px] w-[80px] text-center rounded text-slate-400`} key={index}>
 			<h3>{ truncateString(user.username, 9)}</h3>
-			{conv.adminId === global.id &&
+			{conv.adminId === global.id && conv.adminId !== user.id &&
 				<IconButton icon={FiX} onClick={()=>{deleteMember(global, conv.id, user.id)}}></IconButton>
 			}
 		</div>): [];
@@ -62,6 +62,13 @@ function FloatingMessage() {
 				<div className='flex flex-col flex-grow items-center'>
 					<div id="someRandomID" className='overflow-y-scroll flex-grow'>
 						{users}
+					</div>
+					<div className='flex flex-row'>
+						{ conv.adminId === global.id ?
+							<NavBarButtonSecondary cta="Delete Room" icon={FiTrash2} onClick={()=>{deleteMember(global, conv.id, global.id)}}/>
+							:
+							<NavBarButtonSecondary cta="Quit Room" icon={FiLogOut} onClick={()=>{deleteMember(global, conv.id, global.id)}}/>
+						}
 					</div>
 				</div>
 				:
