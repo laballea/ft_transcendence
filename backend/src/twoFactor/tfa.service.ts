@@ -16,7 +16,6 @@ export class TwoFactorAuthenticationService {
 	public async generateTwoFactorAuthenticationSecret(user: User) {
 		const secret = authenticator.generateSecret();
 		const otpauthUrl = authenticator.keyuri(user.email, this.configService.get('TWO_FACTOR_AUTHEN_NAME'), secret);
-		console.log("SECRET", secret)
 		await this.userService.setTwoFactorAuthenticationSecret(secret, user.id);
 		return {
 			secret,
