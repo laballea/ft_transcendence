@@ -18,10 +18,9 @@ type ProfileInfosProps = {
 		status:status,
 		gameStats:any
 	},
-	userImage:string
 }
 
-const ProfileInfos = ({contact, userImage} : ProfileInfosProps) => {
+const ProfileInfos = ({contact} : ProfileInfosProps) => {
 	const global = useSelector((state: any) => state.global)
 	let statusTag : JSX.Element;
 	let actions : JSX.Element;
@@ -92,7 +91,7 @@ const ProfileInfos = ({contact, userImage} : ProfileInfosProps) => {
 
 	return (
 		<div className='flex items-center mb-[64px]'>
-			<img src={userImage} width="200" height="200" alt="userimage" className="rounded-full mr-[16px]"></img>
+			<img src={global.userImage} width="200" height="200" alt="userimage" className="rounded-full mr-[16px]"></img>
 			<div className='relative'>
 				<div className='absolute mt-[-8px] font-space'>
 					{statusTag}
