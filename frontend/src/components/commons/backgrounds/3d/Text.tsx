@@ -8,11 +8,16 @@ type GLTFResult = GLTF & {
   nodes: {
     ft_trans: THREE.Mesh;
   };
-  materials: {};
+  materials: {
+	['default'] : THREE.MeshStandardMaterial;
+  };
 };
 
 export default function Model(props: JSX.IntrinsicElements["group"]) {
-	const { nodes } = useGLTF("/geometries/ft_trans.gltf") as GLTFResult;
+	const gltf : unknown = useGLTF("/geometries/ft_trans.gltf");
+	const { nodes } = gltf as GLTFResult;
+	
+
 	const ref = useRef<THREE.Mesh>(null!)
 
 	let rotationSpeed : number = 0.001
