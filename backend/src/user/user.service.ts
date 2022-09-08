@@ -4,6 +4,8 @@ import { GAMES_SOCKET, status } from '../common/types';
 import { Repository } from 'typeorm';
 import { UserI, UserSafeInfo, UserSocket, MessageI, safeConv, safeRoom } from './models/user.interface';
 import { User, Message, Conversation, GameData } from './models/user.entity';
+import { HttpService } from '@nestjs/axios';
+import { firstValueFrom, lastValueFrom } from 'rxjs';
 
 @Injectable()
 export class UserService {
@@ -16,6 +18,7 @@ export class UserService {
 		private gameRepository: Repository<GameData>,
 		@InjectRepository(Message)
 		private messageRepository: Repository<Message>,
+		private httpService: HttpService,
 
 	){}
 
@@ -104,6 +107,7 @@ export class UserService {
 		const user = this.connectedUser.find((user: any) => {return user.socket.id === socketID})
 		if (user) {
 			this.connectedUser.splice(this.connectedUser.findIndex(v => v.id === user.id), 1);
+			user.socket.disconnect()
 			console.log(user.username, "disconnected");
 		}
 	}
@@ -145,15 +149,28 @@ export class UserService {
 
 	async editUsername(id:number, newUsername:string){
 		const userRepo: User = await this.userRepository.findOne({ where:{id:id}})
+
 		const isExist: User = await this.userRepository.findOne({ where:{username:newUsername}})
 		if (isExist) {
 			return -1;
 		} else {
+			if (userRepo.token42){
+				let resp = await firstValueFrom(this.httpService
+					.get(`https://api.intra.42.fr/v2/users?filter[login]=${newUsername}`, {
+						headers: { Authorization: `Bearer ${userRepo.token42}` },
+				}));
+				let res = resp.data.find((user:any) => {
+					return (user.login === newUsername && user.id !== userRepo.intraID)
+				})
+				if (res !== undefined)
+					return -1
+			}
 			userRepo.username = newUsername
 			await this.userRepository.save(userRepo)
 			return 1
 		}
 	}
+
 	async changePic(id:number, pathToPic:string){
 		const userRepo: User = await this.userRepository.findOne({ where:{id:id}})
 		const userSocket:UserSocket = this.findConnectedUserById(id);
@@ -192,10 +209,27 @@ export class UserService {
 		return {
 			gameStats:userRepo.gameData,
 			username:userRepo.username,
+			lvl:userRepo.lvl,
 			id:userRepo.id,
 			status:this.getUserStatus(userRepo.id)
 		};
 	}
+
+	async lvlUp(id:number){
+		const userRepo: User = await this.userRepository.findOne({ where:{id:id}, relations: ['gameData', 'gameData.users']})
+		let res = 0
+		for (var i = userRepo.gameData.length - 1; i >= 0; i--) {
+			let game = userRepo.gameData[i]
+			if (game.winner === userRepo.id)
+				res++;
+			else
+				break ;
+		}
+		if (res === userRepo.lvl + 1)
+			userRepo.lvl++;
+		await this.userRepository.save(userRepo)
+	}
+
 
 	async getConversationByUserId(user:User):Promise<safeConv[]>{
 		var _conv:safeConv[] = [];
@@ -220,7 +254,6 @@ export class UserService {
 				_room.push({
 					id: room.id,
 					adminId: room.adminId,
-					troglodite:room.adminId,
 					name: room.name,
 					password: room.password,
 					users: room.users.map(user => ({id:user.id, username:user.username})),
@@ -241,6 +274,7 @@ export class UserService {
 
 		var UserSafeInfo:UserSafeInfo = {
 			id: userRepo.id,
+			lvl:userRepo.lvl,
 			username: userRepo.username,
 			status: userInfo ? userInfo.status : status.Disconnected,
 			profilPic: userRepo.profilPic,
@@ -248,7 +282,7 @@ export class UserService {
 			twoFactor: userRepo.isTwoFactorAuthenticationEnabled,
 		};
 		UserSafeInfo.friends = userRepo.friends.map(id => ({ id: id, username: usersRepo.find(el => el.id == id).username}));
-		UserSafeInfo.bloqued = userRepo.bloqued.map(id => ({ id: id, username: usersRepo.find(el => el.id == id).username}));
+		UserSafeInfo.blocked = userRepo.blocked.map(id => ({ id: id, username: usersRepo.find(el => el.id == id).username}));
 		UserSafeInfo.friendsRequest = userRepo.friendsRequest.map(id => ({ id: id, username: usersRepo.find(el => el.id == id).username}));
 		UserSafeInfo.pendingRequest = userRepo.pendingRequest.map(id => ({ id: id, username: usersRepo.find(el => el.id == id).username}));
 		UserSafeInfo.conv = await this.getConversationByUserId(userRepo);

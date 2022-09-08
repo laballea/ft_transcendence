@@ -12,7 +12,7 @@ import {
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Conversation, Message, User, Room } from './models/user.entity';
-import { gamemode, status } from 'src/common/types';
+import { BLOCKED_DATA, gamemode, status } from 'src/common/types';
 import { FRIEND_REQUEST_ACTIONS,
 	FRIEND_REQUEST_DATA,
 	MESSAGE_DATA,
@@ -127,7 +127,36 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 			console.log(e);
 		}
 	}
+	@SubscribeMessage('BLOCKED')
+	async blocked(@MessageBody() data: BLOCKED_DATA) {
+		try {
+			/* Find if clients are connected*/
+			const user:UserSocket = this.userService.findConnectedUserByUsername(data.user);
+			const user_to_block:UserSocket = this.userService.findConnectedUserByUsername(data.user_to_block);
 
+			/* find user in db */
+			const db_user = await this.userRepository.findOne({ where:{username:data.user} })
+			const db_user_to_block = await this.userRepository.findOne({ where:{username:data.user_to_block} })
+
+			if (user){
+				if (db_user.blocked.includes(user_to_block.id)){
+					db_user.blocked.splice(db_user.blocked.indexOf(user_to_block.id), 1);
+				} else {
+					this.friendsService.remove(db_user, db_user_to_block)
+					db_user.blocked.push(db_user_to_block.id)
+				}
+			}
+			/* update both user db */
+			await this.userService.updateUserDB([db_user, db_user_to_block]);
+			if (user)
+				user.socket.emit('UPDATE_DB', await this.userService.parseUserInfo(db_user.id))
+			if (user_to_block)
+				user_to_block.socket.emit('UPDATE_DB', await this.userService.parseUserInfo(db_user_to_block.id))
+		}
+		catch (e){
+			console.log(e);
+		}
+	}
 	/*
 		return array of object with id, username and status
 	*/
@@ -373,19 +402,43 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 			console.log(e)
 		}
 	}
+
+	@SubscribeMessage('SPECTATE')
+	async spectate(@MessageBody() data:{clientId:number, spectateId:number, token:string}) {
+		let gameId = this.gameService.spectate(data.clientId, data.spectateId)
+		const user:UserSocket = this.userService.findConnectedUserById(data.clientId);
+		if (user){
+			user.status = status.Spectate
+			user.socket.emit("JOIN_SPECTATE", {gameId})
+		}
+		
+	}
+
+	@SubscribeMessage('QUIT_GAME')
+	async quitGame(@MessageBody() data: {client_send: string, gameID:string, jwt: number}) {
+		try {
+			const user_send:UserSocket = this.userService.findConnectedUserByUsername(data.client_send);
+			if (user_send != undefined){
+				this.gameService.quitGame(data.gameID, user_send)
+			}
+		} catch (e){
+			console.log(e)
+		}
+	}
+
 	@SubscribeMessage('CHALLENGED')
 	async challenged(@MessageBody() data: {action:string, mode:gamemode, asking:number, receiving:number, token:string}) {
 		try {
 			const user_asking:UserSocket = this.userService.findConnectedUserById(data.asking);
+			const user_asking_db:User = await this.userRepository.findOne({ where:{id:data.asking} })
 			const user_receiving:UserSocket = this.userService.findConnectedUserById(data.receiving);
 			switch (data.action){
 				case ("ASK"):{
-					if (user_receiving != undefined && user_receiving.challenged === false){
-						user_receiving.challenged = true;
+					if (user_receiving == undefined)
+						this.emitPopUp([user_asking], {error:true, message: `User not connected.`});
+					else{
 						user_receiving.socket.emit("CHALLENGED", {who:{id:data.asking, username:user_asking.username}})
 					}
-					else
-						this.emitPopUp([user_asking], {error:true, message: `User not connected.`});
 					break;
 				}
 				case ("ACCEPT"):{
@@ -418,17 +471,6 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 	@SubscribeMessage('MOUSE_CLICK')
 	async mouseclick(@MessageBody() data: {pos:{x:number, y:number},id:number,gameID:string,jwt:string}) {
 		this.gameService.findGame(data.gameID).pong.mouseclick(data.id, data.pos)
-	}
-
-	@SubscribeMessage('SPECTATE')
-	async spectate(@MessageBody() data:{clientId:number, spectateId:number, token:string}) {
-		let gameId = this.gameService.spectate(data.clientId, data.spectateId)
-		const user:UserSocket = this.userService.findConnectedUserById(data.clientId);
-		if (user){
-			user.status = status.Spectate
-			user.socket.emit("JOIN_SPECTATE", {gameId})
-		}
-		
 	}
 
 	@SubscribeMessage('EDIT_USERNAME')

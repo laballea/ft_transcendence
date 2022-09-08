@@ -20,6 +20,11 @@ import { status } from '../../../common/types'
 
 import { useLocation } from "react-router-dom";
 import Loading from '../../commons/utils/Loading';
+import { useSelector } from 'react-redux';
+import CreateRoom from '../../message/CreateRoom';
+import Message from './Message';
+import FloatingMessage from '../../message/FloatingMessage';
+import ChatBar from '../../message/chatBar';
 
 type ProfileProps = {
 	contact: {
@@ -52,6 +57,7 @@ const Profile = ({contact} : ProfileProps) => {
 
 
 	return (
+
 		<div className="w-full h-screen relative bg-slate-900">
 			<NavBar/>
 			<div className="absolute flex justify-between
@@ -72,7 +78,6 @@ const Profile = ({contact} : ProfileProps) => {
 							</div>
 					}
 				</div>
-				<ContactList/>
 			</div>
 			<Footer/>
 		</div>

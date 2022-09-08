@@ -32,6 +32,33 @@ const Logging = () => {
 			}, 2000);
 		}
 	  }, [popup]);
+
+	const validToken = async (token:string) => {
+		const requestOptions = {
+			method: 'GET',
+			headers: {
+				'Content-Type': 'application/json;charset=utf-8',
+				'Access-Control-Allow-Origin': '*',
+				'Authorization': 'bearer ' + token,
+			},
+		}
+		fetch("http://localhost:5000/auth/user", requestOptions)
+		.then(async response=>{
+			let resp = await response.json();
+			if (response.ok){
+				navigate('/app')
+				dispatch(login({user:resp, token:jwt}))
+			}
+			else {
+				if (searchParams.get("jwt")){
+					searchParams.delete("jwt");
+					setSearchParams(searchParams);
+				}
+				setPopup({open:true, error:true, message:resp.message})
+			}
+		})
+	}
+	
 	/*
 		POST username at auth/login, back respond with jwt token
 		and we redirect to home with jwt in query
@@ -52,7 +79,7 @@ const Logging = () => {
 		.then(async response=>{
 			const resp:any = await response.json()
 			if (response.ok){
-				navigate(`/login?jwt=${resp.token}`)
+				validToken(resp.token)
 			} else {
 				setPopup({open:true, error:true, message:resp.message})
 			}
@@ -77,7 +104,7 @@ const Logging = () => {
 		.then(async response=>{
 			const resp:any = await response.json()
 			if (response.ok){
-				navigate(`/login?jwt=${resp.token}`)
+				validToken(resp.token)
 			} else {
 				setPopup({open:true, error:true, message:resp.message})
 			}
@@ -88,7 +115,8 @@ const Logging = () => {
 		return (
 			<div>
 				<form onSubmit={handleCode}>
-					<input className="h-8 w-[260px] p-4 mb-2 font-space bg-transparent border-2 border-slate-400 hover:border-slate-200 text-md text-slate-400 placeholder:text-slate-600 rounded transition-all duration-300 ease-in-out"
+					<input className="h-8 w-[260px] p-4 mb-2 font-space bg-transparent border-2 border-slate-400 hover:border-slate-200
+										text-md text-slate-400 placeholder:text-slate-600 rounded transition-all duration-300 ease-in-out"
 						type="text"
 						placeholder="code 2fa"
 						value={code2fa}
@@ -100,9 +128,7 @@ const Logging = () => {
 				</form>
 			</div>
 		)
-	}
-
-	if (jwt && !global.token){ // if token exist in redux user is already logged
+	} else if (jwt){ // if token exist in redux user is already logged
 		const requestOptions = {
 			method: 'GET',
 			headers: {
@@ -115,7 +141,11 @@ const Logging = () => {
 		.then(async response=>{
 			let resp = await response.json();
 			if (response.ok){
-				navigate('/app')
+				/*if (searchParams.get("jwt")){
+					searchParams.delete("jwt");
+					setSearchParams(searchParams);
+				}*/
+				navigate('/app', {replace :true})
 				dispatch(login({user:resp, token:jwt}))
 			}
 			else {

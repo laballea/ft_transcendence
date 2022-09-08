@@ -18,6 +18,12 @@ export class FriendsService {
 				message:`You are so alone wtf.`,
 			})
 		}
+		if (recv.blocked.includes(send.id)){
+			return ({
+				error:true,
+				message:`${truncateString(recv.username, 10)} blocked you.`,
+			})
+		}
 		if (!recv.friendsRequest.includes(send.id) && //is user already in friend request
 			!recv.friends.includes(send.id)) //is user already a friend
 		{

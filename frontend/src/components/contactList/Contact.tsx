@@ -47,10 +47,10 @@ const Contact = ({contact, userImage} : ContactProps) => {
 						:
 						<div className='flex items-center'>
 							{
-								global.status === status.InGame &&
+								global.status !== status.InGame && contact.status === status.InGame &&
 								<IconButton icon={FiEye} onClick={() => {spectateGame(global, global.id, contact.id)}}/>
 							}
-							{global.status !== status.InGame && contact.status !== status.Disconnected &&
+							{global.status !== status.InGame && (contact.status === status.Connected || contact.status === status.InQueue) &&
 								<IconButton icon={FiZap}  
 								onClick={() => {contact.status !== status.InGame && challenged("ASK", global, contact.id) }}/>
 							}

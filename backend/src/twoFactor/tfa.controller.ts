@@ -37,21 +37,17 @@ export class TwoFactorAuthenticationController {
 	// if the code send by user is valid: turn on 2fa
 	@Post('turn-on')
 	@UseGuards(JwtAuthGuard)
-	async turnOnTwoFactorAuthentication(@Req() request: RequestWithUser, @Body() { code } : TwoFactorAuthenticationCodeDto) {
-		try {
-			const isCodeValid = this.twoFactorAuthenticationService.isTwoFactorAuthenticationCodeValid(code, request.user);
-			console.log("is code valid?: " + isCodeValid)
-			if (!isCodeValid) {
-				return HttpStatus.UNAUTHORIZED
-			}
-			await this.userService.turnOnTwoFactorAuthentication(request.user.id);
-			const userSocket:UserSocket = this.userService.findConnectedUserById(request.user.id);
-			userSocket.socket.emit("UPDATE_DB", await this.userService.parseUserInfo(request.user.id))
-			
-			return HttpStatus.OK
-		} catch (error) {
-			console.error(error)
+	async turnOnTwoFactorAuthentication(@Req() request: RequestWithUser, @Res() res: Response, @Body() { code } : TwoFactorAuthenticationCodeDto) {
+		const isCodeValid = this.twoFactorAuthenticationService.isTwoFactorAuthenticationCodeValid(code, request.user);
+		if (!isCodeValid) {
+			res.sendStatus(HttpStatus.UNAUTHORIZED)
+			return ;
 		}
+		await this.userService.turnOnTwoFactorAuthentication(request.user.id);
+		const userSocket:UserSocket = this.userService.findConnectedUserById(request.user.id);
+		userSocket.socket.emit("UPDATE_DB", await this.userService.parseUserInfo(request.user.id))
+		res.sendStatus(HttpStatus.OK)
+		return ;
 	}
 
 	@Post('turn-off')

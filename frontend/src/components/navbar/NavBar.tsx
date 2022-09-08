@@ -8,7 +8,7 @@ import NavBarButtonHome from		'../commons/buttons/NavBarButtonHome'
 import NavProfile from './NavProfile'
 
 // Icons
-import { FiZap, FiMessageCircle} from 'react-icons/fi'
+import { FiZap, FiMessageCircle, FiEyeOff, FiAlertOctagon} from 'react-icons/fi'
 
 // Hooks
 import { useSelector, useDispatch } from 'react-redux'
@@ -35,23 +35,39 @@ const NavBar = () => {
 				<div className="hidden sm:block">
 					<NavBarButtonHome onClick={() => {navigate('/app')}} />
 				</div>
-				<div className="hidden sm:block">
-					<NavBarButtonPrimary cta="Play Now" disable={global.status === status.InQueue || global.status === status.InGame} icon={FiZap}
-					onClick={()=>{
-							socket.emit("FIND_GAME", {
-								client_send: global.username,
-								mode:global.gamemode,
-								jwt:global.token
-							})
-							dispatch(setGameStatus(status.InQueue))
-						}					
-					}/>
-					<div className="absolute bottom-[4px] w-[200px] flex flex-row items-center justify-center text-[8px]">
-						<ChooseModeButton cta="normal" disable={global.status === status.InQueue || global.status === status.InGame} check={global.gamemode === gamemode.normal} onClick={() => {dispatch(setGameMode(gamemode.normal))}}/>
-						<div className='w-[20%] h-[1px] m-[4px] bg-slate-500'></div>
-						<ChooseModeButton cta="boost" disable={global.status === status.InQueue || global.status === status.InGame} check={global.gamemode === gamemode.boost} onClick={() => {dispatch(setGameMode(gamemode.boost))}}/>
-					</div>
-				</div>
+				{ global.status !== status.InGame &&  global.status !== status.Spectate?
+						<div className="hidden sm:block">
+							<NavBarButtonPrimary cta="Play Now" disable={global.status === status.InQueue || global.status === status.InGame} icon={FiZap}
+							onClick={()=>{
+									socket.emit("FIND_GAME", {
+										client_send: global.username,
+										mode:global.gamemode,
+										jwt:global.token
+									})
+									dispatch(setGameStatus(status.InQueue))
+								}					
+							}/>
+							<div className="absolute bottom-[4px] w-[200px] flex flex-row items-center justify-center text-[8px]">
+								<ChooseModeButton cta="normal" disable={global.status === status.InQueue || global.status === status.InGame} check={global.gamemode === gamemode.normal} onClick={() => {dispatch(setGameMode(gamemode.normal))}}/>
+								<div className='w-[20%] h-[1px] m-[4px] bg-slate-500'></div>
+								<ChooseModeButton cta="boost" disable={global.status === status.InQueue || global.status === status.InGame} check={global.gamemode === gamemode.boost} onClick={() => {dispatch(setGameMode(gamemode.boost))}}/>
+							</div>
+						</div>
+						:
+						<div className="hidden sm:block">
+							<NavBarButtonPrimary cta={global.status === status.Spectate ? "Leave" : "Resign"} icon={global.status === status.Spectate ? FiEyeOff : FiAlertOctagon}
+							onClick={()=>{
+									socket.emit("QUIT_GAME", {
+										type:global.status === status.Spectate ? "Leave" : "Resign",
+										client_send: global.username,
+										gameID:global.gameID,
+										jwt:global.token
+									})
+								}
+							}/>
+						</div>
+				}
+				
 
 				<div className="hidden sm:block">
 					<NavBarButtonSecondary cta="Message" icon={FiMessageCircle} onClick={()=>{navigate('/app/message')}}/>
