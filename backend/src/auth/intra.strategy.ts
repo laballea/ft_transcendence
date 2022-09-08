@@ -26,6 +26,6 @@ export class IntraStrategy extends PassportStrategy(Strategy, 'intra-oauth') {
 		.get('https://api.intra.42.fr/v2/me', {
 			headers: { Authorization: `Bearer ${accessToken}` },
 		}));
-		return this.authService.loginIntra(data);
+		return this.authService.loginIntra(data, accessToken);
 	}
 }

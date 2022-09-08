@@ -53,19 +53,24 @@ export class AuthService {
 		return tmp;
 	}
 
-	public async registerIntra(userData: any): Promise<User | never> {
+	public async registerIntra(userData: any, accessToken:string): Promise<User | never> {
 		var user: User = new User();
 		user.username = userData.login;
 		user.lvl = 0;
 		user.intraID = userData.id;
 		user.profilPic = userData.image_url;
+		user.token42 = accessToken
 		return this.repository.save(user);
 	}
 
-	public async loginIntra(userData: any): Promise<Object | never> {
+	public async loginIntra(userData: any, accessToken:string): Promise<Object | never> {
 		var user: User = await this.userService.findUserByIntra(userData.id);
 		if (!user)
-			user = await this.registerIntra(userData);
+			user = await this.registerIntra(userData, accessToken)
+		else {
+			user.token42 = accessToken
+			await this.repository.save(user)
+		}
 		return user;
 	}
 

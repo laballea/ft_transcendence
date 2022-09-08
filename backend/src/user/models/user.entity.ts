@@ -25,6 +25,9 @@ export class User {
 	@Column()
 	username:string;
 
+	@Column({nullable:true})
+	token42:string;
+
 	@Column("int", {nullable:true})
 	intraID:number;
 

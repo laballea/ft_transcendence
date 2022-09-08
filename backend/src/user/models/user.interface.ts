@@ -16,6 +16,8 @@ export interface UserI {
 
 	email:string;
 
+	token42:string;
+
 	profilIntraUrl:string;
 	
 	profilPic:string;
