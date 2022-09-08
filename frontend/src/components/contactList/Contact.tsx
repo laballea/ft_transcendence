@@ -52,7 +52,7 @@ const Contact = ({contact, userImage} : ContactProps) => {
 							}
 							{global.status !== status.InGame && (contact.status === status.Connected || contact.status === status.InQueue) &&
 								<IconButton icon={FiZap}  
-								onClick={() => {contact.status === status.InGame && challenged("ASK", global, contact.id) }}/>
+								onClick={() => {contact.status !== status.InGame && challenged("ASK", global, contact.id) }}/>
 							}
 							<IconButton icon={FiMessageCircle} onClick={() => dispatch(setCurrentConv({username:contact.username}))}/>
 						</div>

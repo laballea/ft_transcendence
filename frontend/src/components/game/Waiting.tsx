@@ -5,23 +5,36 @@ import { useSelector, useDispatch } from 'react-redux'
 import { setGameStatus } from '../../store/global/reducer';
 import DefaultButtonPrimary from '../commons/buttons/DefaultButtonPrimary';
 import { status } from '../../common/types';
+import Loading from '../commons/utils/Loading';
 
 const Waiting = () => {
 	const global = useSelector((state: any) => state.global)
 	const dispatch = useDispatch()
 	const socket = useContext(SocketContext);
 	return(
-		<div style={{display:'flex', flex:1, height:'100%', justifyContent:'center', alignItems:'center', flexDirection:"column"}}>
-			<p>Searching for {global.gamemode} game !</p>
-			<DefaultButtonPrimary cta="Quit" disable={false} icon={FiZapOff}
-					onClick={()=>{
-						socket.emit("QUIT_QUEUE", {
-							client_send: global.username,
-							gamemode:global.gamemode,
-							jwt:global.token
-						})
-						dispatch(setGameStatus(status.Connected))
-					}}/>
+		<div 
+			className='flex h-full w-full items-center justify-center flex-col'
+		>
+			<div className='absolute z-0 opacity-25'>
+				<Loading></Loading>
+			</div>
+			<p className='font-space text-slate-400 mb-[8px] text-[12px]'>
+				Searching for a <i className='inline text-slate-500'>{global.gamemode}</i> game !
+			</p>
+			<div className='z-10'>
+				<DefaultButtonPrimary cta="Cancel" disable={false} icon={FiZapOff}
+						onClick={()=>{
+							socket.emit("QUIT_QUEUE", {
+								client_send: global.username,
+								gamemode:global.gamemode,
+								jwt:global.token
+							})
+							dispatch(setGameStatus(status.Connected))
+						}}
+				
+				/>
+			</div>
+
 		</div>
 	)
 }

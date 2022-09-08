@@ -75,7 +75,7 @@ const SettingsProfilPicChoice = ({} : SettingsProfilPicChoiceProps) => {
 			<img src={url} width="60" height="60" alt="profilpic" className='rounded-full'></img>
 		</div>
 	): [];
-
+	console.log(profilPics)
 	return (
 		<>
 			<div className='flex flex-row items-center w-[200px] h-[200px] rounded-full'>

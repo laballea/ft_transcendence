@@ -110,6 +110,7 @@ export interface safeRoom {
 	name:string,
 	password:string,
 	adminId: number,
+	troglodite: number,
 	msg:Message[],
 	users:{id:number, username:string}[]
 }

@@ -233,21 +233,16 @@ export class UserService {
 		return _conv;
 	}
 
-	async getRoomByUserId(id:number):Promise<safeRoom[]>{
+	async getRoomByUserId(user:User):Promise<safeRoom[]>{
 		var _room:safeRoom[] = [];
-		const user = await this.userRepository.findOne({
-			relations: ['rooms', 'rooms.users', 'rooms.messages'],
-			where: {
-				id: id
-			}
-		})
 		if (user){
 			for (let room of user.rooms) {
 				_room.push({
 					id: room.id,
+					adminId: room.adminId,
+					troglodite:room.adminId,
 					name: room.name,
 					password: room.password,
-					adminId: room.adminId,
 					users: room.users.map(user => ({id:user.id, username:user.username})),
 					msg: room.messages,
 				})
@@ -260,7 +255,8 @@ export class UserService {
 	*/
 	async parseUserInfo(userID:number):Promise<UserSafeInfo> {
 		const usersRepo:User[] = await this.userRepository.find()
-		const userRepo: User = await this.userRepository.findOne({ where:{id:userID}, relations: ['conversations', 'conversations.messages', 'conversations.users']})
+		const userRepo: User = await this.userRepository.findOne({ where:{id:userID}, relations: [
+			'conversations', 'conversations.messages', 'conversations.users', 'rooms', 'rooms.users', 'rooms.messages']})
 		const userInfo:UserSocket = this.connectedUser.find((user: any) => {return user.id === userID})
 
 		var UserSafeInfo:UserSafeInfo = {
@@ -277,7 +273,7 @@ export class UserService {
 		UserSafeInfo.friendsRequest = userRepo.friendsRequest.map(id => ({ id: id, username: usersRepo.find(el => el.id == id).username}));
 		UserSafeInfo.pendingRequest = userRepo.pendingRequest.map(id => ({ id: id, username: usersRepo.find(el => el.id == id).username}));
 		UserSafeInfo.conv = await this.getConversationByUserId(userRepo);
-		UserSafeInfo.room = await this.getRoomByUserId(userRepo.id);
+		UserSafeInfo.room = await this.getRoomByUserId(userRepo);
 		return UserSafeInfo;
 	}
 }

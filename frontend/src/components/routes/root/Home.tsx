@@ -27,7 +27,7 @@ export default function Home() {
 			<div className="absolute flex justify-between
 							w-full top-[80px] sm:top-[112px] bottom-0 sm:bottom-[48px]">
 				<div className="hidden w-full h-full flex sm:block justify-between bg-slate-700 z-50">
-					<div className="relative h-[calc(100%-30px)] w-full flex justify-between bg-slate-700 ">
+					<div className="relative h-full w-full flex justify-between bg-slate-700 ">
 						{
 							(global.status === status.InGame 
 								|| global.status === status.InQueue 
@@ -43,9 +43,9 @@ export default function Home() {
 						<div className="relative flex-initial flex w-full bg-slate-800 sm:w-[400px] flex-col h-full">
 							<ContactList/>
 							{global.createRoom ? <CreateRoom/> : global.currentConv != undefined && <FloatingMessage/>}
+							<ChatBar/>
 						</div>
 					</div>
-					<ChatBar/>
 				</div>
 			</div>
 			<Footer/>

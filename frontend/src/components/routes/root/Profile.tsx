@@ -32,11 +32,14 @@ type ProfileProps = {
 		id:number,
 		status:status,
 	},
-	userImage: string,
 }
 
+<<<<<<< HEAD
 const Profile = ({contact, userImage} : ProfileProps) => {
 	const global = useSelector((state: any) => state.global)
+=======
+const Profile = ({contact} : ProfileProps) => {
+>>>>>>> origin
 	const param:any = useLocation()
 	const id = param.state !== null ? param.state.id : contact.id
 	const [user, setUser] = useState(null)
@@ -64,6 +67,7 @@ const Profile = ({contact, userImage} : ProfileProps) => {
 			<NavBar/>
 			<div className="absolute flex justify-between
 							w-full top-[80px] sm:top-[112px] bottom-0 sm:bottom-[48px]">
+<<<<<<< HEAD
 				<div className="hidden w-full h-full flex sm:block justify-between bg-slate-700 z-50">
 					<div className="relative h-[calc(100%-30px)] w-full flex justify-between bg-slate-900 ">
 						<div className="w-[calc(100%-30px)] overflow-scroll h-full flex sm:block justify-between z-10 p-[40px]">
@@ -88,6 +92,23 @@ const Profile = ({contact, userImage} : ProfileProps) => {
 						</div>
 					</div>
 					<ChatBar/>
+=======
+				
+				<div className="w-[calc(100%-400px)] overflow-scroll h-full flex sm:block justify-between z-10 p-[40px]">
+					{
+							user && id ?
+							<div className=''>
+							<ProfileActions contact={user}/>
+							<ProfileInfos	contact={user}/>
+							<ProfileHistory	contact={user}/>
+							<ProfileStats	contact={user}/>
+							</div>
+							:
+							<div className='flex items-center justify-center w-full h-full'>
+								<Loading/>
+							</div>
+					}
+>>>>>>> origin
 				</div>
 			</div>
 			<Footer/>

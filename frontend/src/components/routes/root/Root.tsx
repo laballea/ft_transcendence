@@ -13,7 +13,7 @@ import { SocketContext, socket} from '../../../context/socket';
 import { Navigate, Routes, Route } from 'react-router-dom';
 import Profile from './Profile';
 import Popup from 'reactjs-popup'; 
-import PopUpWindow from '../../commons/popup/PopUpWindow';
+import PopUpToaster from '../../commons/popup/PopUpToaster';
 import Chat from './Chat';
 import Settings from './Settings';
 
@@ -46,6 +46,7 @@ const SocketConnection = (props:any) => {
 			socket.on("connect", () => {
 				socket.emit("CONNECT", {socketID: socket.id, id:global.id, username:global.username});
 				socket.on("UPDATE_DB", (data) => {
+					console.log(data)
 					dispatch(updateDB(data))
 				});
 				socket.on("PopUp", (data) => {
@@ -102,7 +103,7 @@ const SocketConnection = (props:any) => {
 				<Route path="*" element={<Error404/>}/>
 			</Routes>
 			<Popup open={popup.open} contentStyle={{position:'absolute', bottom:0, left:0}}>
-				<PopUpWindow content={popup.message} error={popup.error}/>
+				<PopUpToaster content={popup.message} error={popup.error}/>
 			</Popup>
 		</>
 	)
