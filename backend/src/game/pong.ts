@@ -106,7 +106,7 @@ export class Pong {
 				this.countDown -= 0.030;
 				if (this.countDown <= 0) {
 					this.status = GAME_STATUS.ENDED;
-					this.gameEnd(this.gameID)
+					this.gameEnd(this.gameID, true)
 				}
 				break ;
 			}

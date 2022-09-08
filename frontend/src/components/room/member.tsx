@@ -1,6 +1,6 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
-import { socket } from '../../context/socket'
+import { deleteRoomSocket, socket } from '../../context/socket'
 
 interface IProps {
 	room: any
@@ -10,11 +10,12 @@ const Member: React.FC<IProps> = ({ room }) => {
 	const global = useSelector((state: any) => state.global)
 
 	const deleteMember = (userId: number) => {
-		socket.emit('deleteMember', {
+		deleteRoomSocket(global, room.id, userId)
+		/*socket.emit('deleteMember', {
 			roomId: room.id,
 			userId: userId,
 			admin: global.username,
-		});
+		});*/
 	}
 
 	const memberList = room.users.map((user: any) => 
