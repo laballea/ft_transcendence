@@ -1,22 +1,39 @@
+import { close } from 'inspector';
 import React, {useEffect} from 'react'
 import {useState} from 'react'
 import { FiCheck, FiX } from 'react-icons/fi';
 import { useSelector } from 'react-redux';
 import { useSearchParams } from 'react-router-dom';
 import IconButton from '../buttons/IconButton';
+import PopUpToaster from './PopUpToaster'
+import Popup from 'reactjs-popup'; 
 
-function PopUp2FAModal() {
+type PopUp2FAModalProps = {
+	closeFunc : () => void
+}
+
+
+function PopUp2FAModal({ closeFunc } : PopUp2FAModalProps) {
 	const global = useSelector((state: any) => state.global)
-	const [twoFA,setTwoFA] = useState(global.twoFactor)
 
 	const [image, setInput] = useState({
 		src: "",
 		code: ""
 	})
 
+	const [popup, setPopup] = useState({open:false, error:true, message:""});
+	React.useEffect(() => {
+		if (popup.open) {
+			setTimeout(() => {
+				setPopup(current => {return {open:!current.open, error:true, message:""}})
+			}, 2000);
+		}
+	  }, [popup]);
+
 	useEffect(() => {
 		generate()
 	}, []);
+
 
 	const generate = () => {
 		const requestOptions = {
@@ -36,26 +53,6 @@ function PopUp2FAModal() {
 			image.src = imageObjectURL
 			setInput(image)
 		})
-	}
-
-	const handleTwoFA = (twoFA : boolean) => {
-		if (twoFA) {
-			const requestOptions = {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json;charset=utf-8',
-					'Access-Control-Allow-Origin': '*',
-					'Authorization': 'bearer ' + global.token,
-				},
-			}
-			fetch("http://localhost:5000/2fa/turn-off", requestOptions).then(resp => {
-				if (resp.ok)
-					setTwoFA(false)
-					generate()
-			})
-		} else {
-			generate()
-		}
 	}
 
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
@@ -80,7 +77,13 @@ function PopUp2FAModal() {
 		fetch("http://localhost:5000/2fa/turn-on", requestOptions).then(resp => {
 			console.log(resp)
 			if (resp.ok)
-				setTwoFA(true)
+			{	
+				closeFunc()
+			}
+			else
+			{	
+				setPopup({open:true, error:true, message:"Wrong code!"})
+			}
 		})
 
 		setInput({
@@ -99,7 +102,7 @@ function PopUp2FAModal() {
 							shadow-xl
 							">
 				<div className='absolute top-[8px] right-[8px]'>
-					<IconButton icon={FiX}/>
+					<IconButton onClick={ closeFunc } icon={FiX}/>
 				</div>
 				<h3 className='font-pilowlava text-[64px] text-transparent backgroundTextOutline'>
 					Enable 2FA
@@ -138,6 +141,9 @@ function PopUp2FAModal() {
 					</button>
 				</div>
 			</div>
+			<Popup open={popup.open} contentStyle={{position:'absolute', bottom:0, left:0}}>
+				<PopUpToaster content={popup.message}/>
+			</Popup>	
 		</div>
 	 );
 }

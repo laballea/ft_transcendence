@@ -32,7 +32,8 @@ const Settings2FA = ({} : Settings2FAProps) => {
 		} 
 	}
 
-	console.log("global 2fa" + global.twoFactor)
+	const [modalTwoFA, setModalTwoFA] = useState(false)
+
 	if (global.twoFactor === true) {
 		return (
 			<>
@@ -57,12 +58,15 @@ const Settings2FA = ({} : Settings2FAProps) => {
 	}
 	return (
 		<>
-			{
-				<PopUp2FAModal></PopUp2FAModal>
+			{	
+				modalTwoFA ?
+				<PopUp2FAModal closeFunc={() => setModalTwoFA(false)}></PopUp2FAModal>
+				:
+				<></>
 			}
 			<div  className='w-full border h-[2px] border-slate-700'></div>
 			<h2 className='font-pilowlava text-[64px] text-transparent backgroundTextOutline'>2FA</h2>	
-			<div onClick={ () => { handleTwoFA(); }} className='relative inline-block h-[64px] w-[195px] bg-slate-700 rounded-full'>
+			<div onClick={ () => { setModalTwoFA(true); }} className='relative inline-block h-[64px] w-[195px] bg-slate-700 rounded-full'>
 				<span className='absolute top-0 left-[20px] h-full flex items-center justify-start z-10 gap-[4px]
 									text-red-500 cursor-pointer' >
 					<FiShieldOff className="w-[24px] h-[24px] cursor-pointer "/>
