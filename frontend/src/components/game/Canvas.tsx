@@ -1,5 +1,6 @@
 import React, { useRef, useEffect } from 'react'
 import { gamemode, GAME_STATUS } from '../../common/types'
+import GameBar from './GameBar'
 
 const Canvas = (props:any) => {
 	const {height, width, game, ratio, username} = props
@@ -80,7 +81,8 @@ const Canvas = (props:any) => {
 	})
 
 	return (
-		<div>
+		<div className={`relative w-[${width}] h-[${width}]`}>
+			<GameBar></GameBar>
 			<canvas style={{position:"relative"}} ref={canvasRef} width={width} height={height}/>
 		</div>
 	)
