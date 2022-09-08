@@ -104,6 +104,7 @@ export class UserService {
 		const user = this.connectedUser.find((user: any) => {return user.socket.id === socketID})
 		if (user) {
 			this.connectedUser.splice(this.connectedUser.findIndex(v => v.id === user.id), 1);
+			user.socket.disconnect()
 			console.log(user.username, "disconnected");
 		}
 	}

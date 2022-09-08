@@ -16,18 +16,11 @@ import ChatBar from '../../message/chatBar';
 import Game from '../../game/Game';
 import { status } from '../../../common/types';
 import CreateRoom from '../../message/CreateRoom';
-import { UNSAFE_NavigationContext, useNavigate } from "react-router-dom";
 
 export default function Home() {
 	const global = useSelector((state: any) => state.global)
 	document.title = "FT_TRANS "+ global.username;
-	let navigate = useNavigate();
 
-	useEffect(() => {
-		window.onpopstate = () => {
-			navigate("/login");
-		  }
-	}, []);
 	return (
 		<div className="w-full h-screen relative bg-slate-900">
 			<NavBar/>

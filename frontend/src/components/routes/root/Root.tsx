@@ -52,6 +52,7 @@ const SocketConnection = (props:any) => {
 					setPopup({open:true, error:data.error, message:data.message})
 				});
 				socket.on("disconnect", (data) => {
+					console.log("HERE")
 					dispatch(logout())
 				});
 				socket.on("GAME_FOUND", (data) => {
