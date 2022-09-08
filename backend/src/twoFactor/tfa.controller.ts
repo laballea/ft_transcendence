@@ -14,6 +14,7 @@ import { TwoFactorAuthenticationCodeDto } from '../auth/auth.dto'
 import { UserService } from '../user/user.service';
 import { AuthService } from '../auth/auth.service';
 import { Response } from 'express';
+import { UserSocket } from 'src/user/models/user.interface';
 
 @Controller('2fa')
 export class TwoFactorAuthenticationController {
@@ -39,10 +40,14 @@ export class TwoFactorAuthenticationController {
 	async turnOnTwoFactorAuthentication(@Req() request: RequestWithUser, @Body() { code } : TwoFactorAuthenticationCodeDto) {
 		try {
 			const isCodeValid = this.twoFactorAuthenticationService.isTwoFactorAuthenticationCodeValid(code, request.user);
+			console.log("is code valid?: " + isCodeValid)
 			if (!isCodeValid) {
-				throw new UnauthorizedException('Wrong authentication code');
+				return HttpStatus.UNAUTHORIZED
 			}
 			await this.userService.turnOnTwoFactorAuthentication(request.user.id);
+			const userSocket:UserSocket = this.userService.findConnectedUserById(request.user.id);
+			userSocket.socket.emit("UPDATE_DB", await this.userService.parseUserInfo(request.user.id))
+			
 			return HttpStatus.OK
 		} catch (error) {
 			console.error(error)
@@ -53,6 +58,8 @@ export class TwoFactorAuthenticationController {
 	@UseGuards(JwtAuthGuard)
 	async turnOffTwoFactorAuthentication(@Req() request: RequestWithUser) {
 		await this.userService.turnOffTwoFactorAuthentication(request.user.id);
+		const userSocket:UserSocket = this.userService.findConnectedUserById(request.user.id);
+		userSocket.socket.emit("UPDATE_DB", await this.userService.parseUserInfo(request.user.id))
 		return HttpStatus.OK
 	}
 
