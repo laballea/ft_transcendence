@@ -99,7 +99,7 @@ const SocketConnection = (props:any) => {
 				<Route path="/settings" element={<Settings/>}/>
 				<Route path="*" element={<Error404/>}/>
 			</Routes>
-			<Popup open={popup.open} contentStyle={{position:'absolute', bottom:0, left:0}}>
+			<Popup open={popup.open} contentStyle={{position:'absolute', bottom:48, left:0}}>
 				<PopUpToaster content={popup.message} error={popup.error}/>
 			</Popup>
 		</>
