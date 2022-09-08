@@ -117,5 +117,5 @@ export interface safeRoom {
 	bannedId:number[],
 	msg:Message[],
 	users:{id:number, username:string}[],
-	muteds:Muted[]
+	muted:Muted[]
 }

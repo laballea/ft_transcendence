@@ -3,11 +3,11 @@ import Chat from './chat'
 import Com from './com'
 import { useDispatch, useSelector } from 'react-redux'
 import IconButton from '../commons/buttons/IconButton';
-import { FiChevronsDown, FiChevronsUp, FiDelete, FiEdit, FiLogOut, FiSettings, FiSlash, FiTrash2, FiVolumeX, FiX } from 'react-icons/fi';
+import { FiChevronsDown, FiChevronsUp, FiDelete, FiEdit, FiLogOut, FiSettings, FiSlash, FiTrash2, FiVolume2, FiVolumeX, FiX } from 'react-icons/fi';
 import { setCurrentConv } from '../../store/global/reducer';
 import './noScrollBar.css'
 import { truncateString } from '../commons/utils/truncateString';
-import { deleteMember, changePass, upgradeMember, downgradeMember, banMember, muteMember } from '../../context/socket';
+import { deleteMember, changePass, upgradeMember, downgradeMember, banMember, muteMember, unmutedMember } from '../../context/socket';
 import NavBarButtonSecondary from '../commons/buttons/NavBarButtonSecondary';
 import moment from 'moment';
 
@@ -55,12 +55,16 @@ function FloatingMessage() {
 	const users = conv.ownerId !== undefined ?
 		conv.users.map((user: {id:number, username:string}, index:number) =>
 			<div className={`bg-slate-700 flex flex-row justify-center items-end m-[2px] w-full text-center rounded text-slate-400`} key={index}>
-				<h3>{ truncateString(user.username, 9)}</h3>
+				<h3>{ truncateString(user.username, 9) }</h3>
 				{conv.adminId.find((e:number) => e === global.id) !== undefined && conv.adminId.find((e:number) => e === user.id) === undefined &&
 					<div className='flex flex-row'>
 						<IconButton icon={FiX} onClick={()=>{deleteMember(global, conv.id, user.id)}}></IconButton>
 						<IconButton icon={FiSlash} onClick={()=>{banMember(global, conv.id, user.id)}}></IconButton>
-						<IconButton icon={FiVolumeX} onClick={()=>{muteMember(global, conv.id, user.id, moment(banTime.date).add(10, 'minutes').format('lll'))}}></IconButton>
+						{conv.muted.find((e:any) => e.userId === user.id) !== undefined ?
+							<IconButton icon={FiVolumeX} onClick={()=>{unmutedMember(global, conv.id, user.id)}}></IconButton>
+							:
+							<IconButton icon={FiVolume2} onClick={()=>{muteMember(global, conv.id, user.id, moment(banTime.date).add(10, 'minutes').format('lll'))}}></IconButton>
+						}
 					</div>
 				}
 				{conv.ownerId == global.id && conv.ownerId !== user.id && conv.adminId.find((e:number) => e === user.id) === undefined &&

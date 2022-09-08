@@ -86,7 +86,6 @@ export const globalSlice = createSlice({
 				}
 				else
 					state.currentConv = tmp_conv
-				
 			} else
 				state.currentConv = conv
 		},

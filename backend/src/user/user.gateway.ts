@@ -217,6 +217,8 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		let room : Room = await this.roomRepository.findOne({ where:{id: data.roomId} })
 		if (!room)
 			return this.emitPopUp([admin], {error:true, message: `Room doesn't exist.`});
+		else if (room.adminId.find((e:number) => e === admin.id) !== admin.id)
+			return this.emitPopUp([admin], {error:true, message: `Permission required !`});
 		else {
 			if (await bcrypt.compare(data.oldPass, room.password) === false)
 				return this.emitPopUp([admin], {error:true, message: `Password doesn't match with the room !`});
@@ -230,25 +232,25 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		}
 	}
 
-	@SubscribeMessage('addMember')
-	async addMember(@MessageBody() data: NEW_MEMBER) {
-		const admin: UserSocket = this.userService.findConnectedUserByUsername(data.admin);
-		const db_admin: User = await this.userRepository.findOne({ where:{username:data.admin} })
-		let room : Room = await this.roomRepository.findOne({
-			where:{id: data.roomId},
-			relations:['users', 'users.rooms'],
-		})
-		let newUser:User = await this.userRepository.findOne({ where:{username:data.user} })
-		if (!room || !newUser)
-			return this.emitPopUp([admin], {error:true, message: `User ${data.user} doesn't exist.`});
-		room.users.push(newUser)
-		await this.roomRepository.save(room);
-		for (let idx in room.users){
-			let userSocket = this.userService.findConnectedUserByUsername(room.users[idx].username)
-			if (userSocket)
-				userSocket.socket.emit('UPDATE_DB', await this.userService.parseUserInfo(room.users[idx].id))
-		}
-	}
+	// @SubscribeMessage('addMember')
+	// async addMember(@MessageBody() data: NEW_MEMBER) {
+	// 	const admin: UserSocket = this.userService.findConnectedUserByUsername(data.admin);
+	// 	const db_admin: User = await this.userRepository.findOne({ where:{username:data.admin} })
+	// 	let room : Room = await this.roomRepository.findOne({
+	// 		where:{id: data.roomId},
+	// 		relations:['users', 'users.rooms'],
+	// 	})
+	// 	let newUser:User = await this.userRepository.findOne({ where:{username:data.user} })
+	// 	if (!room || !newUser)
+	// 		return this.emitPopUp([admin], {error:true, message: `User ${data.user} doesn't exist.`});
+	// 	room.users.push(newUser)
+	// 	await this.roomRepository.save(room);
+	// 	for (let idx in room.users){
+	// 		let userSocket = this.userService.findConnectedUserByUsername(room.users[idx].username)
+	// 		if (userSocket)
+	// 			userSocket.socket.emit('UPDATE_DB', await this.userService.parseUserInfo(room.users[idx].id))
+	// 	}
+	// }
 
 	@SubscribeMessage('deleteRoom')
 	async deleteRoom(@MessageBody() data: {roomId: number, user: string}) {
@@ -258,6 +260,8 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 			where:{id: data.roomId},
 			relations:['users', 'users.rooms'],
 		})
+		if (!room)
+			return this.emitPopUp([user], {error:true, message: `Room doesn't exist.`});
 		if (db_user.id !== room.ownerId)
 			return this.emitPopUp([user], {error:true, message: `You aren't the Owner of this room !`});
 		//delete msg then delete room
@@ -265,6 +269,13 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		.createQueryBuilder()
 		.delete()
 		.from(Message)
+		.where("roomId = :roomId", { roomId: data.roomId })
+		.execute();
+		//delete muted then delete room
+		await this.mutedRepository
+		.createQueryBuilder()
+		.delete()
+		.from(Muted)
 		.where("roomId = :roomId", { roomId: data.roomId })
 		.execute();
 		//delete room empty
@@ -308,11 +319,16 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 
 	@SubscribeMessage('deleteMember')
 	async deleteMember(@MessageBody() data: {roomId: number, userId: number, admin: string}) {
+		const user: UserSocket = this.userService.findConnectedUserByUsername(data.admin);
 		let room : Room = await this.roomRepository.findOne({
 			where:{id: data.roomId},
 			relations:['users', 'users.rooms'],
 		})
-		const db_admin: User = await this.userRepository.findOne({ where:{id:room.ownerId} })
+		const db_admin: User = await this.userRepository.findOne({ where:{username:data.admin} })
+		if (!room)
+			return this.emitPopUp([user], {error:true, message: `Room doesn't exist !`});
+		else if (room.adminId.find((e:number) => e === db_admin.id) !== db_admin.id)
+			return this.emitPopUp([user], {error:true, message: `Permission required !`});
 		if (data.userId == db_admin.id)
 			this.deleteRoom({roomId: data.roomId, user: data.admin})
 		else {
@@ -351,23 +367,30 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		const admin: UserSocket = this.userService.findConnectedUserByUsername(data.admin);
 		let room : Room = await this.roomRepository.findOne({
 			where:{id: data.roomId},
-			relations:['users', 'users.rooms'],
 		})
 		if (!room)
 			return this.emitPopUp([admin], {error:true, message: `Room doesn't exist.`});
-		else {
-			//mute userId admin
-			let muted = new Muted();
-			muted.userId = data.userId;
-			muted.date = data.endDate;
-			muted.room = room;
-			await this.mutedRepository.save(muted);
-			await this.roomRepository.save(room);
-			for (let idx in room.users){
-				let userSocket = this.userService.findConnectedUserByUsername(room.users[idx].username)
-				if (userSocket)
-					userSocket.socket.emit('UPDATE_DB', await this.userService.parseUserInfo(room.users[idx].id))
-			}
+		else if (room.adminId.find((e:number) => e === admin.id) !== admin.id)
+			return this.emitPopUp([admin], {error:true, message: `Permission required !`});
+		// check already muted
+		let mutedList : Room = await this.roomRepository.findOne({
+			relations:['muteds'],
+			where:{id: data.roomId},
+		})
+		for (let idx in mutedList.muteds)
+			if (mutedList.muteds[idx].userId === data.userId)
+				return this.emitPopUp([admin], {error:true, message: `He's already muted !`});
+		//mute userId admin
+		let muted = new Muted();
+		muted.userId = data.userId;
+		muted.date = data.endDate;
+		muted.room = room;
+		await this.mutedRepository.save(muted);
+		await this.roomRepository.save(room);
+		for (let idx in room.users) {
+			let userSocket = this.userService.findConnectedUserByUsername(room.users[idx].username)
+			if (userSocket)
+				userSocket.socket.emit('UPDATE_DB', await this.userService.parseUserInfo(room.users[idx].id))
 		}
 	}
 
@@ -376,22 +399,24 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		const admin: UserSocket = this.userService.findConnectedUserByUsername(data.admin);
 		let room : Room = await this.roomRepository.findOne({
 			where:{id: data.roomId},
-			relations:['users', 'users.rooms'],
+			relations:['users', 'users.rooms', 'muteds', 'muteds.room'],
 		})
 		if (!room)
 			return this.emitPopUp([admin], {error:true, message: `Room doesn't exist.`});
-		else {
-			//unmute userId admin
-			await this.roomRepository
-			.createQueryBuilder()
-			.relation(Room, "muteds")
-			.of(data.roomId)
-			.remove(data.userId)
-			for (let idx in room.users){
-				let userSocket = this.userService.findConnectedUserByUsername(room.users[idx].username)
-				if (userSocket)
-					userSocket.socket.emit('UPDATE_DB', await this.userService.parseUserInfo(room.users[idx].id))
-			}
+		else if (room.adminId.find((e:number) => e === admin.id) !== admin.id)
+			return this.emitPopUp([admin], {error:true, message: `Permission required !`});
+		//unmute userId admin
+		await this.mutedRepository
+		.createQueryBuilder()
+		.delete()
+		.from(Muted)
+		.where("userId = :userId", {userId: data.userId})
+		.andWhere("roomId = :roomId", {roomId: data.roomId})
+		.execute();
+		for (let idx in room.users){
+			let userSocket = this.userService.findConnectedUserByUsername(room.users[idx].username)
+			if (userSocket)
+				userSocket.socket.emit('UPDATE_DB', await this.userService.parseUserInfo(room.users[idx].id))
 		}
 	}
 
@@ -404,6 +429,8 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		})
 		if (!room)
 			return this.emitPopUp([admin], {error:true, message: `Room doesn't exist.`});
+		if (admin.id !== room.ownerId)
+			return this.emitPopUp([admin], {error:true, message: `You aren't the Owner of this room !`});
 		else {
 			//add userId admin
 			room.adminId.push(data.userId);
@@ -425,6 +452,8 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		})
 		if (!room)
 			return this.emitPopUp([admin], {error:true, message: `Room doesn't exist.`});
+		if (admin.id !== room.ownerId)
+			return this.emitPopUp([admin], {error:true, message: `You aren't the Owner of this room !`});
 		else {
 			//remove userId admin
 			for(var i = 0; i < room.adminId.length; i++)
@@ -446,22 +475,15 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 
 		/* does conversation exist else create it */
 		let room : Room = await this.roomRepository.findOne({
-			relations:["users"],
+			relations:["users", "muteds"],
 			where: {
 				id: data.conversationID
 			},
 		})
 
-		let mutedList : Room = await this.roomRepository.findOne({
-			relations:["muteds"],
-			where: {
-				id: data.conversationID
-			},
-		})
-
-		for (let idx in mutedList.muteds)
-			if (mutedList.muteds[idx].userId === db_user_send.id)
-				return this.emitPopUp([user_send], {error:true, message: `You are muted until ${mutedList.muteds[idx].date} !`});
+		for (let idx in room.muteds)
+			if (room.muteds[idx].userId === db_user_send.id)
+				return this.emitPopUp([user_send], {error:true, message: `You are muted until ${room.muteds[idx].date} !`});
 
 		/* create new message, save it, update room */
 		let msg = new Message();
@@ -472,7 +494,6 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		msg.room = room;
 		await this.messageRepository.save(msg);
 		await this.roomRepository.save(room);
-
 		for (let idx in room.users){
 			let userSocket = this.userService.findConnectedUserByUsername(room.users[idx].username)
 			if (userSocket)
