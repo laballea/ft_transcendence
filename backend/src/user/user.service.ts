@@ -209,6 +209,7 @@ export class UserService {
 		return {
 			gameStats:userRepo.gameData,
 			username:userRepo.username,
+			profilPic:userRepo.profilPic,
 			lvl:userRepo.lvl,
 			id:userRepo.id,
 			status:this.getUserStatus(userRepo.id)

@@ -24,6 +24,7 @@ export interface user {
 	gameID?:string
 	challenged?:{id:number, username:string},
 	contactList:any[],
+	searchUserContactList:string,
 	gamemode:gamemode,
 	currentConv:any,
 	createRoom:boolean

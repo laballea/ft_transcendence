@@ -18,6 +18,7 @@ const InitialState: user = {
 	gameID:undefined,
 	challenged:undefined,
 	contactList:[],
+	searchUserContactList:"",
 	gamemode:gamemode.normal,
 	twoFactor:false,
 	currentConv:undefined,
@@ -103,6 +104,9 @@ export const globalSlice = createSlice({
 		setContactList: (state:any, data:any) => {
 			state.contactList = data.payload
 		},
+		setSearchUserContactList: (state:any, data:any) => {
+			state.searchUserContactList = data.payload
+		},
 		setGameStatus: (state:any, data:any) => {
 			state.status = data.payload
 		},
@@ -145,7 +149,8 @@ export const {
 	challenged,
 	setContactList,
 	setGameMode,
-	setCreateRoom
+	setCreateRoom,
+	setSearchUserContactList
 	} = globalSlice.actions
 
 export default globalSlice.reducer

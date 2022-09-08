@@ -20,6 +20,7 @@ type ProfileInfosProps = {
 		status:status,
 		lvl:number,
 		gameStats:any
+		profilPic:string
 	},
 }
 
@@ -94,7 +95,7 @@ const ProfileInfos = ({contact} : ProfileInfosProps) => {
 
 	return (
 		<div className='flex items-center mb-[64px]'>
-			<img src={global.userImage} width="200" height="200" alt="userimage" className="rounded-full mr-[16px]"></img>
+			<img src={contact.profilPic} width="200" height="200" alt="userimage" className="rounded-full mr-[16px]"></img>
 			<div className='relative'>
 				<div className='absolute mt-[-8px] font-space'>
 					{statusTag}
