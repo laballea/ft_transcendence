@@ -180,8 +180,6 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		
 		if (data.client_recv == undefined && (!data.conversationID || data.conversationID < 0))
 			return this.emitPopUp([user_send], {error:true, message: `Message can't be sent.`});
-			
-		const db_user_recv:User = await this.userRepository.findOne({ where:{username:data.client_recv} })
 
 		/* does conversation exist else create it */
 		let conv : Conversation = await this.convRepository.findOne({
@@ -190,14 +188,21 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 				id: data.conversationID
 			},
 		})
-		if (!conv && db_user_recv != undefined){
+	
+		let db_user_recv:User = await this.userRepository.findOne({ where:{username:data.client_recv} })
+		db_user_recv = db_user_recv == undefined ? conv.users.find((user:any)=> user.id != user_send.id): db_user_recv
+		if (db_user_recv.blocked.includes(db_user_send.id))
+			return this.emitPopUp([user_send], {error:true, message: `User blocked you.`});
+		if (db_user_send.blocked.includes(db_user_recv.id))
+			return this.emitPopUp([user_send], {error:true, message: `User is blocked.`});
+
+		if (!conv && data.client_recv != undefined){
 			conv = new Conversation();
 			conv.users = [db_user_send, db_user_recv];
 			conv.name = db_user_recv.username
 			await this.convRepository.save(conv);
-		} else if (!conv && db_user_recv == undefined)
+		} else if (!conv && data.client_recv == undefined)
 			return this.emitPopUp([user_send], {error:true, message: `User ${data.client_recv} does not exist.`});
-
 		/* create new message, save it, update conv */
 		let msg = new Message();
 		msg.content = data.content;
@@ -279,9 +284,7 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		.execute();
 		for (let idx in room.users){
 			let userSocket = this.userService.findConnectedUserByUsername(room.users[idx].username)
-			console.log("HERE")
 			let res = await this.userService.parseUserInfo(room.users[idx].id)
-			console.log("res", res)
 			if (userSocket)
 				userSocket.socket.emit('UPDATE_DB',res )
 		}

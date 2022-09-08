@@ -19,7 +19,7 @@ type ProfileActionsProps = {
 		username:string,
 		id:number,
 		status:status,
-		gameStats:any
+		gameStats:any,
 	}
 }
 
@@ -40,7 +40,6 @@ const ProfileActions = ({contact} : ProfileActionsProps) => {
 	}
 	else
 	{
-		console.log(global.blocked, global.blocked.find((blocked:any) => blocked.id == contact.id) )
 		if (global.blocked.find((blocked:any) => blocked.id == contact.id) === undefined)
 		{
 			actions =

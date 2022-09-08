@@ -46,14 +46,12 @@ const SocketConnection = (props:any) => {
 			socket.on("connect", () => {
 				socket.emit("CONNECT", {socketID: socket.id, id:global.id, username:global.username});
 				socket.on("UPDATE_DB", (data) => {
-					console.log(data)
 					dispatch(updateDB(data))
 				});
 				socket.on("PopUp", (data) => {
 					setPopup({open:true, error:data.error, message:data.message})
 				});
 				socket.on("disconnect", (data) => {
-					console.log("HERE")
 					dispatch(logout())
 				});
 				socket.on("GAME_FOUND", (data) => {
@@ -66,7 +64,6 @@ const SocketConnection = (props:any) => {
 					dispatch(spectate(data.gameId))
 				});
 				socket.on("CHALLENGED", (data) => {
-					console.log("CHALLENGED")
 					dispatch(challenged(data))
 				});
 			});
