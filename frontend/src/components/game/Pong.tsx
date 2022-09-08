@@ -88,6 +88,7 @@ const Pong = () => {
 	return (
 		<div ref={overlayEl} className="relative flex-1 h-full justify-center" id="GameDiv">
 			{game != null && <Canvas width={width} global={global} height={height} game={game} username={global.username} ratio={width / 1900}/>}
+
 		</div>
 	)
 }

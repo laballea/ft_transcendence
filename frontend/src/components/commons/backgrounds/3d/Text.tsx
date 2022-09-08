@@ -33,9 +33,8 @@ export default function Model(props: JSX.IntrinsicElements["group"]) {
 	// 	rotationSpeed = 0.01
 
 	
-
 	useFrame((state, delta) => (
-		ref.current.rotation.z += rotationSpeed
+		ref.current.rotation.z += rotationSpeed * 50
 	))
 
 	return (

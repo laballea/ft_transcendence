@@ -7,7 +7,7 @@ import Text from "./3d/Text";
 import '../../../assets/fonts/fonts.css';
 
 
-const BackgroundLobby = () => {
+const BackgroundLobby = React.memo(() => {
 	return (  
 		<div className="w-full h-full flex items-center justify-center">
 			<Canvas>
@@ -17,6 +17,6 @@ const BackgroundLobby = () => {
 			</Canvas>
 		</div>
 	);
-}
+})
 
 export default BackgroundLobby;
