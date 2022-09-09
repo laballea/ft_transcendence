@@ -74,7 +74,7 @@ function FloatingMessage() {
 			</div>
 		)
 		: [];
-
+				
 	return (
 		<div className='w-full h-full
 						flex justify-center flex-col
@@ -159,7 +159,7 @@ function FloatingMessage() {
 					</div>
 				</div>
 				:
-				<div id="someRandomID" className='overflow-y-scroll flex-grow'>
+				<div id="someRandomID" className='overflow-y-scroll flex-grow bg-slate-600'>
 					<Chat msg={conv.msg} username={global.username}/>
 				</div>
 			}
