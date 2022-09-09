@@ -98,18 +98,13 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 	async addFriend(@MessageBody() data: FRIEND_REQUEST_DATA) {
 		try {
 			await this.authService.validToken(data.jwt)
-			/* Find if clients are connected*/
-			const user_send:UserSocket = this.userService.findConnectedUserByUsername(data.client_send);
-			const user_recv:UserSocket = this.userService.findConnectedUserByUsername(data.client_recv);
-
-			/* find user in db */
 			const db_user_send = await this.userRepository.findOne({ where:{username:data.client_send} })
 			const db_user_recv = await this.userRepository.findOne({ where:{username:data.client_recv} })
 
-			/*
-				_send = user who emit on server
-				_recv = to who _send emit
-			*/
+			const user_send:UserSocket = this.userService.findConnectedUserById(db_user_send.id);
+			const user_recv:UserSocket = this.userService.findConnectedUserById(db_user_recv.id);
+
+	
 			if (!db_user_recv){
 				return this.emitPopUp([user_send], {error:true, message: `User ${truncateString(data.client_recv, 10)} does not exist.`});
 			}
@@ -145,12 +140,12 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		try {
 			await this.authService.validToken(data.jwt)
 			/* Find if clients are connected*/
-			const user:UserSocket = this.userService.findConnectedUserByUsername(data.user);
-			const user_to_block:UserSocket = this.userService.findConnectedUserByUsername(data.user_to_block);
-
-			/* find user in db */
 			const db_user = await this.userRepository.findOne({ where:{username:data.user} })
 			const db_user_to_block = await this.userRepository.findOne({ where:{username:data.user_to_block} })
+			const user:UserSocket = this.userService.findConnectedUserById(db_user.id);
+			const user_to_block:UserSocket = this.userService.findConnectedUserById(db_user_to_block.id);
+
+			/* find user in db */
 
 			if (user){
 				if (db_user.blocked.includes(user_to_block.id)){
@@ -189,8 +184,8 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 	async handleDM(@MessageBody() data: MESSAGE_DATA) {
 		try {
 			await this.authService.validToken(data.jwt)
-			const user_send:UserSocket = this.userService.findConnectedUserByUsername(data.client_send);
 			const db_user_send:User = await this.userRepository.findOne({ where:{username:data.client_send} })
+			const user_send:UserSocket = this.userService.findConnectedUserById(db_user_send.id);
 			
 			if (data.client_recv == undefined && (!data.conversationID || data.conversationID < 0))
 				return this.emitPopUp([user_send], {error:true, message: `Message can't be sent.`});
@@ -228,7 +223,7 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 			await this.convRepository.save(conv);
 	
 			for (let idx in conv.users){
-				let userSocket = this.userService.findConnectedUserByUsername(conv.users[idx].username)
+				let userSocket = this.userService.findConnectedUserById(conv.users[idx].id)
 				if (userSocket)
 					userSocket.socket.emit('UPDATE_DB', await this.userService.parseUserInfo(conv.users[idx].id))
 			}
@@ -240,8 +235,8 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 	async handleRoom(@MessageBody() data: ROOM_DATA) {
 		try {
 			await this.authService.validToken(data.jwt)
-			const user_send: UserSocket = this.userService.findConnectedUserByUsername(data.admin);
 			const db_user_send: User = await this.userRepository.findOne({ where:{username:data.admin} })
+			const user_send: UserSocket = this.userService.findConnectedUserById(db_user_send.id);
 			/* does Room exist else create it */
 			let room : Room = await this.roomRepository.findOne({ where:{name: data.name} })
 			if (!room) {
@@ -265,7 +260,8 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 	async changePassRoom(@MessageBody() data: ROOM_NEW_PASS) {
 		try {
 			await this.authService.validToken(data.jwt)
-			const admin: UserSocket = this.userService.findConnectedUserByUsername(data.admin);
+			const adminDb: User = await this.userRepository.findOne({ where:{username:data.admin} })
+			const admin: UserSocket = this.userService.findConnectedUserById(adminDb.id);
 			let room : Room = await this.roomRepository.findOne({ where:{id: data.roomId} })
 			if (!room)
 				return this.emitPopUp([admin], {error:true, message: `Room doesn't exist.`});
@@ -277,7 +273,7 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 				room.password = await bcrypt.hash(data.newPass, 10);
 				await this.roomRepository.save(room);
 				for (let idx in room.users){
-					let userSocket = this.userService.findConnectedUserByUsername(room.users[idx].username)
+					let userSocket = this.userService.findConnectedUserById(room.users[idx].id)
 					if (userSocket)
 						userSocket.socket.emit('UPDATE_DB', await this.userService.parseUserInfo(room.users[idx].id))
 				}
@@ -290,8 +286,8 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 	async deleteRoom(@MessageBody() data: {roomId: number, user: string, jwt:string}) {
 		try {
 			await this.authService.validToken(data.jwt)
-			const user: UserSocket = this.userService.findConnectedUserByUsername(data.user);
 			const db_user: User = await this.userRepository.findOne({ where:{username:data.user} })
+			const user: UserSocket = this.userService.findConnectedUserById(db_user.id);
 			let room : Room = await this.roomRepository.findOne({
 				where:{id: data.roomId},
 				relations:['users', 'users.rooms'],
@@ -323,7 +319,7 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 			.andWhere("ownerId = :ownerId", {ownerId: db_user.id})
 			.execute();
 			for (let idx in room.users){
-				let userSocket = this.userService.findConnectedUserByUsername(room.users[idx].username)
+				let userSocket = this.userService.findConnectedUserById(room.users[idx].id)
 				let res = await this.userService.parseUserInfo(room.users[idx].id)
 				if (userSocket)
 					userSocket.socket.emit('UPDATE_DB',res )
@@ -336,8 +332,8 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 	async joinRoom(@MessageBody() data: {joinRoom:string, passRoom:string, user:string, jwt:string}) {
 		try {
 			await this.authService.validToken(data.jwt)
-			const user: UserSocket = this.userService.findConnectedUserByUsername(data.user);
 			const newUser: User = await this.userRepository.findOne({ where:{username:data.user} })
+			const user: UserSocket = this.userService.findConnectedUserById(newUser.id);
 			let room : Room = await this.roomRepository.findOne({
 				where:{name: data.joinRoom},
 				relations:['users', 'users.rooms'],
@@ -351,7 +347,7 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 			room.users.push(newUser)
 			await this.roomRepository.save(room);
 			for (let idx in room.users){
-				let userSocket = this.userService.findConnectedUserByUsername(room.users[idx].username)
+				let userSocket = this.userService.findConnectedUserById(room.users[idx].id)
 				if (userSocket)
 					userSocket.socket.emit('UPDATE_DB', await this.userService.parseUserInfo(room.users[idx].id))
 			}
@@ -363,12 +359,12 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 	async deleteMember(@MessageBody() data: {roomId: number, userId: number, admin: string, jwt:string}) {
 		try {
 			await this.authService.validToken(data.jwt)
-			const user: UserSocket = this.userService.findConnectedUserByUsername(data.admin);
+			const db_admin: User = await this.userRepository.findOne({ where:{username:data.admin} })
+			const user: UserSocket = this.userService.findConnectedUserById(db_admin.id);
 			let room : Room = await this.roomRepository.findOne({
 				where:{id: data.roomId},
 				relations:['users', 'users.rooms'],
 			})
-			const db_admin: User = await this.userRepository.findOne({ where:{username:data.admin} })
 			if (!room)
 				return this.emitPopUp([user], {error:true, message: `Room doesn't exist !`});
 			if (data.userId == db_admin.id && room.adminId.find((e:number) => e === db_admin.id) === room.ownerId)
@@ -382,7 +378,7 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 				.of(data.roomId)
 				.remove(data.userId)
 				for (let idx in room.users){
-					let userSocket = this.userService.findConnectedUserByUsername(room.users[idx].username)
+					let userSocket = this.userService.findConnectedUserById(room.users[idx].id)
 					if (userSocket)
 						userSocket.socket.emit('UPDATE_DB', await this.userService.parseUserInfo(room.users[idx].id))
 				}
@@ -396,7 +392,8 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 	async banMember(@MessageBody() data: {roomId: number, userId: number, admin: string, jwt:string}) {
 		try {
 			await this.authService.validToken(data.jwt)
-			const admin: UserSocket = this.userService.findConnectedUserByUsername(data.admin);
+			const db_admin: User = await this.userRepository.findOne({ where:{username:data.admin} })
+			const admin: UserSocket = this.userService.findConnectedUserById(db_admin.id);
 			let room : Room = await this.roomRepository.findOne({
 				where:{id: data.roomId},
 				relations:['users', 'users.rooms'],
@@ -417,7 +414,8 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 	async muteMember(@MessageBody() data: {roomId: number, userId: number, admin: string, jwt:string}) {
 		try {
 			await this.authService.validToken(data.jwt)
-			const admin: UserSocket = this.userService.findConnectedUserByUsername(data.admin);
+			const db_admin: User = await this.userRepository.findOne({ where:{username:data.admin} })
+			const admin: UserSocket = this.userService.findConnectedUserById(db_admin.id);
 			let room : Room = await this.roomRepository.findOne({
 				relations:['users','users.rooms'],
 				where:{id: data.roomId},
@@ -442,7 +440,7 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 			await this.mutedRepository.save(muted);
 			await this.roomRepository.save(room);
 			for (let idx in room.users) {
-				let userSocket = this.userService.findConnectedUserByUsername(room.users[idx].username)
+				let userSocket = this.userService.findConnectedUserById(room.users[idx].id)
 				if (userSocket)
 					userSocket.socket.emit('UPDATE_DB', await this.userService.parseUserInfo(room.users[idx].id))
 			}
@@ -454,7 +452,8 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 	async unmuteMember(@MessageBody() data: {roomId: number, userId: number, admin: string, jwt:string}) {
 		try {
 			await this.authService.validToken(data.jwt)
-			const admin: UserSocket = this.userService.findConnectedUserByUsername(data.admin);
+			const db_admin: User = await this.userRepository.findOne({ where:{username:data.admin} })
+			const admin: UserSocket = this.userService.findConnectedUserById(db_admin.id);
 			let room : Room = await this.roomRepository.findOne({
 				where:{id: data.roomId},
 				relations:['users', 'users.rooms', 'muteds', 'muteds.room'],
@@ -472,7 +471,7 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 			.andWhere("roomId = :roomId", {roomId: data.roomId})
 			.execute();
 			for (let idx in room.users){
-				let userSocket = this.userService.findConnectedUserByUsername(room.users[idx].username)
+				let userSocket = this.userService.findConnectedUserById(room.users[idx].id)
 				if (userSocket)
 					userSocket.socket.emit('UPDATE_DB', await this.userService.parseUserInfo(room.users[idx].id))
 			}
@@ -484,7 +483,8 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 	async upgradeMember(@MessageBody() data: {roomId: number, userId: number, admin: string, jwt:string}) {
 		try {
 			await this.authService.validToken(data.jwt)
-			const admin: UserSocket = this.userService.findConnectedUserByUsername(data.admin);
+			const db_admin: User = await this.userRepository.findOne({ where:{username:data.admin} })
+			const admin: UserSocket = this.userService.findConnectedUserById(db_admin.id);
 			let room : Room = await this.roomRepository.findOne({
 				where:{id: data.roomId},
 				relations:['users', 'users.rooms'],
@@ -506,7 +506,7 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 				room.adminId.push(data.userId);
 				await this.roomRepository.save(room);
 				for (let idx in room.users) {
-					let userSocket = this.userService.findConnectedUserByUsername(room.users[idx].username)
+					let userSocket = this.userService.findConnectedUserById(room.users[idx].id)
 					if (userSocket)
 						userSocket.socket.emit('UPDATE_DB', await this.userService.parseUserInfo(room.users[idx].id))
 				}
@@ -519,7 +519,8 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 	async downgradeMember(@MessageBody() data: {roomId: number, userId: number, admin: string, jwt:string}) {
 		try {
 			await this.authService.validToken(data.jwt)
-			const admin: UserSocket = this.userService.findConnectedUserByUsername(data.admin);
+			const db_admin: User = await this.userRepository.findOne({ where:{username:data.admin} })
+			const admin: UserSocket = this.userService.findConnectedUserById(db_admin.id);
 			let room : Room = await this.roomRepository.findOne({
 				where:{id: data.roomId},
 				relations:['users', 'users.rooms'],
@@ -535,7 +536,7 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 						room.adminId.splice(i, 1);
 				await this.roomRepository.save(room);
 				for (let idx in room.users){
-					let userSocket = this.userService.findConnectedUserByUsername(room.users[idx].username)
+					let userSocket = this.userService.findConnectedUserById(room.users[idx].id)
 					if (userSocket)
 						userSocket.socket.emit('UPDATE_DB', await this.userService.parseUserInfo(room.users[idx].id))
 				}
@@ -548,8 +549,8 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 	async handleRoomMsg(@MessageBody() data: MESSAGE_DATA) {
 		try {
 			await this.authService.validToken(data.jwt)
-			const user_send: UserSocket = this.userService.findConnectedUserByUsername(data.client_send);
 			const db_user_send:User = await this.userRepository.findOne({ where:{username:data.client_send} })
+			const user_send: UserSocket = this.userService.findConnectedUserById(db_user_send.id);
 
 			/* does conversation exist else create it */
 			let room : Room = await this.roomRepository.findOne({
@@ -590,7 +591,7 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 				.execute();
 			}
 			for (let idx in room.users){
-				let userSocket = this.userService.findConnectedUserByUsername(room.users[idx].username)
+				let userSocket = this.userService.findConnectedUserById(room.users[idx].id)
 				if (userSocket)
 					userSocket.socket.emit('UPDATE_DB', await this.userService.parseUserInfo(room.users[idx].id))
 			}
@@ -607,7 +608,8 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 	async findGame(@MessageBody() data: FIND_GAME_DATA) {
 		try {
 			await this.authService.validToken(data.jwt)
-			const user_send:UserSocket = this.userService.findConnectedUserByUsername(data.client_send);
+			const db_user_send:User = await this.userRepository.findOne({ where:{username:data.client_send} })
+			const user_send:UserSocket = this.userService.findConnectedUserById(db_user_send.id);
 			if (user_send != undefined){
 				if (!this.gameService.addToQueue(user_send, data.mode)) // add User to queue
 					return this.emitPopUp([user_send], {error:true, message: `${data.client_send} already in queue.`});
@@ -631,7 +633,8 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 	async quitQueue(@MessageBody() data: FIND_GAME_DATA) {
 		try {
 			await this.authService.validToken(data.jwt)
-			const user_send:UserSocket = this.userService.findConnectedUserByUsername(data.client_send);
+			const db_user_send:User = await this.userRepository.findOne({ where:{username:data.client_send} })
+			const user_send:UserSocket = this.userService.findConnectedUserById(db_user_send.id);
 			if (user_send != undefined){
 				this.gameService.removeFromQueue([user_send.id])
 			}
@@ -655,7 +658,8 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 	async quitGame(@MessageBody() data: {client_send: string, gameID:string, jwt: string}) {
 		try {
 			await this.authService.validToken(data.jwt)
-			const user_send:UserSocket = this.userService.findConnectedUserByUsername(data.client_send);
+			const db_user_send:User = await this.userRepository.findOne({ where:{username:data.client_send} })
+			const user_send:UserSocket = this.userService.findConnectedUserById(db_user_send.id);
 			if (user_send != undefined){
 				this.gameService.quitGame(data.gameID, user_send)
 			}
