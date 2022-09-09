@@ -16,6 +16,7 @@ import ChatBar from '../../message/chatBar';
 import Game from '../../game/Game';
 import { status } from '../../../common/types';
 import CreateRoom from '../../message/CreateRoom';
+import BackgroundLogging from '../../commons/backgrounds/BackgroundLogging';
 
 export default function Home() {
 	const global = useSelector((state: any) => state.global)
@@ -34,8 +35,8 @@ export default function Home() {
 							?
 							<Game/>
 							:
-							<div className='w-full h-full overflow-hidden'>
-								{/* <BackgroundLobby/> */}
+							<div className='w-full h-full'>
+								<BackgroundLobby></BackgroundLobby>
 							</div>
 						}
 					

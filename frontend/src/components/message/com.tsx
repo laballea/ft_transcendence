@@ -23,7 +23,8 @@ const Com: React.FC<IProps> = ({ conv }) => {
 		})
 	}
 
-	const sendMessage = (): void => {
+	const sendMessage = (event : any): void => {
+		event.preventDefault();
 		if (conv.adminId !== undefined) {
 			socket.emit('roomMsg', {
 				content: input.content,
@@ -48,24 +49,26 @@ const Com: React.FC<IProps> = ({ conv }) => {
 	}
 
 	return (
-		<div className="flex gap-[8px] w-full items-center justify-between">
+		<form onSubmit={sendMessage} className="flex gap-[8px] w-full items-center justify-between">
 			<input
 				className="	w-full
 							grow
 							p-[8px] pl-[12px] rounded-sm
-							bg-slate-800 text-slate-200 placeholder:text-slate-400
+							bg-slate-800 hover:bg-slate-900 focus:bg-slate-900 text-slate-200 placeholder:text-slate-400
 							font-space text-[16px]
-
+							transition-all duration-300 ease-in-out
 							"
 				type="text"
 				placeholder="write here..."
 				value={input.content}
 				onChange={handleChange}
 				name="content"
-				
+				autoComplete="off"
 			/>
-			<IconButton icon={FiArrowRight} onClick={sendMessage} ></IconButton>
-		</div>
+			<button type="submit" className="flex items-center justify-center">
+				<IconButton	icon={FiArrowRight} ></IconButton>
+			</button>
+		</form>
 	)
 }
 
