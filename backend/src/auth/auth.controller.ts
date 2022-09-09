@@ -1,4 +1,4 @@
-import { Body, Controller, Inject, Post, UseGuards, Req, Get, Res, HttpException, HttpStatus} from '@nestjs/common';
+import { Body, Controller, Inject, Post, UseGuards, Req, Get, Res, HttpException, HttpStatus, Headers} from '@nestjs/common';
 import { User } from '../user/models/user.entity';
 import { LoginDto } from './auth.dto';
 import { JwtAuthGuard, IntraAuthGuard } from './auth.guard';
@@ -59,9 +59,9 @@ export class AuthController {
 	*/
 	@Get('/user')
 	@UseGuards(JwtAuthGuard)
-	async getUser(@Res() res, @Req() req): Promise<any> {
+	async getUser(@Res() res, @Req() req, @Headers() headers): Promise<any> {
 		if (this.userService.getUserStatus(req.user.id) != status.Disconnected)
 			throw new HttpException(HTTP_STATUS.ALREADY_CONNECTED, HttpStatus.CONFLICT);
-		res.status(HttpStatus.OK).send(await this.userService.parseUserInfo(req.user.id));
+		res.status(HttpStatus.OK).send({user:await this.userService.parseUserInfo(req.user.id), token:headers.authorization.split(" ")[1]});
 	}
 }

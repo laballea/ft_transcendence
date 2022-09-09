@@ -26,13 +26,12 @@ export class Boost extends Pong {
 				left:newPosx < this.ball.size,
 				right:newPosx > this.map.width - this.ball.size,
 			}
-			if (this.balltraj && this.balltraj[this.balltrajpos]) {
+			if (this.balltraj && this.balltraj[this.balltrajpos ]) {
 				if ((this.ball.d.x <0 && this.ball.posx <= this.balltraj[this.balltrajpos].x) ||
 					(this.ball.d.x >0 && this.ball.posx >= this.balltraj[this.balltrajpos].x)){
 					if (this.balltraj[this.balltrajpos] && this.balltrajpos >= 1) {
 						this.ball.speed += 0.5
-						this.ball.angle = this.angle(this.balltraj[this.balltrajpos - 1].x, this.balltraj[this.balltrajpos - 1].y,
-						this.balltraj[this.balltrajpos].x, this.balltraj[this.balltrajpos].y)
+						this.ball.angle = this.angle(this.balltraj[this.balltrajpos - 1].x, this.balltraj[this.balltrajpos - 1].y, this.balltraj[this.balltrajpos].x, this.balltraj[this.balltrajpos].y)
 						this.ball.d = {x:Math.cos(this.ball.angle), y:Math.sin(this.ball.angle)}
 					}
 					this.balltrajpos++;
@@ -45,8 +44,7 @@ export class Boost extends Pong {
 						this.balltraj = user.clickpos
 						this.balltrajpos = 0
 						if (this.balltraj[this.balltrajpos]) {
-							this.ball.angle = this.angle(this.ball.posx, this.ball.posy,
-							this.balltraj[this.balltrajpos].x, this.balltraj[this.balltrajpos].y)
+							this.ball.angle = this.angle(this.ball.posx, this.ball.posy, this.balltraj[this.balltrajpos].x, this.balltraj[this.balltrajpos].y)
 							this.ball.d = {x:Math.cos(this.ball.angle), y:Math.sin(this.ball.angle)}
 						} else {
 							this.ball.d.x *= -1

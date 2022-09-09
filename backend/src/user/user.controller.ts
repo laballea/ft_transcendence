@@ -34,7 +34,8 @@ export class UserController {
 					status:this.userService.getUserStatus(user.id),
 					friend:user.friends.includes(Number(userID))
 				}
-				result.push(truncUser)
+				if (usernameSearch.length > 0 || (usernameSearch.length == 0 && user.friends.includes(Number(userID))))
+					result.push(truncUser)
 			}
 		}
 		return result

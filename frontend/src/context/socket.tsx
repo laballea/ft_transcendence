@@ -2,7 +2,12 @@ import {io, Socket} from "socket.io-client";
 import React from "react";
 import { FRIEND_REQUEST_ACTIONS } from "../common/types";
 
-export const socket:Socket = io("http://localhost:5000/", {autoConnect: false, reconnection: false});
+let socketOptions = {
+	autoConnect: false,
+	reconnection: false,
+ };
+
+export const socket:Socket = io("http://localhost:5000/", socketOptions);
 export const SocketContext = React.createContext(socket);
 
 export function acceptFriendRequest(global:any, username:string) {
@@ -170,5 +175,16 @@ export function joinRoomSocket(global:any, joinRoom:string, passRoom:string) {
 		joinRoom,
 		passRoom,
 		user: global.username,
+		jwt: global.token
 	});
 }
+
+export function deleteRoomSocket(global:any,roomId:number, userId:number){
+	socket.emit('deleteMember', {
+		roomId,
+		userId,
+		admin: global.username,
+		jwt: global.token
+	});
+}
+

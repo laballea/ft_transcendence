@@ -33,13 +33,13 @@ export interface FRIEND_REQUEST_DATA {
 	client_send:string;
 	client_recv:string;
 	action:FRIEND_REQUEST_ACTIONS;
-	jwt:number;
+	jwt:string;
 }
 
 export interface BLOCKED_DATA {
 	user:string;
 	user_to_block:string;
-	jwt:number;
+	jwt:string;
 }
 
 export enum HTTP_STATUS {
@@ -53,13 +53,14 @@ export interface MESSAGE_DATA {
 	client_recv: string;
 	content: string;
 	conversationID: number;
-	jwt: number;
+	jwt: string;
 }
 
 export interface ROOM_DATA {
 	admin: string;
 	name: string;
 	password: string;
+	jwt: string;
 }
 
 export interface ROOM_NEW_PASS {
@@ -73,12 +74,13 @@ export interface NEW_MEMBER {
 	roomId: number;
 	user: string;
 	admin: string;
+	jwt: string;
 }
 
 export interface FIND_GAME_DATA {
 	client_send: string;
 	mode:gamemode;
-	jwt: number;
+	jwt: string;
 }
 
 export interface POPUP_DATA {

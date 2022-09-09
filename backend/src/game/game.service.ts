@@ -65,7 +65,7 @@ export class GameService {
 		if (game){
 			if (this.userService.getUserStatus(game.usersID[0]) != status.Disconnected &&
 				this.userService.getUserStatus(game.usersID[1]) != status.Disconnected)
-				game.pong.pause(false);
+				game.pong.pause(false, userID);
 			return game.id
 		}
 		return undefined
@@ -76,9 +76,11 @@ export class GameService {
 			this.removeFromQueue([user.id])
 			if (user.gameID){
 				let game:GAMES_SOCKET = this.findGame(user.gameID)
-				if (game.pong.status === GAME_STATUS.PAUSE)
-					this.gameEnd(user.gameID)
-				game.pong.pause(true);
+				if (game.pong.status === GAME_STATUS.PAUSE){
+					this.gameEnd(user.gameID, false)
+					return ;
+				}
+				game.pong.pause(true, user.id);
 			}
 		}
 	}
@@ -112,10 +114,13 @@ export class GameService {
 		return new this.mode[mode]({users:pongUser,time:Date.now(), mode}, this.gameEnd.bind(this), gameID)
 	}
 
-	async gameEnd(gameID:string){
+	async gameEnd(gameID:string, save:boolean){
 		let game:GAMES_SOCKET = this.findGame(gameID)
-		await this.userService.saveGame(game)
-		this.userService.lvlUp(game.pong.getWinner().id)
+		if (save)
+			await this.userService.saveGame(game)
+		console.log(game.pong.getWinner())
+		if (game.pong.getWinner())
+			this.userService.lvlUp(game.pong.getWinner().id)
 		for (let id of game.usersID){
 			let user:UserSocket = this.userService.findConnectedUserById(id)
 			if (user){

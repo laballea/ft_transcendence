@@ -217,18 +217,20 @@ export class UserService {
 	}
 
 	async lvlUp(id:number){
-		const userRepo: User = await this.userRepository.findOne({ where:{id:id}, relations: ['gameData', 'gameData.users']})
-		let res = 0
-		for (var i = userRepo.gameData.length - 1; i >= 0; i--) {
-			let game = userRepo.gameData[i]
-			if (game.winner === userRepo.id)
-				res++;
-			else
-				break ;
+		if (id >= 0){
+			const userRepo: User = await this.userRepository.findOne({ where:{id:id}, relations: ['gameData', 'gameData.users']})
+			let res = 0
+			for (var i = userRepo.gameData.length - 1; i >= 0; i--) {
+				let game = userRepo.gameData[i]
+				if (game.winner === userRepo.id)
+					res++;
+				else
+					break ;
+			}
+			if (res === userRepo.lvl + 1)
+				userRepo.lvl++;
+			await this.userRepository.save(userRepo)
 		}
-		if (res === userRepo.lvl + 1)
-			userRepo.lvl++;
-		await this.userRepository.save(userRepo)
 	}
 
 

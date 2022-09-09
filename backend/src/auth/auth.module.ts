@@ -20,11 +20,11 @@ import { TwoFactorAuthenticationService } from '../twoFactor/tfa.service';
 	imports: [
 		PassportModule.register({ defaultStrategy: 'jwt', property: 'user' }),
 		JwtModule.registerAsync({
-		inject: [ConfigService],
-		useFactory: (config: ConfigService) => ({
-			secret: process.env.SECRET_KEY || "randomString",
-			signOptions: { expiresIn: '60s' },
-		}),
+			inject: [ConfigService],
+			useFactory: (config: ConfigService) => ({
+				secret: process.env.SECRET_KEY || "randomString",
+				signOptions: { expiresIn: '60s' },
+			}),
 		}),
 		HttpModule,
 		forwardRef(() => UserModule),
@@ -38,5 +38,6 @@ import { TwoFactorAuthenticationService } from '../twoFactor/tfa.service';
 		JwtStrategy,
 		IntraStrategy,
 		SessionSerializer],
+	exports:[AuthService]
 })
 export class AuthModule {}

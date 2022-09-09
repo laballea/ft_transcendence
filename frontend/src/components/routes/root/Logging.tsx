@@ -54,7 +54,7 @@ const Logging = () => {
 		}
 	  }, [popup]);
 
-	const validToken = async (token:string) => {
+	const validToken = (token:string) => {
 		const requestOptions = {
 			method: 'GET',
 			headers: {
@@ -68,7 +68,7 @@ const Logging = () => {
 			let resp = await response.json();
 			if (response.ok){
 				navigate('/app')
-				dispatch(login({user:resp, token:jwt}))
+				dispatch(login({user:resp.user, token:resp.token}))
 			}
 			else {
 				if (searchParams.get("jwt")){
@@ -231,33 +231,7 @@ const Logging = () => {
 		</div>
 		)
 	} else if (jwt){ // if token exist in redux user is already logged
-		const requestOptions = {
-			method: 'GET',
-			headers: {
-				'Content-Type': 'application/json;charset=utf-8',
-				'Access-Control-Allow-Origin': '*',
-				'Authorization': 'bearer ' + jwt,
-			},
-		}
-		fetch("http://localhost:5000/auth/user", requestOptions)
-		.then(async response=>{
-			let resp = await response.json();
-			if (response.ok){
-				/*if (searchParams.get("jwt")){
-					searchParams.delete("jwt");
-					setSearchParams(searchParams);
-				}*/
-				navigate('/app', {replace :true})
-				dispatch(login({user:resp, token:jwt}))
-			}
-			else {
-				if (searchParams.get("jwt")){
-					searchParams.delete("jwt");
-					setSearchParams(searchParams);
-				}
-				setPopup({open:true, error:true, message:resp.message})
-			}
-		})
+		validToken(jwt)
 	}
 
 	return (

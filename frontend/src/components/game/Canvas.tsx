@@ -80,11 +80,20 @@ const Canvas = (props:any) => {
 		}
 	})
 
+<<<<<<< HEAD
+	return(
+			<div style={{width:width, height:height, position:"relative"}}>
+				<canvas style={{position:"relative"}} ref={canvasRef} width={width} height={height}/>
+				<div className={`absolute bottom-[16px]`}>TEST</div>
+				<div className={`absolute bottom-[16px]`}>LOL</div>
+			</div>
+=======
 	return (
 		<div className={`relative w-[${width}] h-[${width}]`}>
 			<GameBar></GameBar>
 			<canvas style={{position:"relative"}} ref={canvasRef} width={width} height={height}/>
 		</div>
+>>>>>>> origin
 	)
 }
 
