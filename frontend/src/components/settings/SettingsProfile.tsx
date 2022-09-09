@@ -19,6 +19,17 @@ const SettingsProfile = ({username, userImage} : SettingsProfileProps) => {
 	const [editProfilPic, setEditProfilPic] = useState(false);
 	const [newUsername, setNewUsername] = useState(username);
 
+
+	const changeUserName = (event : any) => {
+		console.log(event.target)
+		event.preventDefault(); // prevents render of component
+		if (event.target.value !== username)
+		{
+			editUsernameSocket(global, newUsername)
+		}
+		
+	}
+
 	return (
 		<>
 			<div className='flex items-center justify-self-stretch'>
@@ -42,22 +53,49 @@ const SettingsProfile = ({username, userImage} : SettingsProfileProps) => {
 					<div className='w-[200px] h-[200px] rounded-full'>
 						<img src={userImage} width="200" height="200" alt="userimage" className='rounded-full'></img>
 					</div>
-					{editProfilPic && <SettingsProfilPicChoice/>}
 				</div>
-				<div className='flex items-center gap-[8px] 
+				<form 	onSubmit={
+							changeUserName
+						}
+						className=' relative
+									flex items-center gap-[8px] w-[408px]
+									transition-all duration-300 ease-in-out
+									font-space text-[40px] text-slate-400 hover:text-slate-200
+									border-b-2 border-slate-400
+									cursor pointer'>
+						<input
+						type="text"
+							className='w-[368px] bg-transparent '
+							placeholder={newUsername}
+							onChange={(event)=>setNewUsername(event.target.value)}
+						>
+						</input>
+						<FiEdit2 className='absolute right-0
+											w-[24px] h-[24px] 
+											text-[24px] 
+											z-20' 
+							></FiEdit2>
+						<button type='submit' className=''>
+						</button>
+				</form>
+
+
+
+				{/* <div className='flex items-center gap-[8px] 
 								text-slate-400 hover:text-slate-200 font-space text-[40px]
 								cursor-pointer
 								transition-all duration-300 ease-in-out'
 								>
-					{editUsername ?
-					      <input
+					{
+						editUsername ?
+						<input
 								className="flex"
 								type="text"
 								placeholder={username}
 								value={newUsername}
 								onChange={(event)=>setNewUsername(event.target.value)}
 								name="content"
-							/>
+						/>
 						:
 						<p onClick={() => setEditUsername(true)}> { username }</p>
 					}
@@ -66,8 +104,14 @@ const SettingsProfile = ({username, userImage} : SettingsProfileProps) => {
 							editUsernameSocket(global, newUsername)
 						}
 						setEditUsername(!editUsername)}}
-					/>
-				</div>
+						/>
+					</div> */}
+
+
+
+			</div>
+			<div className='w-full'>
+				{editProfilPic && <SettingsProfilPicChoice/>}
 			</div>
 			<div className='mb-[64px]'></div>
 		</>
