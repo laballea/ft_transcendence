@@ -7,6 +7,7 @@ import { useSearchParams } from 'react-router-dom';
 import IconButton from '../buttons/IconButton';
 import PopUpToaster from './PopUpToaster'
 import Popup from 'reactjs-popup'; 
+import Loading from '../utils/Loading';
 
 type PopUp2FAModalProps = {
 	closeFunc : () => void
@@ -113,9 +114,11 @@ function PopUp2FAModal({ closeFunc } : PopUp2FAModalProps) {
 				<div className='mt-[16px] mb-[16px]'>
 					{
 						image.src ? 
-						<img src={image.src} style={{height:'250px', width:'250px'}} alt="" /> 
+						<img src={image.src} style={{height:'240px', width:'240px'}} alt="" /> 
 						: 
-						null
+						<div className='flex items-center justify-center w-[240px] h-[240px]'>
+							<Loading/>
+						</div>
 					}
 				</div>
 				<div>
