@@ -15,6 +15,7 @@ import Game from '../../game/Game';
 import { status } from '../../../common/types';
 import CreateRoom from '../../message/CreateRoom';
 import BackgroundLobby from '../../commons/backgrounds/BackgroundLobby';
+import SocialInterface from '../../commons/socialInterface/SocialInterface';
 
 export default function Home() {
 	const global = useSelector((state: any) => state.global)
@@ -38,11 +39,7 @@ export default function Home() {
 							</div>
 						}
 					
-						<div className="relative flex-initial flex w-full bg-slate-800 sm:w-[400px] flex-col h-full">
-							<ContactList/>
-							{global.currentConv !== undefined ? <FloatingMessage/> : <CreateRoom/>}
-							{/* <ChatBar/> */}
-						</div>
+						<SocialInterface/>
 					</div>
 				</div>
 			</div>

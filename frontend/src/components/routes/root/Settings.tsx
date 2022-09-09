@@ -12,6 +12,7 @@ import '../../../assets/fonts/fonts.css';
 
 // Redux
 import { useSelector } from 'react-redux';
+import SocialInterface from '../../commons/socialInterface/SocialInterface';
 
 // Assets
 type SettingsProps = {
@@ -32,7 +33,7 @@ const Settings = ({} : SettingsProps) => {
 						<Settings2FA/>
 					</div>
 				</div>
-				<ContactList/>
+				<SocialInterface/>
 			</div>
 			<Footer/>
 		</div>

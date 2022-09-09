@@ -64,8 +64,9 @@ const SettingsProfile = ({username, userImage} : SettingsProfileProps) => {
 									border-b-2 border-slate-400
 									cursor pointer'>
 						<input
-						type="text"
-							className='w-[368px] bg-transparent '
+							type="text"
+						
+							className='w-[368px] bg-transparent focus:outline-none'
 							placeholder={newUsername}
 							onChange={(event)=>setNewUsername(event.target.value)}
 						>
