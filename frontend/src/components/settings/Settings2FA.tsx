@@ -24,7 +24,7 @@ const Settings2FA = ({} : Settings2FAProps) => {
 					'Authorization': 'bearer ' + global.token,
 				},
 			}
-			fetch("http://localhost:5000/2fa/turn-off", requestOptions).then(resp => {
+			fetch(`http://${process.env.REACT_APP_ip}:5000/2fa/turn-off`, requestOptions).then(resp => {
 				
 
 			})

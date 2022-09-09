@@ -34,7 +34,7 @@ const SettingsProfilPicChoice = () => {
 			file,
 			file.filename
 		); 
-		fetch('http://localhost:5000/users/upload', {
+		fetch(`http://${process.env.REACT_APP_ip}:5000/users/upload`, {
 			headers: {
 				'Accept': 'application/json',
 				'Authorization': 'bearer ' + global.token,
@@ -56,7 +56,7 @@ const SettingsProfilPicChoice = () => {
 			  'Authorization': 'bearer ' + global.token,
 			},
 		}
-		fetch("http://localhost:5000/users/image", requestOptions)
+		fetch(`http://${process.env.REACT_APP_ip}:5000/users/image`, requestOptions)
 		.then(async response=>{
 			let resp = await response.json();
 			if (response.ok){

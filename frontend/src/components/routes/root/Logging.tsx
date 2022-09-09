@@ -27,7 +27,7 @@ const Logging = () => {
 	const dispatch = useDispatch();
 	const [popup, setPopup] = useState({open:false, error:true, message:""});
 	const navigate = useNavigate();
-	const url = new URL("http://localhost:5000/auth/login"); //url for intra auth
+	const url = new URL(`http://${process.env.REACT_APP_ip}:5000/auth/login`); //url for intra auth
 	const [searchParams, setSearchParams] = useSearchParams();
 	const jwt = searchParams.get("jwt") == null ? null : searchParams.get("jwt"); // get jwt token on query
 	const id = searchParams.get("id") == null ? null : searchParams.get("id"); // get jwt token on query
@@ -51,7 +51,7 @@ const Logging = () => {
 				'Authorization': 'bearer ' + token,
 			},
 		}
-		fetch("http://localhost:5000/auth/user", requestOptions)
+		fetch(`http://${process.env.REACT_APP_ip}:5000/auth/user`, requestOptions)
 		.then(async response=>{
 			let resp = await response.json();
 			if (response.ok){
@@ -84,7 +84,7 @@ const Logging = () => {
 				username: username,
 			})
 		}
-		fetch("http://localhost:5000/auth/login", requestOptions)
+		fetch(`http://${process.env.REACT_APP_ip}:5000/auth/login`, requestOptions)
 		.then(async response=>{
 			const resp:any = await response.json()
 			if (response.ok){
@@ -112,7 +112,7 @@ const Logging = () => {
 				id:id
 			})
 		}
-		fetch("http://localhost:5000/2fa/authenticate", requestOptions)
+		fetch(`http://${process.env.REACT_APP_ip}:5000/2fa/authenticate`, requestOptions)
 		.then(async response=>{
 			const resp:any = await response.json()
 			if (response.ok){

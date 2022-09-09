@@ -17,7 +17,7 @@ export class IntraStrategy extends PassportStrategy(Strategy, 'intra-oauth') {
 		clientID: process.env.clientID,
 		clientSecret: process.env.clientSecret,
 		callbackURL:
-			"http://localhost:5000/auth/login",
+			`http://${process.env.REACT_APP_ip}:5000/auth/login`,
 		});
 	}
 

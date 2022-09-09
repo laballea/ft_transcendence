@@ -16,7 +16,7 @@ const Spectate = () => {
 
 	useEffect(() => {
 		// eslint-disable-next-line
-		eventSource = new EventSource('http://localhost:5000/game/' + global.gameID);
+		eventSource = new EventSource(`http://${process.env.REACT_APP_ip}:5000/game/` + global.gameID);
 		window.addEventListener("beforeunload", function (event) {
 			eventSource.close();
 		})
