@@ -13,13 +13,9 @@ import { AuthService } from 'src/auth/auth.service';
 
 @Module({
 	imports:[
-<<<<<<< HEAD
-		TypeOrmModule.forFeature([User, Message, Conversation, GameData, Room]),
 		forwardRef(() => AuthModule),
-=======
 		TypeOrmModule.forFeature([User, Message, Muted, Conversation, GameData, Room]),
 		AuthModule,
->>>>>>> origin
 		forwardRef(() => GameModule),
 		HttpModule,
 	],
