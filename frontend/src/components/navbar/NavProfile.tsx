@@ -6,6 +6,7 @@ import MobileMenuButton from '../commons/buttons/MobileMenuButton'
 // Assets
 import {FiSettings, FiLogOut, FiUser, FiHome} from 'react-icons/fi'
 import defaultUserImage from '../../assets/images/default-user.png'
+import { truncateString } from '../commons/utils/truncateString'
 
 type NavProfileProps = {
 	username: string,
@@ -31,7 +32,7 @@ const NavProfile = ({username, userImage, onClickSettings, onClickLogOut, onClic
 					onClick={onClickProfile}>
 					<img src={userImage} width="40" height="40" alt="userimage" className="rounded-full mr-[8px]"></img>
 					<p className="sm:block hidden">
-						{username}
+						{truncateString(username, 15)}
 					</p>
 				</div>
 				<div className="hidden sm:flex items-center">

@@ -3,6 +3,7 @@ import React from 'react'
 
 // Assets
 import defaultUserImage from '../../assets/images/default-user.png'
+import { truncateString } from '../commons/utils/truncateString';
 
 type FriendRequestOutProps = {
 	username: string,
@@ -26,7 +27,7 @@ const FriendRequestOut = ({username} : FriendRequestOutProps) => {
 					<div className="ml-[16px]">
 						<p className='absolute mt-[-8px] text-slate-400 font-space text-[10px]'>Request Sent</p>
 						<p className='font-space text-slate-400 text-[20px]'>
-							{username}
+							{truncateString(username, 15)}
 						</p>
 					</div>
 				</div>
