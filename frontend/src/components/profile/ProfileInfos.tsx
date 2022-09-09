@@ -1,5 +1,5 @@
 import React from 'react'
-import {useSelector } from 'react-redux';
+import {useDispatch, useSelector } from 'react-redux';
 
 // Components
 import DefaultButtonPrimary from '../commons/buttons/DefaultButtonPrimary';
@@ -10,21 +10,25 @@ import '../../assets/fonts/fonts.css';
 
 // Types
 import { status } from '../../common/types';
+import { setCurrentConv } from '../../store/global/reducer';
+import { challenged, spectateGame } from '../../context/socket';
 
 type ProfileInfosProps = {
 	contact: {
 		username:string,
 		id:number,
 		status:status,
+		lvl:number,
 		gameStats:any
+		profilPic:string
 	},
 }
 
 const ProfileInfos = ({contact} : ProfileInfosProps) => {
 	const global = useSelector((state: any) => state.global)
+	const dispatch = useDispatch()
 	let statusTag : JSX.Element;
 	let actions : JSX.Element;
-
 	if (contact.username === global.username) // Check if the profile infos gernetated are from loggedin user
 	{
 		statusTag = 
@@ -45,9 +49,9 @@ const ProfileInfos = ({contact} : ProfileInfosProps) => {
 			</span>
 			actions = 
 			<>
-				<DefaultButtonPrimary cta='Challenge'  icon={FiZap} onClick={()=>{}} />
+				{global.friends.find((friend:any) => friend.id == contact.id) != undefined && <DefaultButtonPrimary cta='Challenge'  icon={FiZap} onClick={()=>{challenged("ASK", global, contact.id)}} />}
 				<div className='w-4'></div>
-				<DefaultButtonPrimary cta='Message'  icon={FiMessageCircle} onClick={()=>{}} />
+				<DefaultButtonPrimary cta='Message'  icon={FiMessageCircle} onClick={()=>{dispatch(setCurrentConv({username:contact.username}))}} />
 			</>
 		}
 		else if (contact.status === status.InGame)
@@ -58,9 +62,9 @@ const ProfileInfos = ({contact} : ProfileInfosProps) => {
 			</span>
 			actions = 
 			<>
-				<DefaultButtonPrimary cta='Watch'  icon={FiEye} onClick={()=>{}} />
+				<DefaultButtonPrimary cta='Watch'  icon={FiEye} onClick={()=>{spectateGame(global, global.id, contact.id)}} />
 				<div className='w-4'></div>
-				<DefaultButtonPrimary cta='Message'  icon={FiMessageCircle} onClick={()=>{}} />
+				<DefaultButtonPrimary cta='Message'  icon={FiMessageCircle} onClick={()=>{dispatch(setCurrentConv({username:contact.username}))}} />
 			</>
 		}
 		else if (contact.status === status.InQueue)
@@ -71,9 +75,9 @@ const ProfileInfos = ({contact} : ProfileInfosProps) => {
 			</span>
 			actions = 
 			<>
-				<DefaultButtonPrimary cta='Challenge'  icon={FiZap} onClick={()=>{}} />
+				{global.friends.find((friend:any) => friend.id == contact.id) != undefined && <DefaultButtonPrimary cta='Challenge'  icon={FiZap} onClick={()=>{challenged("ASK", global, contact.id)}} />}
 				<div className='w-4'></div>
-				<DefaultButtonPrimary cta='Message'  icon={FiMessageCircle} onClick={()=>{}} />
+				<DefaultButtonPrimary cta='Message'  icon={FiMessageCircle} onClick={()=>{dispatch(setCurrentConv({username:contact.username}))}} />
 			</>
 		}
 		else // (contact.status === status.Disconnected)
@@ -84,19 +88,20 @@ const ProfileInfos = ({contact} : ProfileInfosProps) => {
 			</span>
 			actions = 
 			<>
-				<DefaultButtonPrimary cta='Message'  icon={FiMessageCircle} onClick={()=>{}} />
+				<DefaultButtonPrimary cta='Message'  icon={FiMessageCircle} onClick={()=>{dispatch(setCurrentConv({username:contact.username}))}} />
 			</>
 		}
 	}
 
 	return (
 		<div className='flex items-center mb-[64px]'>
-			<img src={global.userImage} width="200" height="200" alt="userimage" className="rounded-full mr-[16px]"></img>
+			<img src={contact.profilPic} width="200" height="200" alt="userimage" className="rounded-full mr-[16px]"></img>
 			<div className='relative'>
 				<div className='absolute mt-[-8px] font-space'>
 					{statusTag}
 				</div>
 				<h2 className='font-pilowlava text-[64px] text-slate-400'>{contact.username}</h2>
+				<p className='font-pilowlava text-[24px] text-slate-400'>LVL.{contact.lvl}</p>
 				<div className='flex align-center'>
 					{ actions }
 				</div>

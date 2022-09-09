@@ -1,20 +1,16 @@
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
+import { IconType } from 'react-icons';
 
 type AddFriendButtonProps = {
-	onSubmit : (username:string) => void
+	cta : string,
+	value:string,
+	onClick : (username:string) => void,
 }
 
-const AddFriendButton = ({ onSubmit } : AddFriendButtonProps) => {
-	const [username, setUsername] = useState("");
-	const handleSubmit = async (event: any) => {
-		// Prevent page reload
-		event.preventDefault();
-		onSubmit(username);
-		setUsername("");
-	};
+const AddFriendButton = ({ cta, value, onClick } : AddFriendButtonProps) => {
+
 	return (
 		<div className="absolute top-0 left-0 w-full p-[12px] ">
-			<form onSubmit={handleSubmit}>
 				<input	
 					className="	rounded
 								flex justify-left items-center
@@ -25,17 +21,12 @@ const AddFriendButton = ({ onSubmit } : AddFriendButtonProps) => {
 								placeholder:transition-all placeholder:duration-300 placeholder:ease-in-out
 								shadow-addFriend" 
 
-					placeholder="+ Add a Friend"
-					value={username}
-					onChange={e => setUsername(e.target.value)} required
+					placeholder={cta}
+					value={value}
+					onChange={e => onClick(e.target.value)} required
 					type="text"
 				>
-						{/* <Icon className="sm:w-[24px] w-[16px] h-[24px] mr-[12px]"></Icon> */}
-						{/* <p>
-							Add a Friend
-						</p> */}
 				</input>
-			</form>
 
 
 		</div>

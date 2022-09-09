@@ -9,6 +9,7 @@ import { JwtAuthGuard } from '../auth/auth.guard';
 import { createReadStream, readdirSync} from 'fs';
 import { join } from 'path';
 import { EventsService } from './events.service';
+import { User } from './models/user.entity';
 
 @Controller('users')
 export class UserController {
@@ -17,12 +18,33 @@ export class UserController {
 		private userGateway:UserGateway,
 		private readonly eventsService: EventsService)
 		{
-			this.lol = 3
 		}
-		private lol:number
 	/*
 		return all user in db
 	*/
+	async getUserLIst(userID:number, usernameSearch:string) {
+		const allUsers:User[] = await this.userService.findAll()
+		let result = []
+		for (let user of allUsers){
+			if (user.username.startsWith(usernameSearch) && user.id != userID){
+				let truncUser = {
+					id:user.id,
+					username:user.username,
+					profilPic: user.profilPic,
+					status:this.userService.getUserStatus(user.id),
+					friend:user.friends.includes(Number(userID))
+				}
+				result.push(truncUser)
+			}
+		}
+		return result
+	}
+
+	@Get('search')
+	async findUserByUsername(@Query() query,  @Res() res) {
+		res.send(await this.getUserLIst(0, query.username))
+	}
+
 	@Get()
 	findAll():Promise<UserI[]> {
 		return this.userService.findAll();
@@ -46,7 +68,7 @@ export class UserController {
 	@Sse('contactList')
 	sseContact(@Query() query): Observable<any> {
 		return interval(1000).pipe(
-			mergeMap( async (_) => ({ data: { contactList: await this.userGateway.getContactList(query.username)} })
+			mergeMap( async (_) => ({ data: { contactList: await this.getUserLIst(query.id, query.searchUsername)} })
 		));
 	}
 
@@ -96,4 +118,5 @@ export class UserController {
 		});
 		return res
 	}
+
 }

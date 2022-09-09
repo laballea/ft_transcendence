@@ -10,6 +10,7 @@ export interface user {
 	username?: string;
 	status?: string;
 	token?: string;
+	lvl?:number;
 	logged?:boolean;
 	friendsRequest?:Array<number>;
 	pendingRequest?:Array<number>;
@@ -23,6 +24,7 @@ export interface user {
 	gameID?:string
 	challenged?:{id:number, username:string},
 	contactList:any[],
+	searchUserContactList:string,
 	gamemode:gamemode,
 	currentConv:any,
 	createRoom:boolean

@@ -12,7 +12,11 @@ export interface UserI {
 
 	intraID:number;
 
+	lvl:number;
+
 	email:string;
+
+	token42:string;
 
 	profilIntraUrl:string;
 	
@@ -20,7 +24,7 @@ export interface UserI {
 
 	friends:number[];
 
-	bloqued:number[];
+	blocked:number[];
 
 	conversations: Conversation[];
 
@@ -78,13 +82,15 @@ export interface UserSocket {
 export interface UserSafeInfo {
 	id:number;
 
+	lvl:number;
+
 	username:string;
 
 	status?:status;
 
 	friends?:{id:number, username:string}[];
 
-	bloqued?:{id:number, username:string}[];
+	blocked?:{id:number, username:string}[];
 
 	friendsRequest?:{id:number, username:string}[];
 

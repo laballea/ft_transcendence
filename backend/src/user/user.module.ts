@@ -8,12 +8,14 @@ import { EventsService } from './events.service';
 import { UserGateway } from './user.gateway';
 import { FriendsService } from 'src/friends/friends.service';
 import { GameModule } from 'src/game/game.module';
+import { HttpModule } from '@nestjs/axios';
 
 @Module({
 	imports:[
 		TypeOrmModule.forFeature([User, Message, Muted, Conversation, GameData, Room]),
 		AuthModule,
 		forwardRef(() => GameModule),
+		HttpModule,
 	],
 	providers: [UserService, EventsService, UserGateway, FriendsService],
 	controllers: [UserController],

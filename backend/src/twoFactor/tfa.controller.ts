@@ -14,6 +14,7 @@ import { TwoFactorAuthenticationCodeDto } from '../auth/auth.dto'
 import { UserService } from '../user/user.service';
 import { AuthService } from '../auth/auth.service';
 import { Response } from 'express';
+import { UserSocket } from 'src/user/models/user.interface';
 
 @Controller('2fa')
 export class TwoFactorAuthenticationController {
@@ -36,23 +37,25 @@ export class TwoFactorAuthenticationController {
 	// if the code send by user is valid: turn on 2fa
 	@Post('turn-on')
 	@UseGuards(JwtAuthGuard)
-	async turnOnTwoFactorAuthentication(@Req() request: RequestWithUser, @Body() { code } : TwoFactorAuthenticationCodeDto) {
-		try {
-			const isCodeValid = this.twoFactorAuthenticationService.isTwoFactorAuthenticationCodeValid(code, request.user);
-			if (!isCodeValid) {
-				throw new UnauthorizedException('Wrong authentication code');
-			}
-			await this.userService.turnOnTwoFactorAuthentication(request.user.id);
-			return HttpStatus.OK
-		} catch (error) {
-			console.error(error)
+	async turnOnTwoFactorAuthentication(@Req() request: RequestWithUser, @Res() res: Response, @Body() { code } : TwoFactorAuthenticationCodeDto) {
+		const isCodeValid = this.twoFactorAuthenticationService.isTwoFactorAuthenticationCodeValid(code, request.user);
+		if (!isCodeValid) {
+			res.sendStatus(HttpStatus.UNAUTHORIZED)
+			return ;
 		}
+		await this.userService.turnOnTwoFactorAuthentication(request.user.id);
+		const userSocket:UserSocket = this.userService.findConnectedUserById(request.user.id);
+		userSocket.socket.emit("UPDATE_DB", await this.userService.parseUserInfo(request.user.id))
+		res.sendStatus(HttpStatus.OK)
+		return ;
 	}
 
 	@Post('turn-off')
 	@UseGuards(JwtAuthGuard)
 	async turnOffTwoFactorAuthentication(@Req() request: RequestWithUser) {
 		await this.userService.turnOffTwoFactorAuthentication(request.user.id);
+		const userSocket:UserSocket = this.userService.findConnectedUserById(request.user.id);
+		userSocket.socket.emit("UPDATE_DB", await this.userService.parseUserInfo(request.user.id))
 		return HttpStatus.OK
 	}
 

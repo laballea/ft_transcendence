@@ -9,6 +9,7 @@ import { useState } from 'react';
 import { status } from '../../common/types';
 import IconButton from '../commons/buttons/IconButton';
 import { FiSlash, FiUserCheck, FiUserPlus } from 'react-icons/fi';
+import { addFriend, blocked, removeFriend } from '../../context/socket';
 
 // Components
 
@@ -18,7 +19,7 @@ type ProfileActionsProps = {
 		username:string,
 		id:number,
 		status:status,
-		gameStats:any
+		gameStats:any,
 	}
 }
 
@@ -31,9 +32,6 @@ const ProfileActions = ({contact} : ProfileActionsProps) => {
 
 	let actions : JSX.Element;
 
-	const [friend, setFriend] = useState(false);
-	const [blocked, setBlocked] = useState(false);
-
 	if (contact.username === global.username)
 	{
 		actions = 
@@ -42,24 +40,24 @@ const ProfileActions = ({contact} : ProfileActionsProps) => {
 	}
 	else
 	{
-		if (!blocked)
+		if (global.blocked.find((blocked:any) => blocked.id == contact.id) === undefined)
 		{
 			actions =
 			<>
 				{	
-					friend === true ?
+					global.friends.find((friend:any) => friend.id == contact.id) != undefined ?
 						<>
-							<IconButton color='green' icon={FiUserCheck} onClick={() => setFriend(!friend)}></IconButton>
+							<IconButton color='green' icon={FiUserCheck} onClick={() => removeFriend(global, contact.username)}></IconButton>
 						</>
-					:	<IconButton color='#e2e8f0' icon={FiUserPlus} onClick={() => setFriend(!friend)}></IconButton>
+					:	<IconButton color='#e2e8f0' icon={FiUserPlus} onClick={() => addFriend(global, contact.username)}></IconButton>
 				}
-				<IconButton color='red' icon={FiSlash} onClick={() => setBlocked(!blocked)}></IconButton>
+				<IconButton color='red' icon={FiSlash} onClick={() => blocked(global, contact.username)}></IconButton>
 			</>
 		}
 		else
 		{	
 			actions = 
-			<div className='flex items-center' onClick={() => setBlocked(!blocked)}>
+			<div className='flex items-center' onClick={() => blocked(global, contact.username)}>
 				<IconButton color='red' icon={FiSlash} ></IconButton>
 				<p className='text-[12px] font-space text-red-500'>Blocked </p>
 			</div>

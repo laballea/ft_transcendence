@@ -41,7 +41,15 @@ export function addFriend(global:any, username:string) {
 	})
 }
 
-export function challenged(action:string, global:any, id:number) {
+export function blocked(global:any, username:string){
+	socket.emit("BLOCKED", {
+		user: global.username,
+		user_to_block: username,
+		jwt:global.token
+	})
+}
+
+export function challenged(action:string,global:any, id:number){
 	socket.emit("CHALLENGED", {
 		action: action,
 		mode:global.gamemode,

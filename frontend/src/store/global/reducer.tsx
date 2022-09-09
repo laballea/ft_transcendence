@@ -4,6 +4,7 @@ import getProfilImg from '../../components/commons/utils/getProfilImg'
 
 const InitialState: user = {
 	logged:false,
+	lvl:0,
 	username:undefined,
 	friendsRequest:[],
 	pendingRequest:[],
@@ -17,6 +18,7 @@ const InitialState: user = {
 	gameID:undefined,
 	challenged:undefined,
 	contactList:[],
+	searchUserContactList:"",
 	gamemode:gamemode.normal,
 	twoFactor:false,
 	currentConv:undefined,
@@ -40,6 +42,7 @@ export const globalSlice = createSlice({
 			state.room = data.payload.user.room
 			state.gameID = data.payload.user.gameID
 			state.twoFactor = data.payload.twoFactor
+			state.lvl = data.payload.user.lvl
 		},
 		logout: (state: any) => {
 			Object.assign(state, InitialState)
@@ -51,11 +54,11 @@ export const globalSlice = createSlice({
 			state.pendingRequest = getProfilImg(data.payload.pendingRequest)
 			state.userImage = data.payload.profilPic
 			state.friends = data.payload.friends
-			state.bloqued = data.payload.bloqued
-			console.log(data.payload)
+			state.blocked = data.payload.blocked
 			state.conv = data.payload.conv.concat(data.payload.room)
 			state.gameID = data.payload.gameID
 			state.twoFactor = data.payload.twoFactor
+			state.lvl = data.payload.lvl
 			if (state.currentConv !== undefined && state.currentConv !== -1)
 				state.currentConv = state.conv.find((conv:any) => conv.ownerId === state.currentConv.ownerId && conv.id === state.currentConv.id)
 			if (state.convID === -1){
@@ -100,6 +103,9 @@ export const globalSlice = createSlice({
 		setContactList: (state:any, data:any) => {
 			state.contactList = data.payload
 		},
+		setSearchUserContactList: (state:any, data:any) => {
+			state.searchUserContactList = data.payload
+		},
 		setGameStatus: (state:any, data:any) => {
 			state.status = data.payload
 		},
@@ -142,7 +148,8 @@ export const {
 	challenged,
 	setContactList,
 	setGameMode,
-	setCreateRoom
+	setCreateRoom,
+	setSearchUserContactList
 	} = globalSlice.actions
 
 export default globalSlice.reducer

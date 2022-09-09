@@ -36,6 +36,12 @@ export interface FRIEND_REQUEST_DATA {
 	jwt:number;
 }
 
+export interface BLOCKED_DATA {
+	user:string;
+	user_to_block:string;
+	jwt:number;
+}
+
 export enum HTTP_STATUS {
 	ALREADY_EXIST = 'User already exist.',
 	ALREADY_CONNECTED = 'User is already connected.',

@@ -131,7 +131,36 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 			console.log(e);
 		}
 	}
+	@SubscribeMessage('BLOCKED')
+	async blocked(@MessageBody() data: BLOCKED_DATA) {
+		try {
+			/* Find if clients are connected*/
+			const user:UserSocket = this.userService.findConnectedUserByUsername(data.user);
+			const user_to_block:UserSocket = this.userService.findConnectedUserByUsername(data.user_to_block);
 
+			/* find user in db */
+			const db_user = await this.userRepository.findOne({ where:{username:data.user} })
+			const db_user_to_block = await this.userRepository.findOne({ where:{username:data.user_to_block} })
+
+			if (user){
+				if (db_user.blocked.includes(user_to_block.id)){
+					db_user.blocked.splice(db_user.blocked.indexOf(user_to_block.id), 1);
+				} else {
+					this.friendsService.remove(db_user, db_user_to_block)
+					db_user.blocked.push(db_user_to_block.id)
+				}
+			}
+			/* update both user db */
+			await this.userService.updateUserDB([db_user, db_user_to_block]);
+			if (user)
+				user.socket.emit('UPDATE_DB', await this.userService.parseUserInfo(db_user.id))
+			if (user_to_block)
+				user_to_block.socket.emit('UPDATE_DB', await this.userService.parseUserInfo(db_user_to_block.id))
+		}
+		catch (e){
+			console.log(e);
+		}
+	}
 	/*
 		return array of object with id, username and status
 	*/
@@ -155,8 +184,6 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		
 		if (data.client_recv == undefined && (!data.conversationID || data.conversationID < 0))
 			return this.emitPopUp([user_send], {error:true, message: `Message can't be sent.`});
-			
-		const db_user_recv:User = await this.userRepository.findOne({ where:{username:data.client_recv} })
 
 		/* does conversation exist else create it */
 		let conv : Conversation = await this.convRepository.findOne({
@@ -165,14 +192,21 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 				id: data.conversationID
 			},
 		})
-		if (!conv && db_user_recv != undefined){
+	
+		let db_user_recv:User = await this.userRepository.findOne({ where:{username:data.client_recv} })
+		db_user_recv = db_user_recv == undefined ? conv.users.find((user:any)=> user.id != user_send.id): db_user_recv
+		if (db_user_recv.blocked.includes(db_user_send.id))
+			return this.emitPopUp([user_send], {error:true, message: `User blocked you.`});
+		if (db_user_send.blocked.includes(db_user_recv.id))
+			return this.emitPopUp([user_send], {error:true, message: `User is blocked.`});
+
+		if (!conv && data.client_recv != undefined){
 			conv = new Conversation();
 			conv.users = [db_user_send, db_user_recv];
 			conv.name = db_user_recv.username
 			await this.convRepository.save(conv);
-		} else if (!conv && db_user_recv == undefined)
+		} else if (!conv && data.client_recv == undefined)
 			return this.emitPopUp([user_send], {error:true, message: `User ${data.client_recv} does not exist.`});
-
 		/* create new message, save it, update conv */
 		let msg = new Message();
 		msg.content = data.content;
@@ -542,19 +576,43 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 			console.log(e)
 		}
 	}
+
+	@SubscribeMessage('SPECTATE')
+	async spectate(@MessageBody() data:{clientId:number, spectateId:number, token:string}) {
+		let gameId = this.gameService.spectate(data.clientId, data.spectateId)
+		const user:UserSocket = this.userService.findConnectedUserById(data.clientId);
+		if (user){
+			user.status = status.Spectate
+			user.socket.emit("JOIN_SPECTATE", {gameId})
+		}
+		
+	}
+
+	@SubscribeMessage('QUIT_GAME')
+	async quitGame(@MessageBody() data: {client_send: string, gameID:string, jwt: number}) {
+		try {
+			const user_send:UserSocket = this.userService.findConnectedUserByUsername(data.client_send);
+			if (user_send != undefined){
+				this.gameService.quitGame(data.gameID, user_send)
+			}
+		} catch (e){
+			console.log(e)
+		}
+	}
+
 	@SubscribeMessage('CHALLENGED')
 	async challenged(@MessageBody() data: {action:string, mode:gamemode, asking:number, receiving:number, token:string}) {
 		try {
 			const user_asking:UserSocket = this.userService.findConnectedUserById(data.asking);
+			const user_asking_db:User = await this.userRepository.findOne({ where:{id:data.asking} })
 			const user_receiving:UserSocket = this.userService.findConnectedUserById(data.receiving);
 			switch (data.action){
 				case ("ASK"):{
-					if (user_receiving != undefined && user_receiving.challenged === false){
-						user_receiving.challenged = true;
+					if (user_receiving == undefined)
+						this.emitPopUp([user_asking], {error:true, message: `User not connected.`});
+					else{
 						user_receiving.socket.emit("CHALLENGED", {who:{id:data.asking, username:user_asking.username}})
 					}
-					else
-						this.emitPopUp([user_asking], {error:true, message: `User not connected.`});
 					break;
 				}
 				case ("ACCEPT"):{
@@ -587,17 +645,6 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 	@SubscribeMessage('MOUSE_CLICK')
 	async mouseclick(@MessageBody() data: {pos:{x:number, y:number},id:number,gameID:string,jwt:string}) {
 		this.gameService.findGame(data.gameID).pong.mouseclick(data.id, data.pos)
-	}
-
-	@SubscribeMessage('SPECTATE')
-	async spectate(@MessageBody() data:{clientId:number, spectateId:number, token:string}) {
-		let gameId = this.gameService.spectate(data.clientId, data.spectateId)
-		const user:UserSocket = this.userService.findConnectedUserById(data.clientId);
-		if (user){
-			user.status = status.Spectate
-			user.socket.emit("JOIN_SPECTATE", {gameId})
-		}
-		
 	}
 
 	@SubscribeMessage('EDIT_USERNAME')

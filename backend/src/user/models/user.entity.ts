@@ -25,8 +25,14 @@ export class User {
 	@Column()
 	username:string;
 
+	@Column({nullable:true})
+	token42:string;
+
 	@Column("int", {nullable:true})
 	intraID:number;
+
+	@Column("int", {nullable:true})
+	lvl:number;
 
 	@Column({ unique: true, nullable: true })
 	public email: string;
@@ -41,7 +47,7 @@ export class User {
 	friends: number[];
 
 	@Column("int", { array: true, default: '{}',nullable: true })
-	bloqued: number[];
+	blocked: number[];
 
 	@Column("int", { array: true, default: '{}', nullable:true})
 	friendsRequest: number[];
@@ -68,8 +74,8 @@ export class User {
 		if (!this.friends) {
 			this.friends = []
 		}
-		if (!this.bloqued) {
-			this.bloqued = []
+		if (!this.blocked) {
+			this.blocked = []
 		}
 	}
 }

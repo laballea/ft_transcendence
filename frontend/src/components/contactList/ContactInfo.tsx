@@ -22,8 +22,8 @@ const ContactInfo = ({contact, userImage, challenge} : ContactInfoProps) => {
 		<div	className='cursor-pointer text-slate-400 hover:text-slate-300
 							transition-all duration-300 ease-in-out' 
 				onClick={()=>{
-				navigate('/app/profile/' + contact.username, { state: {id:contact.id} })
-		}}>
+					navigate('/app/profile/' + contact.username, { state: {id:contact.id} })
+				}}>
 			{/* On click go to profile */}
 				<div className='flex items-center w-full h-full'>
 				<>

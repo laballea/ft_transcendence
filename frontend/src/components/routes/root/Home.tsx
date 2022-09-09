@@ -1,9 +1,9 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 // Components
 import NavBar from '../../navbar/NavBar'
 import ContactList from '../../contactList/ContactList';
-import Message from '../../message/FloatingMessage';
+import FloatingMessage from '../../message/FloatingMessage';
 import Footer from '../../commons/footer/Footer';
 import BackgroundLobby from '../../commons/backgrounds/BackgroundLobby';
 
@@ -42,7 +42,7 @@ export default function Home() {
 					
 						<div className="relative flex-initial flex w-full bg-slate-800 sm:w-[400px] flex-col h-full">
 							<ContactList/>
-							{global.createRoom ? <CreateRoom/> : global.currentConv != undefined && <Message/>}
+							{global.createRoom ? <CreateRoom/> : global.currentConv != undefined && <FloatingMessage/>}
 							<ChatBar/>
 						</div>
 					</div>
