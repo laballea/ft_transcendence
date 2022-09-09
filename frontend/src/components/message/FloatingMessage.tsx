@@ -10,6 +10,7 @@ import { truncateString } from '../commons/utils/truncateString';
 import { deleteMember, changePass, upgradeMember, downgradeMember, banMember, muteMember, unmutedMember } from '../../context/socket';
 import NavBarButtonSecondary from '../commons/buttons/NavBarButtonSecondary';
 import MiniButtonSecondary from '../commons/buttons/MiniButtonSecondary';
+import MiniIconButton from '../commons/buttons/MiniIconButton';
 
 export interface MessageI {
 		author: string
@@ -49,29 +50,38 @@ function FloatingMessage() {
 		if (element !== null)
 			element.scrollTop = element.scrollHeight;
 	}, [global.currentConv]);
+
 	const users = conv.ownerId !== undefined ?
 		conv.users.map((user: {id:number, username:string}, index:number) =>
-			<div className={`bg-slate-700 flex flex-row justify-center items-end m-[2px] w-full text-center rounded text-slate-400`} key={index}>
-				<h3>{ truncateString(user.username, 9) }</h3>
-				{conv.adminId.find((e:number) => e === global.id) !== undefined && conv.adminId.find((e:number) => e === user.id) === undefined &&
-					<div className='flex flex-row'>
-						<IconButton icon={FiX} onClick={()=>{deleteMember(global, conv.id, user.id)}}></IconButton>
-						<IconButton icon={FiSlash} onClick={()=>{banMember(global, conv.id, user.id)}}></IconButton>
+			<div className={`flex 
+							w-full rounded-[4px] p-2 pl-4 pr-4
+							border-[1px] border-slate-700
+							font-space text-slate-800`} key={index}>
+				<h3>{ truncateString(user.username, 15) }</h3>
+				<div className='flex items-center justify-end gap-2 w-full'>
+				{
+					conv.adminId.find((e:number) => e === global.id) !== undefined && conv.adminId.find((e:number) => e === user.id) === undefined &&
+					<div>
+						<MiniIconButton icon={FiX} onClick={()=>{deleteMember(global, conv.id, user.id)}}></MiniIconButton>
+						<MiniIconButton icon={FiSlash} onClick={()=>{banMember(global, conv.id, user.id)}}></MiniIconButton>
 						{conv.muted.find((e:any) => e.userId === user.id) !== undefined ?
-							<IconButton icon={FiVolumeX} onClick={()=>{unmutedMember(global, conv.id, user.id)}}></IconButton>
+							<MiniIconButton icon={FiVolumeX} onClick={()=>{unmutedMember(global, conv.id, user.id)}}></MiniIconButton>
 							:
-							<IconButton icon={FiVolume2} onClick={()=>{
+							<MiniIconButton icon={FiVolume2} onClick={()=>{
 								muteMember(global, conv.id, user.id)
-							}}></IconButton>
+							}}></MiniIconButton>
+						}
+						{
+							conv.ownerId === global.id && conv.ownerId !== user.id && conv.adminId.find((e:number) => e === user.id) === undefined &&
+							<MiniIconButton icon={FiChevronsUp} onClick={()=>{upgradeMember(global, conv.id, user.id)}}></MiniIconButton>
+						}
+						{
+							conv.ownerId === global.id && conv.ownerId !== user.id && conv.adminId.find((e:number) => e === user.id) !== undefined &&
+							<MiniIconButton icon={FiChevronsDown} onClick={()=>{downgradeMember(global, conv.id, user.id)}}></MiniIconButton>
 						}
 					</div>
 				}
-				{conv.ownerId === global.id && conv.ownerId !== user.id && conv.adminId.find((e:number) => e === user.id) === undefined &&
-					<IconButton icon={FiChevronsUp} onClick={()=>{upgradeMember(global, conv.id, user.id)}}></IconButton>
-				}
-				{conv.ownerId === global.id && conv.ownerId !== user.id && conv.adminId.find((e:number) => e === user.id) !== undefined &&
-					<IconButton icon={FiChevronsDown} onClick={()=>{downgradeMember(global, conv.id, user.id)}}></IconButton>
-				}
+				</div>
 			</div>
 		)
 		: [];
@@ -101,83 +111,93 @@ function FloatingMessage() {
 			</div>
 			{
 				settings ?
-				<div className='flex flex-col items-start flex-grow
-								w-full h-full p-4 gap-4
-								overflow-scroll'>
-					{ conv.adminId.find((e:number) => e === global.id) !== undefined ?
+				<>	
+					<div className='flex flex-col items-start flex-grow
+									w-full h-full p-4 gap-4
+									bg-slate-600'>
+						{ conv.adminId.find((e:number) => e === global.id) !== undefined ?
 					
-							<MiniButtonSecondary cta="Change Password" icon={FiEdit} onClick={()=>{setNewPass(!newPass)}}/>
-						
-						:
-						[]
-					}
-					{ conv.ownerId === global.id ?
-						<MiniButtonSecondary cta="Delete Room" icon={FiTrash2} onClick={()=>{deleteMember(global, conv.id, global.id)}}/>
-						:
-						<MiniButtonSecondary cta="Quit Room" icon={FiLogOut} onClick={()=>{deleteMember(global, conv.id, global.id)}}/>
-					}
-					<div className='h-[1px] w-full bg-slate-800'></div>
+								<MiniButtonSecondary cta="Change Password" icon={FiEdit} onClick={()=>{setNewPass(!newPass)}}/>
 					
-				</div>
-				// <div className='flex flex-col flex-grow items-center'>
-				// 	<div id="someRandomID" className='overflow-y-scroll flex-grow'>
-				// 		{newPass ?
-				// 			<div  className='flex flex-grow flex-col items-center'>
-				// 			<input
-				// 				className="flex h-[50px]
-				// 							p-[8px] pl-[12px] rounded-sm
-				// 							bg-slate-800 text-slate-200 placeholder:text-slate-400
-				// 							font-space text-[16px]
-				// 							m-5"
-				// 				type="password"
-				// 				placeholder="Old password"
-				// 				value={input.oldPass}
-				// 				onChange={handleChange}
-				// 				name="oldPass"
-				// 			/>
-				// 			<input
-				// 				className="	flex h-[50px]
-				// 							p-[8px] pl-[12px] rounded-sm
-				// 							bg-slate-800 text-slate-200 placeholder:text-slate-400
-				// 							font-space text-[16px]
-				// 							m-5
-				// 							"
-				// 				type="password"
-				// 				placeholder="New password"
-				// 				value={input.newPass}
-				// 				onChange={handleChange}
-				// 				name="newPass"
-				// 			/>
-				// 			<button	
-				// 				className="bg-transparent border-2 h-[32px] sm:h-[48px] w-[160px] sm:w-[164px] rounded
-				// 							font-space text-[16px] text-slate-400
-				// 							transition-all duration-300 ease-in-out
-				// 							flex justify-center items-center border-green-400 hover:border-green-200 hover:text-green-200 text-green-400"
-				// 				onClick={() => {changePass(global, conv.id, global.id, input.oldPass, input.newPass)
-				// 					setNewPass(!newPass)
-				// 				}}
-				// 			>
-				// 				<p>Confirm</p>
-				// 			</button>
-				// 		</div>
-				// 			: users
-				// 		}
-				// 	</div>
-				// 	<div className='flex flex-row'>
-				// 		{ conv.adminId.find((e:number) => e === global.id) !== undefined ?
-				// 			<div>
-				// 				<NavBarButtonSecondary cta="Change Password" icon={FiEdit} onClick={()=>{setNewPass(!newPass)}}/>
-				// 			</div>
-				// 			:
-				// 			[]
-				// 		}
-				// 		{ conv.ownerId === global.id ?
-				// 			<NavBarButtonSecondary cta="Delete Room" icon={FiTrash2} onClick={()=>{deleteMember(global, conv.id, global.id)}}/>
-				// 			:
-				// 			<NavBarButtonSecondary cta="Quit Room" icon={FiLogOut} onClick={()=>{deleteMember(global, conv.id, global.id)}}/>
-				// 		}
-				// 	</div>
-				// </div>
+							:
+							[]
+						}
+						{ conv.ownerId === global.id ?
+							<MiniButtonSecondary cta="Delete Room" icon={FiTrash2} onClick={()=>{deleteMember(global, conv.id, global.id)}}/>
+							:
+							<MiniButtonSecondary cta="Quit Room" icon={FiLogOut} onClick={()=>{deleteMember(global, conv.id, global.id)}}/>
+						}
+						<div className='h-[1px] w-full bg-slate-700'></div>
+						<div className='w-full h-full
+										flex flex-col items-start gap-2
+										overflow-scroll '>
+							{ newPass
+								? <></> 
+								: 
+								users 
+							}
+						</div>
+					</div>
+					{/* <div className='flex flex-col flex-grow items-center'>
+						<div id="someRandomID" className='overflow-y-scroll flex-grow'>
+							{newPass ?
+								<div  className='flex flex-grow flex-col items-center'>
+								<input
+									className="flex h-[50px]
+												p-[8px] pl-[12px] rounded-sm
+												bg-slate-800 text-slate-200 placeholder:text-slate-400
+												font-space text-[16px]
+												m-5"
+									type="password"
+									placeholder="Old password"
+									value={input.oldPass}
+									onChange={handleChange}
+									name="oldPass"
+								/>
+								<input
+									className="	flex h-[50px]
+												p-[8px] pl-[12px] rounded-sm
+												bg-slate-800 text-slate-200 placeholder:text-slate-400
+												font-space text-[16px]
+												m-5
+												"
+									type="password"
+									placeholder="New password"
+									value={input.newPass}
+									onChange={handleChange}
+									name="newPass"
+								/>
+								<button
+									className="bg-transparent border-2 h-[32px] sm:h-[48px] w-[160px] sm:w-[164px] rounded
+												font-space text-[16px] text-slate-400
+												transition-all duration-300 ease-in-out
+												flex justify-center items-center border-green-400 hover:border-green-200 hover:text-green-200 text-green-400"
+									onClick={() => {changePass(global, conv.id, global.id, input.oldPass, input.newPass)
+										setNewPass(!newPass)
+									}}
+								>
+									<p>Confirm</p>
+								</button>
+							</div>
+								: users
+							}
+						</div>
+						<div className='flex flex-row'>
+							{ conv.adminId.find((e:number) => e === global.id) !== undefined ?
+								<div>
+									<NavBarButtonSecondary cta="Change Password" icon={FiEdit} onClick={()=>{setNewPass(!newPass)}}/>
+								</div>
+								:
+								[]
+							}
+							{ conv.ownerId === global.id ?
+								<NavBarButtonSecondary cta="Delete Room" icon={FiTrash2} onClick={()=>{deleteMember(global, conv.id, global.id)}}/>
+								:
+								<NavBarButtonSecondary cta="Quit Room" icon={FiLogOut} onClick={()=>{deleteMember(global, conv.id, global.id)}}/>
+							}
+						</div>
+					</div> */}
+				</>
 				:
 				<>
 					<div id="someRandomID" className='overflow-y-scroll flex-grow'>
