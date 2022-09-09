@@ -62,6 +62,13 @@ export interface ROOM_DATA {
 	password: string;
 }
 
+export interface ROOM_NEW_PASS {
+	roomId: number;
+	admin: string;
+	oldPass: string;
+	newPass: string;
+}
+
 export interface NEW_MEMBER {
 	roomId: number;
 	user: string;

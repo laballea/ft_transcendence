@@ -60,7 +60,7 @@ export const globalSlice = createSlice({
 			state.twoFactor = data.payload.twoFactor
 			state.lvl = data.payload.lvl
 			if (state.currentConv !== undefined && state.currentConv !== -1)
-				state.currentConv = state.conv.find((conv:any) => conv.adminId === state.currentConv.adminId && conv.id === state.currentConv.id)
+				state.currentConv = state.conv.find((conv:any) => conv.ownerId === state.currentConv.ownerId && conv.id === state.currentConv.id)
 			if (state.convID === -1){
 				state.convID = state.conv.find((conv:any) => {
 					return conv.users.length === 2 && conv.users.findIndex((user:any) => user.username === state.clientChat) >= 0
@@ -89,7 +89,6 @@ export const globalSlice = createSlice({
 				}
 				else
 					state.currentConv = tmp_conv
-				
 			} else
 				state.currentConv = conv
 		},
