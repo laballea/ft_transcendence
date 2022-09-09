@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { FiDownload, FiX } from 'react-icons/fi';
+import { FiDownload, FiPlus, FiX } from 'react-icons/fi';
 import { useSelector } from 'react-redux';
 import { editProfilPicSocket } from '../../context/socket';
 
@@ -7,7 +7,7 @@ import { editProfilPicSocket } from '../../context/socket';
 
 const SettingsProfilPicChoice = () => {
 	const global = useSelector((state: any) => state.global)
-	const [file, setFile] = React.useState<any>(null);
+	//const [file, setFile] = React.useState<any>(null);
 	const [preview, setPreview] = React.useState<any>(null);
 	const [profilPics, setProfilPics] = useState([]);
 	const uploadRef = useRef<any>()
@@ -21,12 +21,13 @@ const SettingsProfilPicChoice = () => {
 		setIsHovering(false);
 	};
 
-	const onFileChange = (event:any) => { 
-		setFile(event.target.files[0])
+	const onFileChange = (event:any) => {
+		fileUpload(event.target.files[0])
+		/*setFile(event.target.files[0])
 		let url = URL.createObjectURL(event.target.files[0])
-		setPreview(url)
+		setPreview(url)*/
 	};
-	const fileUpload = () => {
+	const fileUpload = (file:any) => {
 		const formData = new FormData();
 		formData.append( 
 			"file", 
@@ -41,6 +42,7 @@ const SettingsProfilPicChoice = () => {
 			method: 'POST',
 			body: formData
 		}).then((response) =>  {
+			console.log(response)
 			retrievePics()
 			return response.text();
 		 })
@@ -69,34 +71,44 @@ const SettingsProfilPicChoice = () => {
 	}, []);
 
 	const profilPicsComp = profilPics.length > 0 ? profilPics.map((url:string, index:number) =>
-		<div className='w-[60px] h-[60px] rounded-full m-5' key={index} onClick={()=> {editProfilPicSocket(global, url)}}>
-			<img src={url} width="60" height="60" alt="profilpic" className='rounded-full'></img>
+		<div className='w-[64px] h-[64px] rounded-full' key={index} onClick={()=> {editProfilPicSocket(global, url)}}>
+			<img src={url} width="64" height="64" alt="profilpic" className='rounded-full'></img>
 		</div>
 	): [];
 	return (
 		<>
-			<div className='flex flex-row items-center w-[200px] h-[200px] rounded-full'>
-				<div className='w-[100px] overflow-x-scroll h-[200px]'>
-					{profilPicsComp}
-				</div>
+			<div className='flex items-center gap-2 h-[200px] overflow-scroll'>
+				<div className='w-[64px] h-[64px] rounded-full
+								bg-slate-700 hover:bg-slate-600
+								flex items-center justify-center
+								text-slate-500 hover:text-slate-400 text-[40px]
+								transition-all duration-300 ease-in-out 
+								cursor-pointer
+								'
+						onClick= {() => {
+							let element: HTMLElement = document.getElementById('imageUploadButton') as HTMLElement;
+							element.click();
+						}}
+								>
+					<input 
+							id="imageUploadButton"
+							className='	absolute
+										z-10
+										h-[64px] w-[64px]
+										invisible '
+							type='file'
+							 ref={uploadRef} 
+							onChange={onFileChange} 
+					>
+					</input>
+					<FiPlus/>
+				</div> 
+				{ profilPicsComp }
+			</div>
+			{/* <div>
 				<div className='flex w-[100px] flex-column justify-center items-center flex-wrap h-[200px]'>
 					<div className='flex w-[60px] flex-wrap h-[120px] justify-center items-center'>
-						{preview &&
-							<div className='w-[60px] h-[60px] relative justify-center  items-center' onMouseOver={handleMouseOver} onMouseOut={handleMouseOut}>
-								<div className='w-[60px] h-[60px] rounded-full border-blue-400 border-4'>
-									<img src={preview} width="60" height="60" alt="profilpic" className='rounded-full'></img>
-								</div>
-								{isHovering &&
-									<FiX className='absolute top-[5px] left-[5px] w-[50px] h-[50px] rounded-full text-red-400'
-											onClick={()=>{
-												setFile(null)
-												setPreview(null)
-											}}
-									/>
-								}
-								
-							</div>
-						}
+						
 						<div className='flex w-[60px] h-[60px] justify-center  items-center'>
 							<input id="uploadButton" ref={uploadRef} className='w-[60px] h-[60px] rounded-full invisible absolute' type="file" onChange={onFileChange} /> 
 							<FiDownload	className={`w-[60px] h-[60px] rounded-full
@@ -113,7 +125,7 @@ const SettingsProfilPicChoice = () => {
 						</div>
 					</div>
 				</div>
-			</div>
+			</div> */}
 		</>
 	)
 }

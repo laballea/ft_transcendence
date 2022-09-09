@@ -53,7 +53,6 @@ const SettingsProfile = ({username, userImage} : SettingsProfileProps) => {
 					<div className='w-[200px] h-[200px] rounded-full'>
 						<img src={userImage} width="200" height="200" alt="userimage" className='rounded-full'></img>
 					</div>
-					{editProfilPic && <SettingsProfilPicChoice/>}
 				</div>
 				<form 	onSubmit={
 							changeUserName
@@ -105,11 +104,14 @@ const SettingsProfile = ({username, userImage} : SettingsProfileProps) => {
 							editUsernameSocket(global, newUsername)
 						}
 						setEditUsername(!editUsername)}}
-					/>
-				</div> */}
+						/>
+					</div> */}
 
 
 
+			</div>
+			<div className='w-full'>
+				{editProfilPic && <SettingsProfilPicChoice/>}
 			</div>
 			<div className='mb-[64px]'></div>
 		</>
