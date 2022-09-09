@@ -8,9 +8,11 @@ const ChatBar = () => {
 	const global = useSelector((state: any) => state.global)
 	const dispatch = useDispatch()
 
-	const convList = global.conv.length > 0 ? global.conv.map((conv: any) =>  
-		<button className={`bg-slate-700 justify-center items-end m-[2px] w-[180px] text-center rounded
-							${global.currentConv && conv.id === global.currentConv.id ? "text-green-300" : "text-slate-400"}`} key={conv.id}
+	const convList = global.conv.length > 0 ? global.conv.map((conv: any) =>
+		
+		<button className={`bg-slate-700 m-[2px] h-[80px] w-full text-center rounded
+							${global.currentConv && conv.id === global.currentConv.id ? "text-green-300" : "text-slate-400"}`}
+					key={conv.id}
 			onClick={() => dispatch(setCurrentConv({conv:conv}))}
 		>
 			{ truncateString(conv.adminId !== undefined ? conv.name : conv.users.find((user:any) => user.username !== global.username).username, 9)}
@@ -18,15 +20,17 @@ const ChatBar = () => {
 	): [];
 	
 	return (
-		<div className="relative flex-row flex justify-end bg-slate-800 h-[30px] w-[400px] overflow-scroll-x">
-			{convList}
-			<button
-				className="bg-slate-700 flex flex-row justify-center items-end m-[2px] w-[80px] text-center rounded text-slate-400 text-slate-500 hover:text-slate-400 roundedtransition-all duration-300 ease-in-out"
-				onClick={()=>{dispatch(setCreateRoom({}))}}
-			>
-				<FiPlusCircle className="sm:w-[24px] w-[16px] sm:h-[24px] h-[16px]"></FiPlusCircle>
-			</button>
-		</div>
+			<div className="relative overflow-scroll w-full h-[460px] bg-slate-800">
+				{convList}
+			</div>
+		// <div className='flex'>
+		// 	{/* <button
+		// 		className="bg-slate-700 flex flex-row justify-center items-end m-[2px] w-[80px] text-center rounded text-slate-400 text-slate-500 hover:text-slate-400 roundedtransition-all duration-300 ease-in-out"
+		// 		onClick={()=>{dispatch(setCreateRoom({}))}}
+		// 	>
+		// 		<FiPlusCircle className="sm:w-[24px] w-[16px] sm:h-[24px] h-[16px]"></FiPlusCircle>
+		// 	</button> */}
+		// </div>
 	)
 }
 

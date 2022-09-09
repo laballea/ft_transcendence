@@ -5,6 +5,7 @@ import { FiX } from 'react-icons/fi';
 import { setCreateRoom } from '../../store/global/reducer';
 import './noScrollBar.css'
 import { joinRoomSocket, newChatRoom } from '../../context/socket';
+import ChatBar from './chatBar';
 
 function CreateRoom() {
 	const global = useSelector((state: any) => state.global)
@@ -66,15 +67,18 @@ function CreateRoom() {
 						drop-shadow-custom1
 						bg-slate-700'>
 			<div className='w-full h-auto p-[8px] flex items-center justify-between bg-slate-700 drop-shadow-custom2'>
-				<h3 className={`font-space cursor-pointer ${mode === 0 ? "text-green-200" : "text-slate-200"}`} onClick={()=>{setMode(0)}}>
+				<h3 className={`font-space cursor-pointer ${mode === 1 ? "text-green-200" : "text-slate-200"}`} onClick={()=>{setMode(mode === 1 ? 0 : 1)}}>
 					create room
 				</h3>
-				<h3 className={`font-space cursor-pointer ${mode === 1 ? "text-green-200" : "text-slate-200"}`} onClick={()=>{setMode(1)}}>
+				<h3 className={`font-space cursor-pointer ${mode === 2 ? "text-green-200" : "text-slate-200"}`} onClick={()=>{setMode(mode === 2 ? 0 : 2)}}>
 					join room
 				</h3>
 				<IconButton icon={FiX} onClick={()=>{dispatch(setCreateRoom({}))}}></IconButton>
 			</div>
-			{mode === 0 ?
+			{mode === 0 && 
+				<ChatBar/>
+			}
+			{mode === 1 &&
 				<div  className='flex flex-grow flex-col items-center'>
 					<input
 						className={`flex h-[50px]
@@ -126,7 +130,8 @@ function CreateRoom() {
 						<p>Create</p>
 					</button>
 				</div>
-				:
+				}
+				{mode === 2 &&
 				<div  className='flex flex-grow flex-col items-center'>
 					<input
 						className={`flex h-[50px]
