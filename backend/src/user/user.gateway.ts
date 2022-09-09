@@ -21,7 +21,8 @@ import {
 	ROOM_DATA,
 	NEW_MEMBER,
 	FIND_GAME_DATA,
-	ROOM_NEW_PASS
+	ROOM_NEW_PASS,
+	BLOCKED_DATA
 } from 'src/common/types';
 import { UserService } from './user.service';
 import { truncateString } from 'src/common/utils';
@@ -400,6 +401,7 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 	async muteMember(@MessageBody() data: {roomId: number, userId: number, admin: string, endDate: string}) {
 		const admin: UserSocket = this.userService.findConnectedUserByUsername(data.admin);
 		let room : Room = await this.roomRepository.findOne({
+			relations:['users','users.rooms'],
 			where:{id: data.roomId},
 		})
 		if (!room)
@@ -429,7 +431,7 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 	}
 
 	@SubscribeMessage('unmuteMember')
-	async unmuteMember(@MessageBody() data: {roomId: number, userId: number, admin: string, endDate: string}) {
+	async unmuteMember(@MessageBody() data: {roomId: number, userId: number, admin: string}) {
 		const admin: UserSocket = this.userService.findConnectedUserByUsername(data.admin);
 		let room : Room = await this.roomRepository.findOne({
 			where:{id: data.roomId},
@@ -467,9 +469,17 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 			return this.emitPopUp([admin], {error:true, message: `You aren't the Owner of this room !`});
 		else {
 			//add userId admin
+				// check already muted
+			let mutedList : Room = await this.roomRepository.findOne({
+				relations:['muteds'],
+				where:{id: data.roomId},
+			})
+			for (let idx in mutedList.muteds)
+				if (mutedList.muteds[idx].userId === data.userId)
+					this.unmuteMember({roomId: data.roomId, userId: data.userId, admin: data.admin});
 			room.adminId.push(data.userId);
 			await this.roomRepository.save(room);
-			for (let idx in room.users){
+			for (let idx in room.users) {
 				let userSocket = this.userService.findConnectedUserByUsername(room.users[idx].username)
 				if (userSocket)
 					userSocket.socket.emit('UPDATE_DB', await this.userService.parseUserInfo(room.users[idx].id))
