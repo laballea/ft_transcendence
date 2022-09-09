@@ -40,7 +40,6 @@ export default function Home() {
 					
 						<div className="relative flex-initial flex w-full bg-slate-800 sm:w-[400px] flex-col h-full">
 							<ContactList/>
-							
 							{global.currentConv !== undefined ? <FloatingMessage/> : <CreateRoom/>}
 							{/* <ChatBar/> */}
 						</div>

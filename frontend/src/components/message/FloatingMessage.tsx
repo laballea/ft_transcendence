@@ -76,19 +76,27 @@ function FloatingMessage() {
 		: [];
 
 	return (
-		<div className='w-[400px] h-[460px] 
+		<div className='w-full h-full
 						flex justify-center flex-col
 						rounded-md
 						drop-shadow-custom1
-						bg-slate-700'>
-			<div className='w-full h-auto p-[8px] flex items-center justify-between bg-slate-700 drop-shadow-custom2'>
-				{conv.adminId !== undefined &&
-					<IconButton icon={FiSettings} onClick={()=>{setSettings(!settings)}}></IconButton>
-				}
-				<h3 className='font-space text-slate-200'>
+						'>
+			<div className='w-full h-auto p-[16px] flex items-center  justify-between bg-slate-700 drop-shadow-custom2 '>
+				<h3 className='font-space text-slate-200 text-[16px]'>
 					{conv.adminId !== undefined ? conv.name : conv.users.find((user:any) => user.username !== global.username).username}
 				</h3>
-				<IconButton icon={FiX} onClick={()=>{dispatch(setCurrentConv({conv:undefined}))}}></IconButton>
+				{ conv.adminId !== undefined && 
+					<p className='absolute top-[6px]
+									font-space text-[10px] italic text-slate-900'>
+						Group
+					</p>
+				}
+				<div className='text-[12px] h-[24px]'>
+					{conv.adminId !== undefined &&
+						<IconButton icon={FiSettings} onClick={()=>{setSettings(!settings)}}></IconButton>
+					}
+					<IconButton icon={FiX} onClick={()=>{dispatch(setCurrentConv({conv:undefined}))}}></IconButton>
+				</div>
 			</div>
 			{settings ?
 				<div className='flex flex-col flex-grow items-center'>

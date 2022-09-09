@@ -81,10 +81,16 @@ const Profile = ({contact} : ProfileProps) => {
 							</div>
 					}
 				</div>
-				<div className="relative flex-initial flex w-full bg-slate-800 sm:w-[400px] flex-col h-full">
+				<div className="relative flex-initial flex bg-slate-800 w-[400px] flex-col h-full">
 					<ContactList/>
-					{global.createRoom ? <CreateRoom/> : global.currentConv !== undefined && <FloatingMessage/>}
-					<ChatBar/>
+					<div className='p-4 h-[400px] w-full'>
+						<div className='bg-slate-900 w-full h-full rounded-[8px] shadow-inner overflow-hidden'>
+						{ global.currentConv !== undefined ? <FloatingMessage/> : <CreateRoom/>}
+						</div>
+					</div>
+
+					{/* {global.createRoom ? <CreateRoom/> : global.currentConv !== undefined && <FloatingMessage/>}
+					<ChatBar/> */}
 				</div>
 			</div>
 

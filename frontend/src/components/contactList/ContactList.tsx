@@ -41,13 +41,13 @@ const ContactList = () => {
 	const friendsList = global.contactList.length > 0 ? global.contactList.map((contact: any, index:number) =>  <Contact index={index} key={index} contact={contact} userImage={contact.profilPic}/>): [];
 	const pendingRequest = global.pendingRequest.length > 0 ? global.pendingRequest.map((contact: any, index:number) =>  <FriendRequestOut key={index} username={contact.username}/>): [];
 	return (
-		<div className="relative overflow-scroll w-full bg-slate-800 sm:w-[400px] flex-1 p-[16px] mx-[16px] sm:mx-0 rounded sm:rounded-l ">
+		<div className="relative w-full bg-slate-800 sm:w-[400px] flex-1 p-[16px] mx-[16px] sm:mx-0 rounded sm:rounded-l ">
 			<AddFriendButton cta="search.." value={global.searchUserContactList} onClick={(username:string)=> dispatch(setSearchUserContactList(username))}/>
 			<div className="relative w-full h-full mt-[60px]">
 				{
 					friendsRequestList.length > 0 || global.contactList.length > 0 || pendingRequest.length > 0 
 					?
-					<div>
+					<div className='overflow-scroll'>
 						{ friendsRequestList }
 						{ friendsList }
 						{ pendingRequest }
