@@ -8,22 +8,12 @@ import { login } from '../../../store/global/reducer'
 import { useSearchParams } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import Popup from 'reactjs-popup'; 
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import PopUpToaster from '../../commons/popup/PopUpToaster';
-import { stringify } from 'querystring';
 
 const Logging = () => {
 	const [username, setUsername] = useState("");
 
-	type pinCode = {
-		pin1 : string,
-		pin2 : string,
-		pin3 : string,
-		pin4 : string,
-		pin5 : string,
-		pin6 : string,
-
-	}
 	const code2faInitialState = {
 		pin1: "",
 		pin2: "",
@@ -34,8 +24,6 @@ const Logging = () => {
 	}
 
 	const [code2fa, setCode] = useState(code2faInitialState);
-
-	const global = useSelector((state: any) => state.global)
 	const dispatch = useDispatch();
 	const [popup, setPopup] = useState({open:false, error:true, message:""});
 	const navigate = useNavigate();

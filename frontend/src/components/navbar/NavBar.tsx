@@ -2,13 +2,12 @@ import React, { useContext } from 'react'
 
 // Components
 import NavBarButtonPrimary from		'../commons/buttons/NavBarButtonPrimary'
-import NavBarButtonSecondary from	'../commons/buttons/NavBarButtonSecondary'
 import NavBarButtonHome from		'../commons/buttons/NavBarButtonHome'
 
 import NavProfile from './NavProfile'
 
 // Icons
-import { FiZap, FiMessageCircle, FiEyeOff, FiAlertOctagon} from 'react-icons/fi'
+import { FiZap, FiEyeOff, FiAlertOctagon} from 'react-icons/fi'
 
 // Hooks
 import { useSelector, useDispatch } from 'react-redux'

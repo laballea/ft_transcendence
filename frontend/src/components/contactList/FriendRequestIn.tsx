@@ -10,6 +10,7 @@ import {FiCheck, FiX} from 'react-icons/fi'
 
 import { acceptFriendRequest, declineFriendRequest } from '../../context/socket';
 import { useSelector } from 'react-redux'
+import { truncateString } from '../commons/utils/truncateString';
 
 type FriendRequestInProps = {
 	username: string,
@@ -34,7 +35,7 @@ const FriendRequestIn = ({username} :  FriendRequestInProps) => {
 					<div className="ml-[16px]">
 						<p className='absolute mt-[-8px] text-green-500 font-space text-[10px]'>added You</p>
 						<p className='font-space text-green-500 text-[20px]'>
-							{username}
+							{truncateString(username, 15)}
 						</p>
 					</div>
 				</div>

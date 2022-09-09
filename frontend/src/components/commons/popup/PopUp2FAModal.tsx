@@ -1,9 +1,7 @@
-import { close } from 'inspector';
 import React, {useEffect} from 'react'
 import {useState} from 'react'
 import { FiCheck, FiX } from 'react-icons/fi';
 import { useSelector } from 'react-redux';
-import { useSearchParams } from 'react-router-dom';
 import IconButton from '../buttons/IconButton';
 import PopUpToaster from './PopUpToaster'
 import Popup from 'reactjs-popup'; 
@@ -33,6 +31,7 @@ function PopUp2FAModal({ closeFunc } : PopUp2FAModalProps) {
 
 	useEffect(() => {
 		generate()
+		// eslint-disable-next-line
 	}, []);
 
 
@@ -62,7 +61,6 @@ function PopUp2FAModal({ closeFunc } : PopUp2FAModalProps) {
 			[e.target.name]: e.target.value
 		})
 	}
-	console.log("yoyo")
 	const sendCode = (event : any): void => {
 		event.preventDefault(); // prevents render of component
 		const requestOptions = {
@@ -77,7 +75,6 @@ function PopUp2FAModal({ closeFunc } : PopUp2FAModalProps) {
 			})
 		}
 		fetch("http://localhost:5000/2fa/turn-on", requestOptions).then(resp => {
-			console.log(resp)
 			if (resp.ok)
 			{	
 				closeFunc()

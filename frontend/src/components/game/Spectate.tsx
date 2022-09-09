@@ -17,12 +17,17 @@ const Spectate = () => {
 	useEffect(() => {
 		// eslint-disable-next-line
 		eventSource = new EventSource('http://localhost:5000/game/' + global.gameID);
-
+		window.addEventListener("beforeunload", function (event) {
+			eventSource.close();
+		})
 		eventSource.onmessage = async ({ data }) => {
 			const json = await JSON.parse(data)
 			setGame(json.game)
 		}
 		return () => {
+			window.removeEventListener("beforeunload", function (event) {
+				eventSource.close();
+			})
 			eventSource.close()
 		};
 	}, []);

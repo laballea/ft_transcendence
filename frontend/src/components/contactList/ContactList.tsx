@@ -7,13 +7,11 @@ import FriendRequestOut from './FriendRequestOut'
 
 
 // Hooks
-import React, {useEffect, useState} from 'react'
+import React, {useEffect} from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 // SocketIo
-import { addFriend } from '../../context/socket';
 import { setContactList, setSearchUserContactList } from '../../store/global/reducer';
-import { FiPlus } from 'react-icons/fi';
 
 const ContactList = () => { 
 	const global = useSelector((state: any) => state.global)

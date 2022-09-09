@@ -90,7 +90,7 @@ const Canvas = (props:any) => {
 			<div className='flex flex-col items-center justify-center w-full h-full'>
 				<canvas style={{position:"relative"}} ref={canvasRef} width={width} height={height}/>
 				<div className='relative top-[-48px] w-full h-[48px]'>
-					<GameBar></GameBar>
+					<GameBar game={game}></GameBar>
 				</div>
 			</div>
 		</div>

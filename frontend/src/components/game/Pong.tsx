@@ -63,6 +63,9 @@ const Pong = () => {
 			const json = await JSON.parse(data)
 			setGame(json.game)
 		}
+		window.addEventListener("beforeunload", function (event) {
+			eventSource.close();
+		})
 		window.addEventListener('keydown',keyDown, true);
 		window.addEventListener('keyup', keyUp, true);
 		window.addEventListener('mousedown', mouseDown, true);
@@ -70,6 +73,9 @@ const Pong = () => {
 			window.removeEventListener('keydown', keyDown, true)
 			window.removeEventListener('keyup', keyUp, true)
 			window.removeEventListener('mousedown', mouseDown, true)
+			window.removeEventListener("beforeunload", function (event) {
+				eventSource.close();
+			})
 			eventSource.close()
 		};
 	}, []);
