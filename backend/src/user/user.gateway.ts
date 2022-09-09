@@ -71,6 +71,7 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 	async connect(@MessageBody() data: {socketID:string, id:number, username:string, jwt:string}, @ConnectedSocket() client: any) {
 		try {
 			await this.authService.validToken(data.jwt)
+			console.log("HERE")
 			this.userService.connectUser(
 				{
 					id:data.id,
@@ -85,7 +86,7 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 			user.status = user.gameID ? status.InGame : user.status
 			client.emit("UPDATE_DB", await this.userService.parseUserInfo(data.id))
 		}
-		catch (e){}
+		catch (e){console.log(e)}
 	}
 
 	@SubscribeMessage('FRIEND_REQUEST')
@@ -132,7 +133,7 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 			if (user_send)
 				user_send.socket.emit('UPDATE_DB', await this.userService.parseUserInfo(db_user_send.id))
 		}
-		catch (e){}
+		catch (e){console.log(e)}
 	}
 	@SubscribeMessage('BLOCKED')
 	async blocked(@MessageBody() data: BLOCKED_DATA) {

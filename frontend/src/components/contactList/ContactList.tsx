@@ -20,16 +20,23 @@ const ContactList = () => {
 	const dispatch = useDispatch();
 	var eventSource:EventSource;
 
+
+	
 	useEffect(() => {
 		// eslint-disable-next-line
 		eventSource = new EventSource(`http://localhost:5000/users/contactList?searchUsername=${global.searchUserContactList}&id=${global.id}`);
-		
+		window.addEventListener("beforeunload", function (event) {
+			eventSource.close();
+		})
 		eventSource.onmessage = ({ data }) => {
 			const json = JSON.parse(data)
 			dispatch(setContactList(json.contactList.sort((a:any, b:any) => Number(b.friend) - Number(a.friend))))
 		}
 		return () => {
 			eventSource.close()
+			window.removeEventListener("beforeunload", function (event) {
+				eventSource.close();
+			})
 		};
 	}, [global.searchUserContactList]);
 	const friendsRequestList = global.friendsRequest.length > 0 ? global.friendsRequest.map((user: {id:number, username:string}, index:number) =>  <FriendRequestIn key={index} username={user.username}/>): [];

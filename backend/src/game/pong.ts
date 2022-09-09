@@ -110,6 +110,14 @@ export class Pong {
 				}
 				break ;
 			}
+			case (GAME_STATUS.PAUSE):{
+				this.countDown -= 0.030;
+				if (this.countDown <= 0) {
+					this.status = GAME_STATUS.ENDED;
+					this.gameEnd(this.gameID, true)
+				}
+				break ;
+			}
 		}
 		if (this.status != GAME_STATUS.ENDED){
 			setTimeout(function () {this.run()}.bind(this), 30)
@@ -225,11 +233,29 @@ export class Pong {
 		}
 	}
 
-	pause(status:boolean){
-		if (status)
+	pause(status:boolean, userId:number){
+		if (status){
+			this.countDown = 10
+			for (const user of this.users){
+				if (user.id != userId){
+					this.winner = {
+						username:user.username,
+						id:user.id
+					}
+				}
+			}
 			this.status = GAME_STATUS.PAUSE
+		}
 		else {
 			this.countDown = 5
+			for (const user of this.users){
+				if (user.id != userId){
+					this.winner = {
+						username:undefined,
+						id:-1
+					}
+				}
+			}
 			this.status = GAME_STATUS.COUNTDOWN
 		}
 	}

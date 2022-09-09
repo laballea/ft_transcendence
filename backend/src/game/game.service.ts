@@ -65,7 +65,7 @@ export class GameService {
 		if (game){
 			if (this.userService.getUserStatus(game.usersID[0]) != status.Disconnected &&
 				this.userService.getUserStatus(game.usersID[1]) != status.Disconnected)
-				game.pong.pause(false);
+				game.pong.pause(false, userID);
 			return game.id
 		}
 		return undefined
@@ -76,9 +76,11 @@ export class GameService {
 			this.removeFromQueue([user.id])
 			if (user.gameID){
 				let game:GAMES_SOCKET = this.findGame(user.gameID)
-				if (game.pong.status === GAME_STATUS.PAUSE)
+				if (game.pong.status === GAME_STATUS.PAUSE){
 					this.gameEnd(user.gameID, false)
-				game.pong.pause(true);
+					return ;
+				}
+				game.pong.pause(true, user.id);
 			}
 		}
 	}

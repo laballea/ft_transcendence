@@ -5,13 +5,6 @@ import { FRIEND_REQUEST_ACTIONS } from "../common/types";
 let socketOptions = {
 	autoConnect: false,
 	reconnection: false,
-	transportOptions: {
-	  polling: {
-		extraHeaders: {
-		  Authorization: 'your token', //'Bearer h93t4293t49jt34j9rferek...'
-		}
-	  }
-	}
  };
 
 export const socket:Socket = io("http://localhost:5000/", socketOptions);

@@ -54,6 +54,7 @@ export const globalSlice = createSlice({
 			state.pendingRequest = getProfilImg(data.payload.pendingRequest)
 			state.userImage = data.payload.profilPic
 			state.friends = data.payload.friends
+			//state.token = data.payload.token
 			state.blocked = data.payload.blocked
 			state.conv = data.payload.conv.concat(data.payload.room)
 			state.gameID = data.payload.gameID
