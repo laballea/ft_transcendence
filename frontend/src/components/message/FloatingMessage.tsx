@@ -26,9 +26,6 @@ function FloatingMessage() {
 		oldPass: "",
 		newPass: ""
 	})
-	const [banTime, setEndDate] = useState({
-		date: moment()
-	})
 
 	const conv = global.currentConv === -1 ?
 		{
@@ -63,7 +60,9 @@ function FloatingMessage() {
 						{conv.muted.find((e:any) => e.userId === user.id) !== undefined ?
 							<IconButton icon={FiVolumeX} onClick={()=>{unmutedMember(global, conv.id, user.id)}}></IconButton>
 							:
-							<IconButton icon={FiVolume2} onClick={()=>{muteMember(global, conv.id, user.id, moment(banTime.date).add(10, 'minutes').format('lll'))}}></IconButton>
+							<IconButton icon={FiVolume2} onClick={()=>{
+								muteMember(global, conv.id, user.id)
+							}}></IconButton>
 						}
 					</div>
 				}

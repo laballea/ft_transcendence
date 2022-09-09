@@ -14,7 +14,6 @@ import { Navigate, Routes, Route } from 'react-router-dom';
 import Profile from './Profile';
 import Popup from 'reactjs-popup'; 
 import PopUpToaster from '../../commons/popup/PopUpToaster';
-import Chat from './Chat';
 import Settings from './Settings';
 
 // Types
@@ -94,7 +93,7 @@ const SocketConnection = (props:any) => {
 		<>
 			<Routes>
 				<Route path="/" element={<Home/>}/>
-				<Route path="/message" element={<Chat/>}/>
+				<Route path="/message" element={null}/>
 				<Route path="/profile/*" element={<Profile contact={userContact}/>}/>
 				<Route path="/settings" element={<Settings/>}/>
 				<Route path="*" element={<Error404/>}/>

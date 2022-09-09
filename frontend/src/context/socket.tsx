@@ -120,13 +120,11 @@ export function banMember(global:any, roomId:number, userId:number) {
 	});
 }
 
-export function muteMember(global:any, roomId:number, userId:number, endDate:string) {
-	console.log("date:", Date().toString(), " endDate:", endDate)
+export function muteMember(global:any, roomId:number, userId:number) {
 	socket.emit('muteMember', {
 		roomId: roomId,
 		userId: userId,
 		admin: global.username,
-		endDate: endDate,
 		jwt: global.token
 	});
 }

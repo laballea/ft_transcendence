@@ -9,7 +9,7 @@ import {
 	OnGatewayInit,
 	ConnectedSocket
 } from '@nestjs/websockets';
-import { Repository } from 'typeorm';
+import { ConnectionOptionsReader, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Conversation, Message, User, Room, Muted } from './models/user.entity';
 import { gamemode, status } from 'src/common/types';
@@ -267,26 +267,6 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		}
 	}
 
-	// @SubscribeMessage('addMember')
-	// async addMember(@MessageBody() data: NEW_MEMBER) {
-	// 	const admin: UserSocket = this.userService.findConnectedUserByUsername(data.admin);
-	// 	const db_admin: User = await this.userRepository.findOne({ where:{username:data.admin} })
-	// 	let room : Room = await this.roomRepository.findOne({
-	// 		where:{id: data.roomId},
-	// 		relations:['users', 'users.rooms'],
-	// 	})
-	// 	let newUser:User = await this.userRepository.findOne({ where:{username:data.user} })
-	// 	if (!room || !newUser)
-	// 		return this.emitPopUp([admin], {error:true, message: `User ${data.user} doesn't exist.`});
-	// 	room.users.push(newUser)
-	// 	await this.roomRepository.save(room);
-	// 	for (let idx in room.users){
-	// 		let userSocket = this.userService.findConnectedUserByUsername(room.users[idx].username)
-	// 		if (userSocket)
-	// 			userSocket.socket.emit('UPDATE_DB', await this.userService.parseUserInfo(room.users[idx].id))
-	// 	}
-	// }
-
 	@SubscribeMessage('deleteRoom')
 	async deleteRoom(@MessageBody() data: {roomId: number, user: string}) {
 		const user: UserSocket = this.userService.findConnectedUserByUsername(data.user);
@@ -398,7 +378,7 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 	}
 
 	@SubscribeMessage('muteMember')
-	async muteMember(@MessageBody() data: {roomId: number, userId: number, admin: string, endDate: string}) {
+	async muteMember(@MessageBody() data: {roomId: number, userId: number, admin: string}) {
 		const admin: UserSocket = this.userService.findConnectedUserByUsername(data.admin);
 		let room : Room = await this.roomRepository.findOne({
 			relations:['users','users.rooms'],
@@ -419,7 +399,7 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		//mute userId admin
 		let muted = new Muted();
 		muted.userId = data.userId;
-		muted.date = data.endDate;
+		muted.date = new Date(new Date().getTime()+10000).toUTCString()
 		muted.room = room;
 		await this.mutedRepository.save(muted);
 		await this.roomRepository.save(room);
@@ -519,15 +499,23 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 
 		/* does conversation exist else create it */
 		let room : Room = await this.roomRepository.findOne({
-			relations:["users", "muteds"],
+			relations:['users', 'users.rooms', 'muteds', 'muteds.room'],
 			where: {
 				id: data.conversationID
 			},
 		})
 
-		for (let idx in room.muteds)
-			if (room.muteds[idx].userId === db_user_send.id)
-				return this.emitPopUp([user_send], {error:true, message: `You are muted until ${room.muteds[idx].date} !`});
+		let timeExpire = false;
+		for (let idx in room.muteds) {
+			if (room.muteds[idx].userId === db_user_send.id) {
+				let dateDB = new Date(room.muteds[idx].date);
+				let dateNow = new Date();
+				if (dateDB < dateNow)
+					timeExpire = true;
+				else
+					return this.emitPopUp([user_send], {error:true, message: `You are muted until ${(dateDB.getTime() - dateNow.getTime())/1000} !`});
+			}
+		}
 
 		/* create new message, save it, update room */
 		let msg = new Message();
@@ -538,6 +526,15 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		msg.room = room;
 		await this.messageRepository.save(msg);
 		await this.roomRepository.save(room);
+		if (timeExpire) {
+			await this.mutedRepository
+			.createQueryBuilder()
+			.delete()
+			.from(Muted)
+			.where("userId = :userId", {userId: db_user_send.id})
+			.andWhere("roomId = :roomId", {roomId: data.conversationID})
+			.execute();
+		}
 		for (let idx in room.users){
 			let userSocket = this.userService.findConnectedUserByUsername(room.users[idx].username)
 			if (userSocket)
