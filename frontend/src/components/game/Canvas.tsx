@@ -30,19 +30,25 @@ const Canvas = (props:any) => {
 			case(GAME_STATUS.COUNTDOWN):{
 				ctx.font = "30px Pilowlava-Regular";
 				textString = Math.ceil(game.countDown)
-				ctx.fillText(textString, width / 2 - ctx.measureText(textString).width / 2, height / 2);
+				ctx.fillText(textString, 
+					width / 2 - ctx.measureText(textString).width / 2, 
+					height / 2  + ctx.measureText(textString).width / 2);
 				break;
 			}
 			case (GAME_STATUS.WINNER):{
 				ctx.font = "30px Pilowlava-Regular";
 				textString = "WINNER " + game.winner.username
-				ctx.fillText(textString, width / 2 - ctx.measureText(textString).width/2, height / 2);
+				ctx.fillText(textString, 
+					width / 2 - ctx.measureText(textString).width / 2, 
+					height / 2 + ctx.measureText(textString).width / 2);
 				break ;
 			}
 			case (GAME_STATUS.PAUSE):{
 				ctx.font = "30px Pilowlava-Regular";
 				textString = "PAUSE"
-				ctx.fillText(textString, width / 2 - ctx.measureText(textString).width/2, height / 2);
+				ctx.fillText(textString, 
+					width / 2 - ctx.measureText(textString).width / 2,
+					height / 2 + ctx.measureText(textString).width / 2);
 				break ;
 			}
 		}
@@ -79,11 +85,14 @@ const Canvas = (props:any) => {
 			window.cancelAnimationFrame(animationFrameId)
 		}
 	})
-
 	return (
-		<div className={`relative w-[${width}] h-[${width}]`}>
-			<GameBar game={game}/>
-			<canvas style={{position:"relative"}} ref={canvasRef} width={width} height={height}/>
+		<div>
+			<div className='flex flex-col items-center justify-center w-full h-full'>
+				<canvas style={{position:"relative"}} ref={canvasRef} width={width} height={height}/>
+				<div className='relative top-[-48px] w-full h-[48px]'>
+					<GameBar game={game}></GameBar>
+				</div>
+			</div>
 		</div>
 	)
 }

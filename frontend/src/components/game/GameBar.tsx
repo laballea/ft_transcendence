@@ -14,7 +14,7 @@ function GameBar({game}: GameBarProps) {
 	const global = useSelector((state: any) => state.global)
 	return (  
 		<div 
-			className="	absolute w-full h-[48px] bottom-0 p-[16px] pr-2 pl-2 
+			className="	w-full h-[48px] bottom-0 p-[16px] pr-2 pl-2 
 						flex items-center justify-between
 						z-20
 						opacity-50">
