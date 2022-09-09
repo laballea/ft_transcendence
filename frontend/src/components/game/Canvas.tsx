@@ -15,13 +15,13 @@ const Canvas = (props:any) => {
 	}
 	const drawPlayers = (ctx:any) => {
 		for (const user of game.users){
-			ctx.fillStyle = '##94a3b8'
+			ctx.fillStyle = '#22c55e'
 			if (user.username === username) {
-				ctx.fillStyle = '#22c55e'
+				ctx.fillStyle = '#8B5CF6'
 			}
 			ctx.fillRect(user.posx * ratio, user.posy * ratio, 5,  0.3 * height)
 		}
-		ctx.fillStyle = '##94a3b8'
+		ctx.fillStyle = '#22c55e'
 	}
 	const drawStatus = (ctx:any) => {
 		let textString;
@@ -70,14 +70,21 @@ const Canvas = (props:any) => {
 					for (const click of user.clickpos) {
 						context.beginPath();
 						context.arc(click.x * ratio, click.y * ratio, 5, 0, 2*Math.PI)
-						context.strokeStyle = user.username === username ? '#22c55e' : '#94a3b8'
+						context.strokeStyle = user.username === username ? '#8B5CF6' : '#22c55e'
 						context.stroke();
 					}
 				}
 			}
 			context.font = "30px Space Mono";
-			textString = game.users[0].point + " - " + game.users[1].point
+			context.fillStyle = game.users[0].username === username ? '#8B5CF6' : '#22c55e'
+			textString = game.users[0].point
+			context.fillText(textString, width / 2 - context.measureText(textString).width/2 -20, 30);
+			context.fillStyle = '#94a3b8'
+			textString = " - "
 			context.fillText(textString, width / 2 - context.measureText(textString).width/2, 30);
+			context.fillStyle = game.users[1].username === username ? '#8B5CF6' : '#22c55e'
+			textString = game.users[1].point
+			context.fillText(textString, width / 2 - context.measureText(textString).width/2 + 20, 30);
 		}
 		render()
 		

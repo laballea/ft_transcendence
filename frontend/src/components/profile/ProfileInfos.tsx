@@ -32,9 +32,7 @@ const ProfileInfos = ({contact} : ProfileInfosProps) => {
 	if (contact.username === global.username) // Check if the profile infos gernetated are from loggedin user
 	{
 		statusTag = 
-		<span className='text-purple-500'>
-				It's you!
-		</span>
+		<span className='text-purple-500'>You</span>
 		actions = 
 		<>
 		</>

@@ -9,11 +9,14 @@ type ChatProps = {
 
 const Chat = ({ msg, username } : ChatProps) => {
 	const messagesList = (): JSX.Element[] => {
+		console.log(msg)
+		let sortArray = [...msg]
+		sortArray.sort((a:any, b:any) => {return( a.id - b.id)})
+		msg = sortArray
 		return msg.map((message, index) => {
 			return (
 				<Message key={index} message={message} own={message.author === username}/>
-			)
-		})
+			)})
 	}
 
 	const test = () => {

@@ -85,7 +85,7 @@ function FloatingMessage() {
 			</div>
 		)
 		: [];
-
+				
 	return (
 		<div className='w-full h-full
 						flex justify-center flex-col
@@ -209,6 +209,7 @@ function FloatingMessage() {
 						<Com conv={conv} />
 					</div>
 				</>
+
 			}
 		</div>
 	)
