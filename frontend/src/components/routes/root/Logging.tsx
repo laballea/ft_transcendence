@@ -137,21 +137,29 @@ const Logging = () => {
 		})
 	}
 	
-	for (const [key, value] of Object.entries(code2fa)) {
-		
-		if (value === "")
-		{
-			let nextSibiling = document.getElementById(`${key}`);
-
-			if(nextSibiling !== null){
-				nextSibiling.focus();
-				break;
+	React.useEffect(() => {
+		let firstInput = document.getElementById('pin1');
+		if(firstInput !== null){
+			firstInput.focus();
+		}
+	},[]);
+	
+	
+	if (id && twofa) {
+		for (const [key, value] of Object.entries(code2fa)) {
+			
+			if (value === "")
+			{
+				let nextSibiling = document.getElementById(`${key}`);
+	
+				if(nextSibiling !== null){
+					nextSibiling.focus();
+					break;
+				}
 			}
 		}
-	}
 
 
-	if (id && twofa) {
 		return (
 		<div className='w-full h-full flex items-center justify-center '>
 			<div>
