@@ -140,65 +140,6 @@ function FloatingMessage() {
 							
 						</div>
 					</div>
-					{/* <div className='flex flex-col flex-grow items-center'>
-						<div id="someRandomID" className='overflow-y-scroll flex-grow'>
-							{newPass ?
-								<div  className='flex flex-grow flex-col items-center'>
-								<input
-									className="flex h-[50px]
-												p-[8px] pl-[12px] rounded-sm
-												bg-slate-800 text-slate-200 placeholder:text-slate-400
-												font-space text-[16px]
-												m-5"
-									type="password"
-									placeholder="Old password"
-									value={input.oldPass}
-									onChange={handleChange}
-									name="oldPass"
-								/>
-								<input
-									className="	flex h-[50px]
-												p-[8px] pl-[12px] rounded-sm
-												bg-slate-800 text-slate-200 placeholder:text-slate-400
-												font-space text-[16px]
-												m-5
-												"
-									type="password"
-									placeholder="New password"
-									value={input.newPass}
-									onChange={handleChange}
-									name="newPass"
-								/>
-								<button
-									className="bg-transparent border-2 h-[32px] sm:h-[48px] w-[160px] sm:w-[164px] rounded
-												font-space text-[16px] text-slate-400
-												transition-all duration-300 ease-in-out
-												flex justify-center items-center border-green-400 hover:border-green-200 hover:text-green-200 text-green-400"
-									onClick={() => {changePass(global, conv.id, global.id, input.oldPass, input.newPass)
-										setNewPass(!newPass)
-									}}
-								>
-									<p>Confirm</p>
-								</button>
-							</div>
-								: users
-							}
-						</div>
-						<div className='flex flex-row'>
-							{ conv.adminId.find((e:number) => e === global.id) !== undefined ?
-								<div>
-									<NavBarButtonSecondary cta="Change Password" icon={FiEdit} onClick={()=>{setNewPass(!newPass)}}/>
-								</div>
-								:
-								[]
-							}
-							{ conv.ownerId === global.id ?
-								<NavBarButtonSecondary cta="Delete Room" icon={FiTrash2} onClick={()=>{deleteMember(global, conv.id, global.id)}}/>
-								:
-								<NavBarButtonSecondary cta="Quit Room" icon={FiLogOut} onClick={()=>{deleteMember(global, conv.id, global.id)}}/>
-							}
-						</div>
-					</div> */}
 				</>
 				:
 				<>

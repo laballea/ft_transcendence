@@ -204,45 +204,6 @@ function CreateRoom() {
 					<p>Join</p>
 				</button>
 			</form>
-				// <form  className='flex flex-grow flex-col items-center'>
-				// 	<input
-				// 		className={`flex h-12
-				// 					p-[8px] pl-[12px] rounded-sm
-				// 					bg-slate-800 text-slate-200 placeholder:text-slate-400
-				// 					font-space text-[16px]
-				// 					m-5 ${errorName && "border-2 border-red-400"}
-				// 					`}
-				// 		type="text"
-				// 		placeholder="room name"
-				// 		value={input.roomName}
-				// 		onChange={handleChange}
-				// 		name="roomName"
-				// 	/>
-				// 	<input
-				// 		className="	flex h-12
-				// 					p-[8px] pl-[12px] rounded-sm
-				// 					bg-slate-800 text-slate-200 placeholder:text-slate-400
-				// 					font-space text-[16px]
-				// 					m-5
-				// 					"
-				// 		type="password"
-				// 		placeholder="password"
-				// 		value={input.password}
-				// 		onChange={handleChange}
-				// 		name="password"
-				// 	/>
-				// 	<button	
-					
-				// 		className={`bg-transparent border-2 h-[32px] sm:h-[48px] w-[160px] sm:w-[164px] rounded
-				// 					font-space text-[16px] text-slate-400
-				// 					transition-all duration-300 ease-in-out
-				// 					flex justify-center items-center ${errorName ? "border-red-400" : "border-green-400 hover:border-green-200 hover:text-green-200 text-green-400"}`}
-				// 		onClick={joinRoom}
-				// 		disabled={errorName}
-				// 		>
-				// 		<p>Join</p>
-				// 	</button>
-				// </form>
 			}
 			
 		</div>
