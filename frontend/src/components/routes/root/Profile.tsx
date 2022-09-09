@@ -44,13 +44,18 @@ const Profile = ({contact} : ProfileProps) => {
 	useEffect(() => {
 		// eslint-disable-next-line
 		eventSource = new EventSource('http://localhost:5000/users/gameStat?id=' + id);
-
+		window.addEventListener("beforeunload", function (event) {
+			eventSource.close();
+		})
 		eventSource.onmessage = ({ data }) => {
 			const json = JSON.parse(data)
 			setUser(prevState => (json.gameStats))
 		}
 		return () => {
 			setUser(null)
+			window.removeEventListener("beforeunload", function (event) {
+				eventSource.close();
+			})
 			eventSource.close()
 		};
 	}, [id]);
