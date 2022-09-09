@@ -118,7 +118,6 @@ export class GameService {
 		let game:GAMES_SOCKET = this.findGame(gameID)
 		if (save)
 			await this.userService.saveGame(game)
-		console.log(game.pong.getWinner())
 		if (game.pong.getWinner())
 			this.userService.lvlUp(game.pong.getWinner().id)
 		for (let id of game.usersID){

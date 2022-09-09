@@ -68,6 +68,7 @@ export interface ROOM_NEW_PASS {
 	admin: string;
 	oldPass: string;
 	newPass: string;
+	jwt:string
 }
 
 export interface NEW_MEMBER {
