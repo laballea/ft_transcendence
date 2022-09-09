@@ -40,19 +40,6 @@ export class Pong {
 	}
 
 	init(){
-		this.users = this.users.map((user, index)=> {
-			return {
-				id:user.id,
-				username:user.username,
-				posx:[50, 1900 - 55][index],
-				pos:["left", "right"][index],
-				posy:1000/2 - 150,
-				point:0,
-				speed:33,
-				clickpos:[],
-				keyPress: 0//0=none, -1=up, 1=down
-			}
-		})
 		this.ball = {
 			posx:1900 / 2,
 			posy: 1000 / 2,
@@ -224,11 +211,13 @@ export class Pong {
 		for (const user of this.users){
 			if (user.id !== userID){
 				this.status = GAME_STATUS.WINNER
+				this.countDown = 5
 				user.point = 5
 				this.winner = {
 					username:user.username,
 					id:user.id
 				}
+				break ;
 			}
 		}
 	}

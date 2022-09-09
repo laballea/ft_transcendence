@@ -3,7 +3,6 @@ import React from 'react'
 // Hooks
 import { useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux';
-import { useState } from 'react';
 
 // Types
 import { status } from '../../common/types';
@@ -40,12 +39,12 @@ const ProfileActions = ({contact} : ProfileActionsProps) => {
 	}
 	else
 	{
-		if (global.blocked.find((blocked:any) => blocked.id == contact.id) === undefined)
+		if (global.blocked.find((blocked:any) => blocked.id === contact.id) === undefined)
 		{
 			actions =
 			<>
 				{	
-					global.friends.find((friend:any) => friend.id == contact.id) != undefined ?
+					global.friends.find((friend:any) => friend.id === contact.id) !== undefined ?
 						<>
 							<IconButton color='green' icon={FiUserCheck} onClick={() => removeFriend(global, contact.username)}></IconButton>
 						</>

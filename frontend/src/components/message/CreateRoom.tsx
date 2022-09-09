@@ -1,14 +1,10 @@
-import React, {useEffect, useState} from 'react';
-import Chat from './chat'
-import Com from './com'
+import React, { useState} from 'react';
 import { useDispatch, useSelector } from 'react-redux'
 import IconButton from '../commons/buttons/IconButton';
-import { FiSettings, FiX } from 'react-icons/fi';
-import { setCurrentConv, setCreateRoom } from '../../store/global/reducer';
+import { FiX } from 'react-icons/fi';
+import { setCreateRoom } from '../../store/global/reducer';
 import './noScrollBar.css'
-import { truncateString } from '../commons/utils/truncateString';
-import { deleteMember, joinRoomSocket, newChatRoom } from '../../context/socket';
-import ChooseModeButton from '../commons/buttons/ChooseModeButton';
+import { joinRoomSocket, newChatRoom } from '../../context/socket';
 
 function CreateRoom() {
 	const global = useSelector((state: any) => state.global)

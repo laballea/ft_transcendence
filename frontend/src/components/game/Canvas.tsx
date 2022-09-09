@@ -82,7 +82,7 @@ const Canvas = (props:any) => {
 
 	return (
 		<div className={`relative w-[${width}] h-[${width}]`}>
-			<GameBar></GameBar>
+			<GameBar game={game}/>
 			<canvas style={{position:"relative"}} ref={canvasRef} width={width} height={height}/>
 		</div>
 	)

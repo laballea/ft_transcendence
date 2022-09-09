@@ -68,6 +68,7 @@ export interface ROOM_NEW_PASS {
 	admin: string;
 	oldPass: string;
 	newPass: string;
+	jwt:string
 }
 
 export interface NEW_MEMBER {
@@ -91,6 +92,7 @@ export interface POPUP_DATA {
 export interface GameUserI {
 	id:number,
 	username:string,
+	profilPic:string,
 	posx?:number,
 	posy?:number,
 	point?:number,

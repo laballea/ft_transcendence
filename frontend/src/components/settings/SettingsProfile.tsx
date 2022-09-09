@@ -17,30 +17,8 @@ const SettingsProfile = ({username, userImage} : SettingsProfileProps) => {
 	const backtext : string = "<- back";
 	const [editUsername, setEditUsername] = useState(false);
 	const [editProfilPic, setEditProfilPic] = useState(false);
-	const [file, setFile] = React.useState<any>();
 	const [newUsername, setNewUsername] = useState(username);
 
-	const onFileChange = (event:any) => { 
-		setFile(event.target.files[0])
-	}; 
-	const fileUpload = (e:any) => {
-		const formData = new FormData();
-		formData.append( 
-			"file", 
-			file,
-			file.filename
-		); 
-		fetch('http://localhost:5000/users/upload', {
-			headers: {
-				'Accept': 'application/json',
-				'Authorization': 'bearer ' + global.token,
-			},
-			method: 'POST',
-			body: formData
-		}).then((response) =>  {
-			return response.text();
-		 })
-	}
 	return (
 		<>
 			<div className='flex items-center justify-self-stretch'>

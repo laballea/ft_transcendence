@@ -51,7 +51,7 @@ const ProfileStats = ({contact} : ProfileStatsProps) => {
 	return (
 		<div  className='w-full border-t-2 border-slate-700'>
 			<h2 className='font-pilowlava text-[64px] text-transparent backgroundTextOutline'>Stats</h2>
-			{ contact.gameStats.length == 0 ?
+			{ contact.gameStats.length === 0 ?
 				<p className="font-space text-slate-400 text-[12px]">{"No Games played yet :("}</p>
 				:
 				<div>

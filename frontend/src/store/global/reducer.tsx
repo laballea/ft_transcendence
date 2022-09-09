@@ -76,7 +76,7 @@ export const globalSlice = createSlice({
 		},
 		setCurrentConv: (state:any, data:any) => {
 			var {username, conv} = data.payload
-			if ((conv === undefined && username === undefined) || (state.currentConv && conv != undefined && state.currentConv.id === conv.id)){
+			if ((conv === undefined && username === undefined) || (state.currentConv && conv !== undefined && state.currentConv.id === conv.id)){
 				state.currentConv = undefined
 				state.clientChat = undefined
 			}

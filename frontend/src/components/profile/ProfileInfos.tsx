@@ -49,7 +49,7 @@ const ProfileInfos = ({contact} : ProfileInfosProps) => {
 			</span>
 			actions = 
 			<>
-				{global.friends.find((friend:any) => friend.id == contact.id) != undefined && <DefaultButtonPrimary cta='Challenge'  icon={FiZap} onClick={()=>{challenged("ASK", global, contact.id)}} />}
+				{global.friends.find((friend:any) => friend.id === contact.id) !== undefined && <DefaultButtonPrimary cta='Challenge'  icon={FiZap} onClick={()=>{challenged("ASK", global, contact.id)}} />}
 				<div className='w-4'></div>
 				<DefaultButtonPrimary cta='Message'  icon={FiMessageCircle} onClick={()=>{dispatch(setCurrentConv({username:contact.username}))}} />
 			</>
@@ -75,7 +75,7 @@ const ProfileInfos = ({contact} : ProfileInfosProps) => {
 			</span>
 			actions = 
 			<>
-				{global.friends.find((friend:any) => friend.id == contact.id) != undefined && <DefaultButtonPrimary cta='Challenge'  icon={FiZap} onClick={()=>{challenged("ASK", global, contact.id)}} />}
+				{global.friends.find((friend:any) => friend.id === contact.id) !== undefined && <DefaultButtonPrimary cta='Challenge'  icon={FiZap} onClick={()=>{challenged("ASK", global, contact.id)}} />}
 				<div className='w-4'></div>
 				<DefaultButtonPrimary cta='Message'  icon={FiMessageCircle} onClick={()=>{dispatch(setCurrentConv({username:contact.username}))}} />
 			</>

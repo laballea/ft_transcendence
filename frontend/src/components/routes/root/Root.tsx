@@ -43,7 +43,6 @@ const SocketConnection = (props:any) => {
 		if (socket.connected === false)
 			socket.connect()
 			socket.on("connect", () => {
-				console.log("CONNECTTTT", global.token)
 				socket.emit("CONNECT", {socketID: socket.id, id:global.id, username:global.username, jwt:global.token});
 				socket.on("UPDATE_DB", (data) => {
 					dispatch(updateDB(data))

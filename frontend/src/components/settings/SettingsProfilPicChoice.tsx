@@ -1,14 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { FiDownload, FiEdit2, FiX } from 'react-icons/fi';
+import { FiDownload, FiX } from 'react-icons/fi';
 import { useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom'
-import { editProfilPicSocket, editUsernameSocket } from '../../context/socket';
+import { editProfilPicSocket } from '../../context/socket';
 
 // Assets
-type SettingsProfilPicChoiceProps = {
-}
 
-const SettingsProfilPicChoice = ({} : SettingsProfilPicChoiceProps) => {
+const SettingsProfilPicChoice = () => {
 	const global = useSelector((state: any) => state.global)
 	const [file, setFile] = React.useState<any>(null);
 	const [preview, setPreview] = React.useState<any>(null);
@@ -68,6 +65,7 @@ const SettingsProfilPicChoice = ({} : SettingsProfilPicChoiceProps) => {
 
 	useEffect(() => {
 		retrievePics()
+		// eslint-disable-next-line
 	}, []);
 
 	const profilPicsComp = profilPics.length > 0 ? profilPics.map((url:string, index:number) =>
@@ -119,12 +117,5 @@ const SettingsProfilPicChoice = ({} : SettingsProfilPicChoiceProps) => {
 		</>
 	)
 }
-/*<button onClick={fileUpload}> 
-							Upload! 
-						</button> */
-
-SettingsProfilPicChoice.defaultProps = {
-}
-
 
 export default SettingsProfilPicChoice

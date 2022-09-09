@@ -3,13 +3,12 @@ import Chat from './chat'
 import Com from './com'
 import { useDispatch, useSelector } from 'react-redux'
 import IconButton from '../commons/buttons/IconButton';
-import { FiChevronsDown, FiChevronsUp, FiDelete, FiEdit, FiLogOut, FiSettings, FiSlash, FiTrash2, FiVolume2, FiVolumeX, FiX } from 'react-icons/fi';
+import { FiChevronsDown, FiChevronsUp, FiEdit, FiLogOut, FiSettings, FiSlash, FiTrash2, FiVolume2, FiVolumeX, FiX } from 'react-icons/fi';
 import { setCurrentConv } from '../../store/global/reducer';
 import './noScrollBar.css'
 import { truncateString } from '../commons/utils/truncateString';
 import { deleteMember, changePass, upgradeMember, downgradeMember, banMember, muteMember, unmutedMember } from '../../context/socket';
 import NavBarButtonSecondary from '../commons/buttons/NavBarButtonSecondary';
-import moment from 'moment';
 
 export interface MessageI {
 		author: string
@@ -46,9 +45,9 @@ function FloatingMessage() {
 
 	useEffect(() => {
 		var element = document.getElementById("someRandomID");
-		if (element != null)
+		if (element !== null)
 			element.scrollTop = element.scrollHeight;
-	});
+	}, [global.currentConv]);
 	const users = conv.ownerId !== undefined ?
 		conv.users.map((user: {id:number, username:string}, index:number) =>
 			<div className={`bg-slate-700 flex flex-row justify-center items-end m-[2px] w-full text-center rounded text-slate-400`} key={index}>
@@ -66,10 +65,10 @@ function FloatingMessage() {
 						}
 					</div>
 				}
-				{conv.ownerId == global.id && conv.ownerId !== user.id && conv.adminId.find((e:number) => e === user.id) === undefined &&
+				{conv.ownerId === global.id && conv.ownerId !== user.id && conv.adminId.find((e:number) => e === user.id) === undefined &&
 					<IconButton icon={FiChevronsUp} onClick={()=>{upgradeMember(global, conv.id, user.id)}}></IconButton>
 				}
-				{conv.ownerId == global.id && conv.ownerId !== user.id && conv.adminId.find((e:number) => e === user.id) !== undefined &&
+				{conv.ownerId === global.id && conv.ownerId !== user.id && conv.adminId.find((e:number) => e === user.id) !== undefined &&
 					<IconButton icon={FiChevronsDown} onClick={()=>{downgradeMember(global, conv.id, user.id)}}></IconButton>
 				}
 			</div>

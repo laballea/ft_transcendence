@@ -1,7 +1,6 @@
-import React, {useEffect} from 'react'
+import React from 'react'
 import {useState} from 'react'
 import { useSelector } from 'react-redux';
-import { useSearchParams } from 'react-router-dom';
 
 // Assets
 import {FiShield, FiShieldOff} from 'react-icons/fi'
