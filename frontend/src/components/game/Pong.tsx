@@ -56,7 +56,6 @@ const Pong = () => {
 	}
 
 	useEffect(() => {
-		// eslint-disable-next-line
 		eventSource = new EventSource(`http://localhost:5000/game/` + global.gameID);
 
 		eventSource.onmessage = async ({ data }) => {
@@ -87,7 +86,6 @@ const Pong = () => {
 					let height = overlayEl.current.clientHeight * 1.9 > (window.innerWidth - 400) ? (window.innerWidth - 400)/ 1.9 : overlayEl.current.clientHeight;
 					setWidth(width)
 					setHeight(height)
-					console.log(height)
 				}
 		});
 		resizeObserver.observe(document.getElementById("GameDiv")!);

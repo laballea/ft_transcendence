@@ -179,15 +179,6 @@ export function joinRoomSocket(global:any, joinRoom:string, passRoom:string) {
 	});
 }
 
-export function deleteRoomSocket(global:any,roomId:number, userId:number){
-	socket.emit('deleteMember', {
-		roomId,
-		userId,
-		admin: global.username,
-		jwt: global.token
-	});
-}
-
 export function quitGameSocket(global:any){
 	socket.emit("QUIT_GAME", {
 		type:global.status === status.Spectate ? "Leave" : "Resign",

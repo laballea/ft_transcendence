@@ -66,7 +66,7 @@ const Com: React.FC<IProps> = ({ conv }) => {
 				autoComplete="off"
 			/>
 			<button type="submit" className="flex items-center justify-center">
-				<IconButton	icon={FiArrowRight} ></IconButton>
+				<FiArrowRight className="sm:w-[24px] w-[16px] sm:h-[24px] h-[16px]" />
 			</button>
 		</form>
 	)
