@@ -721,10 +721,11 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 	async editUsername(@MessageBody() data:{id:number, newUsername:string, jwt:string}) {
 		try {
 			await this.authService.validToken(data.jwt)
+			const db_user:User = await this.userRepository.findOne({ where:{id:data.id} })
 			const userSocket:UserSocket = this.userService.findConnectedUserById(data.id);
 			if (data.newUsername.length > 15)
 				return this.emitPopUp([userSocket], {error:true, message: `Username too long!`});
-			if (data.newUsername === userSocket.username)
+			if (data.newUsername === db_user.username)
 				return this.emitPopUp([userSocket], {error:true, message: `It's yours username`});
 			let ret = await this.userService.editUsername(data.id, data.newUsername)
 			if (ret == 1) {

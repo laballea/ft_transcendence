@@ -21,7 +21,6 @@ const SettingsProfile = ({username, userImage} : SettingsProfileProps) => {
 
 
 	const changeUserName = (event : any) => {
-		console.log(event.target)
 		event.preventDefault(); // prevents render of component
 		if (event.target.value !== username)
 		{
@@ -79,37 +78,6 @@ const SettingsProfile = ({username, userImage} : SettingsProfileProps) => {
 						<button type='submit' className=''>
 						</button>
 				</form>
-
-
-
-				{/* <div className='flex items-center gap-[8px] 
-								text-slate-400 hover:text-slate-200 font-space text-[40px]
-								cursor-pointer
-								transition-all duration-300 ease-in-out'
-								>
-					{
-						editUsername ?
-						<input
-								className="flex"
-								type="text"
-								placeholder={username}
-								value={newUsername}
-								onChange={(event)=>setNewUsername(event.target.value)}
-								name="content"
-						/>
-						:
-						<p onClick={() => setEditUsername(true)}> { username }</p>
-					}
-					<FiEdit2 size='24px' onClick={() => {
-						if (editUsername) {
-							editUsernameSocket(global, newUsername)
-						}
-						setEditUsername(!editUsername)}}
-						/>
-					</div> */}
-
-
-
 			</div>
 			<div className='w-full'>
 				{editProfilPic && <SettingsProfilPicChoice/>}

@@ -20,7 +20,7 @@ const ChatBar = () => {
 					key={conv.id}
 			onClick={() => dispatch(setCurrentConv({conv:conv}))}
 		>
-			{ truncateString(conv.adminId !== undefined ? conv.name : conv.users.find((user:any) => user.username !== global.username).username, 9)}
+			{ truncateString(conv.adminId !== undefined ? conv.name : conv.users.find((user:any) => user.username !== global.username).username, 25)}
 			{	
 				conv.adminId !== undefined &&
 				<>
@@ -36,14 +36,6 @@ const ChatBar = () => {
 							flex flex-col gap-2">
 				{convList}
 			</div>
-		// <div className='flex'>
-		// 	{/* <button
-		// 		className="bg-slate-700 flex flex-row justify-center items-end m-[2px] w-[80px] text-center rounded text-slate-400 text-slate-500 hover:text-slate-400 roundedtransition-all duration-300 ease-in-out"
-		// 		onClick={()=>{dispatch(setCreateRoom({}))}}
-		// 	>
-		// 		<FiPlusCircle className="sm:w-[24px] w-[16px] sm:h-[24px] h-[16px]"></FiPlusCircle>
-		// 	</button> */}
-		// </div>
 	)
 }
 
