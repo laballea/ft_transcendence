@@ -47,7 +47,7 @@ function FloatingMessage() {
 		var element = document.getElementById("someRandomID");
 		if (element !== null)
 			element.scrollTop = element.scrollHeight;
-	});
+	}, [global.currentConv]);
 	const users = conv.ownerId !== undefined ?
 		conv.users.map((user: {id:number, username:string}, index:number) =>
 			<div className={`bg-slate-700 flex flex-row justify-center items-end m-[2px] w-full text-center rounded text-slate-400`} key={index}>

@@ -1,6 +1,6 @@
 import {io, Socket} from "socket.io-client";
 import React from "react";
-import { FRIEND_REQUEST_ACTIONS } from "../common/types";
+import { FRIEND_REQUEST_ACTIONS, status } from "../common/types";
 
 let socketOptions = {
 	autoConnect: false,
@@ -186,5 +186,14 @@ export function deleteRoomSocket(global:any,roomId:number, userId:number){
 		admin: global.username,
 		jwt: global.token
 	});
+}
+
+export function quitGameSocket(global:any){
+	socket.emit("QUIT_GAME", {
+		type:global.status === status.Spectate ? "Leave" : "Resign",
+		client_send: global.username,
+		gameID:global.gameID,
+		jwt:global.token
+	})
 }
 

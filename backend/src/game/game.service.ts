@@ -109,6 +109,13 @@ export class GameService {
 			return {
 				id:user.id,
 				username:user.username,
+				posx:[50, 1900 - 55][index],
+				pos:["left", "right"][index],
+				posy:1000/2 - 150,
+				point:0,
+				speed:33,
+				clickpos:[],
+				keyPress: 0//0=none, -1=up, 1=down
 			}
 		})
 		return new this.mode[mode]({users:pongUser,time:Date.now(), mode}, this.gameEnd.bind(this), gameID)

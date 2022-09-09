@@ -193,15 +193,17 @@ export class UserService {
 	}
 
 	async saveGame(_game:GAMES_SOCKET){
-		const usersRepo:User[] = await this.userRepository.find()
-		let game = new GameData();
-		game.users = _game.usersID.map(id => usersRepo.find(el => el.id == id))
-		game.winner = _game.pong.getWinner().id
-		game.duration = _game.pong.getDuration()
-		game.maxSpeed = Math.ceil(_game.pong.getMaxBallSpeed())
-		game.score = _game.pong.getScore()
-		game.mode = _game.pong.getMode()
-		await this.gameRepository.save(game)
+		try {
+			const usersRepo:User[] = await this.userRepository.find()
+			let game = new GameData();
+			game.users = _game.usersID.map(id => usersRepo.find(el => el.id == id))
+			game.winner = _game.pong.getWinner().id
+			game.duration = _game.pong.getDuration()
+			game.maxSpeed = Math.ceil(_game.pong.getMaxBallSpeed())
+			game.score = _game.pong.getScore()
+			game.mode = _game.pong.getMode()
+			await this.gameRepository.save(game)
+		} catch(e){}
 	}
 
 	async getGameStatByUserId(userId:number):Promise<any>{

@@ -92,6 +92,7 @@ export interface POPUP_DATA {
 export interface GameUserI {
 	id:number,
 	username:string,
+	profilPic:string,
 	posx?:number,
 	posy?:number,
 	point?:number,
