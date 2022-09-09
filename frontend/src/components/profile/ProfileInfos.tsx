@@ -95,11 +95,11 @@ const ProfileInfos = ({contact} : ProfileInfosProps) => {
 		<div className='flex items-center mb-[64px]'>
 			<img src={contact.profilPic} width="200" height="200" alt="userimage" className="rounded-full mr-[16px]"></img>
 			<div className='relative'>
-				<div className='absolute mt-[-8px] font-space'>
+				<div className='absolute flex items-center justify-between gap-[8px] mt-[-8px] font-space w-full'>
 					{statusTag}
+					<p className='font-space text-slate-400'>lvl.{contact.lvl}</p>
 				</div>
 				<h2 className='font-pilowlava text-[64px] text-slate-400'>{contact.username}</h2>
-				<p className='font-pilowlava text-[24px] text-slate-400'>LVL.{contact.lvl}</p>
 				<div className='flex align-center'>
 					{ actions }
 				</div>

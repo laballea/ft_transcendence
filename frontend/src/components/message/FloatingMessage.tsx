@@ -58,10 +58,10 @@ function FloatingMessage() {
 							border-[1px] border-slate-700
 							font-space text-slate-800`} key={index}>
 				<h3>{ truncateString(user.username, 15) }</h3>
-				<div className='flex items-center justify-end gap-2 w-full'>
+				<div className='flex items-center justify-end w-full'>
 				{
 					conv.adminId.find((e:number) => e === global.id) !== undefined && conv.adminId.find((e:number) => e === user.id) === undefined &&
-					<div>
+					<>
 						<MiniIconButton icon={FiX} onClick={()=>{deleteMember(global, conv.id, user.id)}}></MiniIconButton>
 						<MiniIconButton icon={FiSlash} onClick={()=>{banMember(global, conv.id, user.id)}}></MiniIconButton>
 						{conv.muted.find((e:any) => e.userId === user.id) !== undefined ?
@@ -71,6 +71,8 @@ function FloatingMessage() {
 								muteMember(global, conv.id, user.id)
 							}}></MiniIconButton>
 						}
+					</>
+				}
 						{
 							conv.ownerId === global.id && conv.ownerId !== user.id && conv.adminId.find((e:number) => e === user.id) === undefined &&
 							<MiniIconButton icon={FiChevronsUp} onClick={()=>{upgradeMember(global, conv.id, user.id)}}></MiniIconButton>
@@ -79,8 +81,6 @@ function FloatingMessage() {
 							conv.ownerId === global.id && conv.ownerId !== user.id && conv.adminId.find((e:number) => e === user.id) !== undefined &&
 							<MiniIconButton icon={FiChevronsDown} onClick={()=>{downgradeMember(global, conv.id, user.id)}}></MiniIconButton>
 						}
-					</div>
-				}
 				</div>
 			</div>
 		)
@@ -88,7 +88,7 @@ function FloatingMessage() {
 				
 	return (
 		<div className='w-full h-full
-						flex justify-center flex-col
+						flex flex-col
 						rounded-md
 						drop-shadow-custom1
 						'>
@@ -112,7 +112,7 @@ function FloatingMessage() {
 			{
 				settings ?
 				<>	
-					<div className='flex flex-col items-start flex-grow
+					<div className='flex flex-col items-start
 									w-full h-full p-4 gap-4
 									bg-slate-600'>
 						{ conv.adminId.find((e:number) => e === global.id) !== undefined ?
@@ -128,14 +128,16 @@ function FloatingMessage() {
 							<MiniButtonSecondary cta="Quit Room" icon={FiLogOut} onClick={()=>{deleteMember(global, conv.id, global.id)}}/>
 						}
 						<div className='h-[1px] w-full bg-slate-700'></div>
-						<div className='w-full h-full
+						<div className='w-full
+										h-[200px] pb-[16px]
 										flex flex-col items-start gap-2
-										overflow-scroll '>
+										overflow-scroll'>
 							{ newPass
-								? <></> 
+								? null 
 								: 
 								users 
 							}
+							
 						</div>
 					</div>
 					{/* <div className='flex flex-col flex-grow items-center'>

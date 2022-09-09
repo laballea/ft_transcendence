@@ -61,11 +61,11 @@ function CreateRoom() {
 	else if (errorPass && input.password === input.confirmed) setErrorPass(false)
 
 	return (
-		<div className='w-[400px] h-[460px] 
+		<div className='w-full h-full 
 						flex justify-center flex-col
 						rounded-md
 						drop-shadow-custom1
-						bg-slate-700'>
+						'>
 			<div className='w-full h-auto p-[8px] flex items-center justify-between bg-slate-700 drop-shadow-custom2'>
 				<h3 className={`font-space cursor-pointer ${mode === 1 ? "text-green-200" : "text-slate-200"}`} onClick={()=>{setMode(mode === 1 ? 0 : 1)}}>
 					create room

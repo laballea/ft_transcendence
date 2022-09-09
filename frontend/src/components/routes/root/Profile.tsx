@@ -84,7 +84,7 @@ const Profile = ({contact} : ProfileProps) => {
 				<div className="relative flex-initial flex bg-slate-800 w-[400px] flex-col h-full">
 					<ContactList/>
 					<div className='p-4 h-[400px] w-full'>
-						<div className='bg-slate-900 w-full h-full rounded-[8px] shadow-inner overflow-hidden'>
+						<div className='w-full h-full rounded-[8px] shadow-inner overflow-hidden'>
 						{ global.currentConv !== undefined ? <FloatingMessage/> : <CreateRoom/>}
 						</div>
 					</div>
