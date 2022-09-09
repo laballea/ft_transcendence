@@ -95,7 +95,7 @@ export class UserController {
 	}))
 	uploadFile(@UploadedFile() file: Express.Multer.File, @Req() req) {
 		if (file != undefined)
-			this.userService.changePic(req.user.id, "http://localhost:5000/users/image/" + file.originalname)
+			this.userService.changePic(req.user.id, `http://${process.env.REACT_APP_ip}:5000/users/image/` + file.originalname)
 		else {
 			const userSocket:any = this.userService.findConnectedUserById(req.user.id)
 			this.userGateway.emitPopUp([userSocket], {error:true, message: `Invalide format.`});
@@ -116,7 +116,7 @@ export class UserController {
 			res.push(req.user.profilIntraUrl)
 		let filenames = readdirSync(process.cwd() + '/uploads/profilpic');
 		filenames.forEach((file) => {
-			res.push("http://localhost:5000/users/image/" + file)
+			res.push(`http://${process.env.REACT_APP_ip}:5000/users/image/` + file)
 		});
 		return res
 	}

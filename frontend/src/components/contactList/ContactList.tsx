@@ -22,7 +22,7 @@ const ContactList = () => {
 	
 	useEffect(() => {
 		// eslint-disable-next-line
-		eventSource = new EventSource(`http://localhost:5000/users/contactList?searchUsername=${global.searchUserContactList}&id=${global.id}`);
+		eventSource = new EventSource(`http://${process.env.REACT_APP_ip}:5000/users/contactList?searchUsername=${global.searchUserContactList}&id=${global.id}`);
 		window.addEventListener("beforeunload", function (event) {
 			eventSource.close();
 		})

@@ -28,7 +28,7 @@ export class AuthService {
 		user = new User();
 		user.username = username;
 		user.lvl = 0;
-		user.profilPic = "http://localhost:5000/users/image/default.png";
+		user.profilPic = `http://${process.env.REACT_APP_ip}:5000/users/image/default.png`;
 		return this.repository.save(user);
 	}
 

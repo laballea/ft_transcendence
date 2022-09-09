@@ -56,7 +56,7 @@ const Pong = () => {
 	}
 
 	useEffect(() => {
-		eventSource = new EventSource(`http://localhost:5000/game/` + global.gameID);
+		eventSource = new EventSource(`http://${process.env.REACT_APP_ip}:5000/game/` + global.gameID);
 
 		eventSource.onmessage = async ({ data }) => {
 			const json = await JSON.parse(data)
