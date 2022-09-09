@@ -35,7 +35,7 @@ export default function Home() {
 							<Game/>
 							:
 							<div className='w-full h-full overflow-hidden'>
-								<BackgroundLobby/>
+								{/* <BackgroundLobby/> */}
 							</div>
 						}
 					

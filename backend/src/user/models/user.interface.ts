@@ -1,5 +1,5 @@
 import { status } from "src/common/types";
-import { Conversation, GameData, Message, Room } from "./user.entity";
+import { Conversation, GameData, Message, Muted, Room } from "./user.entity";
 
 export interface UserI {
 	id:number;
@@ -46,13 +46,22 @@ export interface MessageI {
 	date: Date;
 }
 
+export interface MutedI {
+	id: number;
+	userId: number;
+	date: string;
+}
+
 export interface RoomI {
 	id: number;
 	name: string;
 	password: string;
-	adminId: number;
+	ownerId: number;
+	adminId: number[];
+	bannedId:number[];
 	users: UserI[];
 	messages: MessageI[];
+	muteds: MutedI[];
 }
 
 export interface ConversationI {
@@ -109,7 +118,10 @@ export interface safeRoom {
 	id:number,
 	name:string,
 	password:string,
-	adminId: number,
+	ownerId:number,
+	adminId:number[],
+	bannedId:number[],
 	msg:Message[],
-	users:{id:number, username:string}[]
+	users:{id:number, username:string}[],
+	muted:Muted[]
 }

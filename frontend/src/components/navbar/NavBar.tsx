@@ -67,11 +67,6 @@ const NavBar = () => {
 							}/>
 						</div>
 				}
-				
-
-				<div className="hidden sm:block">
-					<NavBarButtonSecondary cta="Message" icon={FiMessageCircle} onClick={()=>{navigate('/app/message')}}/>
-				</div>
 			</div>
 
 			<div>

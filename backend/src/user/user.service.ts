@@ -256,11 +256,14 @@ export class UserService {
 			for (let room of user.rooms) {
 				_room.push({
 					id: room.id,
+					ownerId: room.ownerId,
 					adminId: room.adminId,
+					bannedId: room.bannedId,
 					name: room.name,
 					password: room.password,
 					users: room.users.map(user => ({id:user.id, username:user.username})),
 					msg: room.messages,
+					muted: room.muteds,
 				})
 			}
 		}
@@ -272,7 +275,7 @@ export class UserService {
 	async parseUserInfo(userID:number):Promise<UserSafeInfo> {
 		const usersRepo:User[] = await this.userRepository.find()
 		const userRepo: User = await this.userRepository.findOne({ where:{id:userID}, relations: [
-			'conversations', 'conversations.messages', 'conversations.users', 'rooms', 'rooms.users', 'rooms.messages']})
+			'conversations', 'conversations.messages', 'conversations.users', 'rooms', 'rooms.users', 'rooms.messages', 'rooms.muteds']})
 		const userInfo:UserSocket = this.connectedUser.find((user: any) => {return user.id === userID})
 
 		var UserSafeInfo:UserSafeInfo = {

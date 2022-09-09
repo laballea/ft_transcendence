@@ -20,7 +20,7 @@ export default function Model(props: JSX.IntrinsicElements["group"]) {
 
 	const ref = useRef<THREE.Mesh>(null!)
 
-	let rotationSpeed : number = 0.001
+	let rotationSpeed : number = 0.01
 
 	// if (ref.current.rotation.z === Math.PI * 2)
 	// 	ref.current.rotation.z = 0
@@ -40,7 +40,7 @@ export default function Model(props: JSX.IntrinsicElements["group"]) {
 	return (
 		<group {...props} dispose={null}>
 		<mesh
-			ref={ref}
+		
 			receiveShadow
 			scale={4}
 			rotation={[Math.PI / 2, 0, - Math.PI / 3]}
