@@ -371,11 +371,11 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 			const db_admin: User = await this.userRepository.findOne({ where:{username:data.admin} })
 			if (!room)
 				return this.emitPopUp([user], {error:true, message: `Room doesn't exist !`});
-			else if (room.adminId.find((e:number) => e === db_admin.id) !== db_admin.id)
+			if (data.userId == db_admin.id && room.adminId.find((e:number) => e === db_admin.id) === room.ownerId)
+					this.deleteRoom({roomId: data.roomId, user: data.admin, jwt:data.jwt})
+			else if (data.userId !== db_admin.id && room.adminId.find((e:number) => e === db_admin.id) !== db_admin.id)
 				return this.emitPopUp([user], {error:true, message: `Permission required !`});
-			if (data.userId == db_admin.id)
-				this.deleteRoom({roomId: data.roomId, user: data.admin, jwt:data.jwt})
-			else {
+			else if (data.userId === db_admin.id || room.adminId.find((e:number) => e === db_admin.id) === db_admin.id) {
 				await this.roomRepository
 				.createQueryBuilder()
 				.relation(Room, "users")
@@ -718,6 +718,10 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		try {
 			await this.authService.validToken(data.jwt)
 			const userSocket:UserSocket = this.userService.findConnectedUserById(data.id);
+			if (data.newUsername.length > 15)
+				return this.emitPopUp([userSocket], {error:true, message: `Username too long!`});
+			if (data.newUsername === userSocket.username)
+				return this.emitPopUp([userSocket], {error:true, message: `It's yours username`});
 			let ret = await this.userService.editUsername(data.id, data.newUsername)
 			if (ret == 1) {
 				this.emitPopUp([userSocket], {error:false, message: `Username successfuly changed.`});
