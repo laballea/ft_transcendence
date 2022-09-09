@@ -62,8 +62,9 @@ function PopUp2FAModal({ closeFunc } : PopUp2FAModalProps) {
 			[e.target.name]: e.target.value
 		})
 	}
-
+	console.log("yoyo")
 	const sendCode = (): void => {
+		console.log("hey yti")
 		const requestOptions = {
 			method: 'POST',
 			headers: {
@@ -121,28 +122,26 @@ function PopUp2FAModal({ closeFunc } : PopUp2FAModalProps) {
 						</div>
 					}
 				</div>
-				<div>
+				<form className='relative w-[240px]' onSubmit={sendCode}>
 					<input
 						type="text"
 						placeholder="Enter code here..."
 						value={image.code}
 						onChange={handleChange}
 						name="code"
-						className='	bg-transparent p-[8px] pl-[16px]
-									border-b-[1px] border-slate-400 hover:border-slate-200 focus:border-transparent
+						className='	bg-transparent p-[8px] pl-[16px] w-[240px]
+									border-b-[1px] border-slate-400 hover:border-slate-200 focus:border-transparent active:border-transparent
 									font-space text-[16px] text-slate-200 placerholder:hover:text-slate-200 placeholder:text-slate-400
 									transition-all duration-300 ease-in-out'
 					/>
 					<button
-						className="add-chat"
-						onClick={sendCode}
-						style={{color:'white', marginLeft: '25px'}}
+						type="submit"
+						className="absolute right-[12px] bottom-[12px] text-slate-400 hover:text-slate-200 
+									add-chat transition-all duration-300 ease-in-out"
 					>
-						<div>
 							<FiCheck></FiCheck>
-						</div>
 					</button>
-				</div>
+				</form>
 			</div>
 			<Popup open={popup.open} contentStyle={{position:'absolute', bottom:0, left:0}}>
 				<PopUpToaster content={popup.message}/>
