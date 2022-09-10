@@ -1,15 +1,15 @@
 version: "3.3"
 services:
-    front:
-      build:
-          dockerfile: Dockerfile
-          context: ./frontend
-      env_file:
-          - .env
-      depends_on: 
-          - api
-      ports:
-          - "3000:3000"
+    # front:
+    #   build:
+    #       dockerfile: Dockerfile
+    #       context: ./frontend
+    #   env_file:
+    #       - .env
+    #   depends_on: 
+    #       - api
+    #   ports:
+    #       - "3000:3000"
 
     api:
         build:

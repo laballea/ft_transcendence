@@ -133,7 +133,57 @@ function FloatingMessage() {
 										flex flex-col items-start gap-2
 										overflow-scroll'>
 							{ newPass
-								? null 
+								? 
+								<form  className='flex flex-grow flex-col items-center w-full justify-between'
+										onSubmit={ () => {changePass(global, conv.id, global.id, input.oldPass, input.newPass)
+											setNewPass(!newPass)
+							}}>
+									<div className='flex flex-col items-center gap-2 w-full'>
+										<input
+											className="flex h-12 w-full
+														bg-slate-700 hover:bg-slate-800
+														cursor-pointer
+														transition-all duration-300 ease-in-out
+														p-[8px] pl-[12px] rounded-sm
+														text-slate-400 placeholder:text-slate-400 hover:text-slate-200
+														font-space text-[16px]
+														"
+											type="password"
+											placeholder="Old password"
+											value={input.oldPass}
+											onChange={handleChange}
+											name="oldPass"
+											required
+										/>
+										<input
+											className="	flex h-12 w-full
+														bg-slate-700 hover:bg-slate-800
+														cursor-pointer
+														transition-all duration-300 ease-in-out
+														p-[8px] pl-[12px] rounded-sm
+														text-slate-400 placeholder:text-slate-400 hover:text-slate-200
+														font-space text-[16px]
+										
+														"
+											type="password"
+											placeholder="New password"
+											value={input.newPass}
+											onChange={handleChange}
+											name="newPass"
+											required
+										/>
+									</div>
+									<button
+										type='submit'
+										className="bg-transparent border-2 h-12 w-full rounded
+													font-space text-[16px]
+													transition-all duration-300 ease-in-out
+													flex justify-center items-center border-slate-400 hover:border-slate-200 hover:text-slate-200 text-slate-400"
+										
+									>
+										<p>Confirm</p>
+									</button>
+							</form>
 								: 
 								users 
 							}
