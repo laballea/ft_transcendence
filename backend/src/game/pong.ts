@@ -44,7 +44,7 @@ export class Pong {
 		this.ball = {
 			posx:1900 / 2,
 			posy: 1000 / 2,
-			speed:20,
+			speed:10,
 			angle:45* (Math.PI/180),
 			d:{x:0, y:0},
 			size:30 //rayon
@@ -72,7 +72,7 @@ export class Pong {
 	run() {
 		switch (this.status){
 			case (GAME_STATUS.COUNTDOWN):{
-				this.countDown -= 0.030
+				this.countDown -= 0.060
 				if (this.countDown <= 0) {
 					this.status = GAME_STATUS.RUNNING;
 					this.countDown = 3;
@@ -91,7 +91,7 @@ export class Pong {
 				break ;
 			}
 			case (GAME_STATUS.WINNER):{
-				this.countDown -= 0.030;
+				this.countDown -= 0.060;
 				if (this.countDown <= 0) {
 					this.status = GAME_STATUS.ENDED;
 					this.gameEnd(this.gameID, true)
@@ -99,7 +99,7 @@ export class Pong {
 				break ;
 			}
 			case (GAME_STATUS.PAUSE):{
-				this.countDown -= 0.030;
+				this.countDown -= 0.060;
 				if (this.countDown <= 0) {
 					this.status = GAME_STATUS.ENDED;
 					this.gameEnd(this.gameID, true)
@@ -113,8 +113,8 @@ export class Pong {
 	}
 
 	ballTrajectory(){
-		let factor = this.ball.speed / 10
-		for (let i=1; i < factor; i++) {
+		let factor = Math.round(this.ball.speed / 10)
+		for (let i=0; i < factor; i++) {
 			let speed = this.ball.speed / factor
 			let newPosx = this.ball.posx + (this.ball.d.x) * speed
 			let newPosy = this.ball.posy + (this.ball.d.y) * speed
@@ -131,8 +131,6 @@ export class Pong {
 					if (this.between(newPosx + Math.sign(this.ball.d.x) * this.ball.size, idx ? user.posx : user.posx + 5, idx ? user.posx + 15: user.posx + 20)){
 						this.ball.d.x *= -1
 						this.ball.speed += 1
-						if (this.ball.speed > this.maxBallSpeed)
-							this.maxBallSpeed = this.ball.speed
 						bounce = true
 					}
 				}
@@ -140,6 +138,7 @@ export class Pong {
 			if ((hit.bot || hit.top) && !bounce) {
 				newPosy = hit.bot ? this.ball.size : (this.map.height  - this.ball.size)
 				this.ball.d.y *= -1
+				this.ball.speed += 0.3
 				bounce = true
 			}
 			if ((hit.left || hit.right) && !bounce) {
@@ -156,7 +155,7 @@ export class Pong {
 					user.posy = 1000 / 2 - 150;
 				newPosx = this.map.width / 2
 				newPosy = this.map.height / 2
-				this.ball.speed = 20
+				this.ball.speed = 10 + this.users[0].point + this.users[1].point
 				this.ball.angle = this.randomNumber(0, 360)
 				bounce = true
 			}
