@@ -30,7 +30,7 @@ export class Boost extends Pong {
 				if ((this.ball.d.x <0 && this.ball.posx <= this.balltraj[this.balltrajpos].x) ||
 					(this.ball.d.x >0 && this.ball.posx >= this.balltraj[this.balltrajpos].x)){
 					if (this.balltraj[this.balltrajpos] && this.balltrajpos >= 1) {
-						this.ball.speed += 0.5
+						this.ball.speed += 0.75
 						this.ball.angle = this.angle(this.balltraj[this.balltrajpos - 1].x, this.balltraj[this.balltrajpos - 1].y, this.balltraj[this.balltrajpos].x, this.balltraj[this.balltrajpos].y)
 						this.ball.d = {x:Math.cos(this.ball.angle), y:Math.sin(this.ball.angle)}
 					}
@@ -60,7 +60,7 @@ export class Boost extends Pong {
 			if ((hit.bot || hit.top) && !bounce) {
 				newPosy = hit.bot ? this.ball.size : (this.map.height  - this.ball.size)
 				this.ball.d.y *= -1
-				this.ball.speed += 0.1
+				this.ball.speed += 0.3
 				bounce = true
 			}
 			if ((hit.left || hit.right) && !bounce) {
@@ -77,10 +77,12 @@ export class Boost extends Pong {
 					user.posy = 1000 / 2 - 150;
 				newPosx = this.map.width / 2
 				newPosy = this.map.height / 2
-				this.ball.speed = 20
+				this.ball.speed = 10 + this.users[0].point + this.users[1].point
 				this.ball.d = this.randomDir(newPosx < this.ball.size ? 1 : 0)
 				bounce = true
 			}
+			if (this.ball.speed > this.maxBallSpeed)
+				this.maxBallSpeed = this.ball.speed
 			this.ball.posx = newPosx
 			this.ball.posy = newPosy
 			if (bounce)
