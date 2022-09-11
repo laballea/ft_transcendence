@@ -6,20 +6,16 @@ import { UserI, UserSafeInfo, UserSocket, MessageI, safeConv, safeRoom } from '.
 import { User, Message, Conversation, GameData } from './models/user.entity';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom, lastValueFrom } from 'rxjs';
+import { GameService } from 'src/game/game.service';
 
 @Injectable()
 export class UserService {
 	constructor(
 		@InjectRepository(User)
 		private userRepository: Repository<User>,
-		@InjectRepository(Conversation)
-		private convRepository: Repository<Conversation>,
 		@InjectRepository(GameData)
 		private gameRepository: Repository<GameData>,
-		@InjectRepository(Message)
-		private messageRepository: Repository<Message>,
 		private httpService: HttpService,
-
 	){}
 
 	public connectedUser: UserSocket[] = [];
@@ -37,7 +33,7 @@ export class UserService {
 		await this.userRepository.update(userId, {
 			isTwoFactorAuthenticationEnabled: true
 		});
-		//user.socket.emit('UPDATE_DB', await this.parseUserInfo(userId))
+		user.socket.emit('UPDATE_DB', await this.parseUserInfo(userId))
 	}
 
 	// TWO FACTOR DISABLE
@@ -46,7 +42,7 @@ export class UserService {
 		await this.userRepository.update(userId, {
 			isTwoFactorAuthenticationEnabled: false
 		});
-		//user.socket.emit('UPDATE_DB', await this.parseUserInfo(userId))
+		user.socket.emit('UPDATE_DB', await this.parseUserInfo(userId))
 	}
 
 	/*
@@ -71,15 +67,15 @@ export class UserService {
 		return this.userRepository.findOne({ where:{id: id} });
 	}
 
-	/*
-		find user by username
-	*/
+
 	findOne(username: string):Promise<UserI | undefined> {
 		return this.userRepository.findOne({ where:{username: username} });
 	}
-	/*
-		find user by username
-	*/
+
+	findOneId(id: number):Promise<UserI | undefined> {
+		return this.userRepository.findOne({ where:{id: id} });
+	}
+
 	findUserByIntra(intraID: number):Promise<UserI | undefined> {
 		return this.userRepository.findOne({ where:{intraID:intraID} });
 	}
@@ -279,7 +275,6 @@ export class UserService {
 		const userRepo: User = await this.userRepository.findOne({ where:{id:userID}, relations: [
 			'conversations', 'conversations.messages', 'conversations.users', 'rooms', 'rooms.users', 'rooms.messages', 'rooms.muteds']})
 		const userInfo:UserSocket = this.connectedUser.find((user: any) => {return user.id === userID})
-
 		var UserSafeInfo:UserSafeInfo = {
 			id: userRepo.id,
 			lvl:userRepo.lvl,
@@ -289,6 +284,7 @@ export class UserService {
 			gameID: userInfo ? userInfo.gameID : undefined,
 			twoFactor: userRepo.isTwoFactorAuthenticationEnabled,
 		};
+
 		UserSafeInfo.friends = userRepo.friends.map(id => ({ id: id, username: usersRepo.find(el => el.id == id).username}));
 		UserSafeInfo.blocked = userRepo.blocked.map(id => ({ id: id, username: usersRepo.find(el => el.id == id).username}));
 		UserSafeInfo.friendsRequest = userRepo.friendsRequest.map(id => ({ id: id, username: usersRepo.find(el => el.id == id).username}));

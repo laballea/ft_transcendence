@@ -18,12 +18,17 @@ export class GameController {
 		}});
 	}
 
+	@Get('games/:id')
+	getGamesId(@Param() param):any {
+		return this.gameService.findGame(param.id).pong.getGameInfo()
+	}
+
 	/*
 	*/
-	@Sse(':id')
+	/*@Sse(':id')
 	sse(@Query() query, @Param() param): Observable<any> {
 		return interval(30).pipe(
 			mergeMap( async (_) => {return {data : { game: this.gameService.findGame(param.id).pong.getGameInfo()}}}
 		));
-	}
+	}*/
 }

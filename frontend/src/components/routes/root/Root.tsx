@@ -30,6 +30,7 @@ const SocketConnection = (props:any) => {
 	const dispatch = useDispatch();
 	const global = useSelector((state: any) => state.global)
 	const [popup, setPopup] = useState({open:false, error:true, message:""});
+
 	React.useEffect(() => {
 		if (popup.open) {
 			let msg = popup.message
@@ -39,6 +40,7 @@ const SocketConnection = (props:any) => {
 			}, 2000);
 		}
 	}, [popup]);
+
 	useEffect( () => {
 		if (socket.connected === false)
 			socket.connect()

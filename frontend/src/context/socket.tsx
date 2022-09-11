@@ -5,6 +5,7 @@ import { FRIEND_REQUEST_ACTIONS, status } from "../common/types";
 let socketOptions = {
 	autoConnect: false,
 	reconnection: false,
+	transports: ["websocket"]
  };
 
 export const socket:Socket = io(`http://${process.env.REACT_APP_ip}:5000/`, socketOptions);

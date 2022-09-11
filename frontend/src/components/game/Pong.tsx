@@ -3,6 +3,7 @@
 // Hooks
 import React, {useState, useEffect, useRef, useContext} from 'react'
 import { useSelector } from 'react-redux'
+import { GAME_STATUS } from '../../common/types';
 
 //
 import { mouseClickSocket, SocketContext } from '../../context/socket';
@@ -15,8 +16,6 @@ const Pong = () => {
 	const [width, setWidth] = useState(100);
 	const [height, setHeight] = useState(100);
 	const overlayEl = useRef<HTMLDivElement>(null);
-
-	var eventSource:EventSource;
 
 	const keyDown = (event:KeyboardEvent) => {
 		const key = event.key; // "ArrowRight", "ArrowLeft", "ArrowUp", or "ArrowDown"
@@ -54,17 +53,34 @@ const Pong = () => {
 			}
 		}
 	}
-
+	const getgame = () => {
+		const requestOptions = {
+			method: 'GET',
+			headers: {
+				'Content-Type': 'application/json;charset=utf-8',
+				'Access-Control-Allow-Origin': '*',
+				'Authorization': 'bearer ' + global.token,
+			},
+		}
+		fetch(`http://${process.env.REACT_APP_ip}:5000/game/games/${global.gameID}`, requestOptions)
+		.then(async response=>{
+			let resp = await response.json();
+			setGame(resp)
+			if (resp.status !== GAME_STATUS.WINNER)
+				setTimeout(getgame, 16);
+		})
+	}
 	useEffect(() => {
-		eventSource = new EventSource(`http://${process.env.REACT_APP_ip}:5000/game/` + global.gameID);
+		getgame()
+		/*let eventSource = new EventSource(`http://${process.env.REACT_APP_ip}:5000/game/` + global.gameID);
 
 		eventSource.onmessage = async ({ data }) => {
 			const json = await JSON.parse(data)
 			setGame(json.game)
-		}
-		window.addEventListener("beforeunload", function (event) {
+		}*/
+		/*window.addEventListener("beforeunload", function (event) {
 			eventSource.close();
-		})
+		})*/
 		window.addEventListener('keydown',keyDown, true);
 		window.addEventListener('keyup', keyUp, true);
 		window.addEventListener('mousedown', mouseDown, true);
@@ -72,11 +88,12 @@ const Pong = () => {
 			window.removeEventListener('keydown', keyDown, true)
 			window.removeEventListener('keyup', keyUp, true)
 			window.removeEventListener('mousedown', mouseDown, true)
-			window.removeEventListener("beforeunload", function (event) {
+			/*window.removeEventListener("beforeunload", function (event) {
 				eventSource.close();
 			})
-			eventSource.close()
+			eventSource.close()*/
 		};
+	// eslint-disable-next-line
 	}, []);
 
 	useEffect(() => {

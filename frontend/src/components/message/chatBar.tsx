@@ -1,7 +1,7 @@
 import React from 'react'
-import { FiPlusCircle, FiUsers } from 'react-icons/fi'
+import { FiUsers } from 'react-icons/fi'
 import { useDispatch, useSelector } from 'react-redux'
-import { setCreateRoom, setCurrentConv } from '../../store/global/reducer'
+import {setCurrentConv } from '../../store/global/reducer'
 import { truncateString } from '../commons/utils/truncateString'
 
 const ChatBar = () => {

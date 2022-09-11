@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { FiDownload, FiPlus, FiX } from 'react-icons/fi';
+import { FiPlus } from 'react-icons/fi';
 import { useSelector } from 'react-redux';
 import { editProfilPicSocket } from '../../context/socket';
 
@@ -8,18 +8,9 @@ import { editProfilPicSocket } from '../../context/socket';
 const SettingsProfilPicChoice = () => {
 	const global = useSelector((state: any) => state.global)
 	//const [file, setFile] = React.useState<any>(null);
-	const [preview, setPreview] = React.useState<any>(null);
 	const [profilPics, setProfilPics] = useState([]);
 	const uploadRef = useRef<any>()
-	const [isHovering, setIsHovering] = useState(false);
 
-	const handleMouseOver = () => {
-		setIsHovering(true);
-	};
-	
-	const handleMouseOut = () => {
-		setIsHovering(false);
-	};
 
 	const onFileChange = (event:any) => {
 		fileUpload(event.target.files[0])
@@ -42,7 +33,6 @@ const SettingsProfilPicChoice = () => {
 			method: 'POST',
 			body: formData
 		}).then((response) =>  {
-			console.log(response)
 			retrievePics()
 			return response.text();
 		 })

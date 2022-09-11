@@ -56,18 +56,18 @@ export class UserController {
 		return this.userService.getConnected();
 	}
 
-	@Sse('gameStat')
-	sse(@Query() query): Observable<any> {
+	@Get('gameStat')
+	async gameStat(@Query() query) {
+		return await this.userService.getGameStatByUserId(query.id)
 		return interval(1000).pipe(
 			mergeMap( async (_) => ({ data: { gameStats: await this.userService.getGameStatByUserId(query.id)} })
 		));
 	}
 
-	/*
-		send to all client who listening to /user/contactList the list of user in db
-	*/
-	@Sse('contactList')
-	sseContact(@Query() query): Observable<any> {
+
+	@Get('contactList')
+	async contactList(@Query() query){
+		return await this.getUserLIst(query.id, query.searchUsername)
 		return interval(1000).pipe(
 			mergeMap( async (_) => ({ data: { contactList: await this.getUserLIst(query.id, query.searchUsername)} })
 		));

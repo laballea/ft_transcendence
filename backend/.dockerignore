@@ -1,4 +1,5 @@
 node_modules
+dist
 npm-debug.log
 app/profil_pic/*
 .env

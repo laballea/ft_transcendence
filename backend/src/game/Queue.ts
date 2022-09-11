@@ -29,7 +29,7 @@ export class Queue {
 
 	findOtherPlayer(user:UserSocket, mode:gamemode):number{
 		if (this.queue[mode].length > 1) {
-			let other = this.queue[mode].find((id)=>id !== user.id)
+			let other = this.queue[mode].find((id:number)=>id !== user.id)
 			return other
 		}
 		return -1

@@ -11,12 +11,21 @@ import Waiting from './Waiting';
 
 const Game = () => {
 	const global = useSelector((state: any) => state.global)
-
 	return (
-		<div className="relative flex-1 justify-center">
-			{global.status === status.InQueue && <Waiting/>}
-			{global.status === status.InGame && <Pong/>}
-			{global.status === status.Spectate && <Spectate/>}
+		<div className="w-full h-full
+						flex items-center justify-center
+						bg-gradient-to-r
+						from-purple-500/50
+						via-slate-700/50
+						to-purple-700/50 
+						bg-[length:400%]
+						animate-bgpanright">
+			<div className='font-pilowlava text-transparent backgroundTextOutline 
+							animate-deglingo'>
+				{global.status === status.InQueue && <Waiting/>}
+				{global.status === status.InGame && <Pong/>}
+				{global.status === status.Spectate && <Spectate/>}
+			</div>
 		</div>
 	)
 }

@@ -2,7 +2,6 @@ import React, { useState, useContext } from "react";
 import { FiArrowRight } from "react-icons/fi";
 import { useSelector } from 'react-redux'
 import { SocketContext } from '../../context/socket';
-import IconButton from "../commons/buttons/IconButton";
 
 interface IProps {
 	conv: any

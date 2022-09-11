@@ -1,7 +1,7 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { GameI, gamemode, GAMES_SOCKET, GAME_STATUS, status } from 'src/common/types';
 import { User } from 'src/user/models/user.entity';
-import { UserSocket } from 'src/user/models/user.interface';
+import { UserI, UserSocket } from 'src/user/models/user.interface';
 import { UserService } from 'src/user/user.service';
 import { Pong } from './pong';
 import { Boost } from './mode/pongBoost';
@@ -84,7 +84,7 @@ export class GameService {
 			}
 		}
 	}
-	createGame(users:UserSocket[], mode:gamemode):GAMES_SOCKET{
+	createGame(users:UserSocket[], usersDb:UserI[], mode:gamemode):GAMES_SOCKET{
 		let gameID = "game_" + s4()
 		if (this.Games.length){
 			while (this.Games.find((game) => {return game.id === gameID}))
@@ -94,7 +94,7 @@ export class GameService {
 			id:gameID,
 			spectatesID:[],
 			usersID:users.map(user => {return user.id}),
-			pong:this.initPong(users, mode, gameID)
+			pong:this.initPong(usersDb, mode, gameID)
 		}
 		this.Games.push(game)
 		for (let idx in users){
@@ -104,11 +104,12 @@ export class GameService {
 		return game
 	}
 
-	initPong(users:UserSocket[], mode:gamemode, gameID:string):Pong{
+	initPong(users:UserI[], mode:gamemode, gameID:string):Pong{
 		let pongUser = users.map((user, index)=> {
 			return {
 				id:user.id,
 				username:user.username,
+				profilPic:user.profilPic,
 				posx:[50, 1900 - 55][index],
 				pos:["left", "right"][index],
 				posy:1000/2 - 150,
@@ -123,42 +124,46 @@ export class GameService {
 
 	async gameEnd(gameID:string, save:boolean){
 		let game:GAMES_SOCKET = this.findGame(gameID)
-		if (save)
-			await this.userService.saveGame(game)
-		if (game.pong.getWinner())
-			this.userService.lvlUp(game.pong.getWinner().id)
-		for (let id of game.usersID){
-			let user:UserSocket = this.userService.findConnectedUserById(id)
-			if (user){
-				user.socket.emit("GAME_END")
-				user.challenged = false
-				user.socket.leave(gameID)
-				user.status = status.Connected
-				user.gameID = undefined
+		if (game){
+			if (save)
+				await this.userService.saveGame(game)
+			if (game.pong.getWinner())
+				this.userService.lvlUp(game.pong.getWinner().id)
+			for (let id of game.usersID){
+				let user:UserSocket = this.userService.findConnectedUserById(id)
+				if (user){
+					user.socket.emit("GAME_END")
+					user.challenged = false
+					user.socket.leave(gameID)
+					user.status = status.Connected
+					user.gameID = undefined
+				}
 			}
-		}
-		for (let id of game.spectatesID){
-			let user:UserSocket = this.userService.findConnectedUserById(id)
-			if (user){
-				user.socket.emit("GAME_END")
-				user.socket.leave(gameID)
-				user.status = status.Connected
-				user.gameID = undefined
+			for (let id of game.spectatesID){
+				let user:UserSocket = this.userService.findConnectedUserById(id)
+				if (user){
+					user.socket.emit("GAME_END")
+					user.socket.leave(gameID)
+					user.status = status.Connected
+					user.gameID = undefined
+				}
 			}
+			this.removeGame(gameID)
 		}
-		this.removeGame(gameID)
 	}
 
 	quitGame(gameID:string, user:UserSocket){
 		let game:GAMES_SOCKET = this.findGame(gameID)
-		user.socket.leave(gameID)
-		user.socket.emit("GAME_END")
-		user.status = status.Connected
-		user.gameID = undefined
 		for (let id of game.usersID){
 			if (user.id === id){
 				game.pong.giveUp(id)
 			}
 		}
+	}
+
+	updateUser(gameID:string, userDb:UserI){
+		let game:GAMES_SOCKET = this.findGame(gameID)
+		if (game)
+			game.pong.updateUser(userDb)
 	}
 }
