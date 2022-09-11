@@ -26,10 +26,10 @@ function GameBar({game}: GameBarProps) {
 							cursor-pointer
 							'
 							onClick={()=>{navigate('/app/profile/' + game.users[0].username, { state: {id:game.users[0].id} })}}>
-				{/* <div className="	w-[32px] h-[32px]
+				<div className="	w-[32px] h-[32px]
 								bg-slate-500 rounded-full overflow-hidden">
 					<img src={game.users[0].profilPic} className="rounded-full " width="32" height="32" alt="userimage"></img>
-				</div> */}
+				</div>
 				<p>{game.users[0].username}</p>
 			</div>
 			<div className='flex gap-[4px] text-[16px] items-center justify-center
@@ -47,10 +47,10 @@ function GameBar({game}: GameBarProps) {
 							cursor-pointer'
 							onClick={()=>{navigate('/app/profile/' + game.users[1].username, { state: {id:game.users[1].id} })}}>
 
-				{/* <div className=" w-[32px] h-[32px]
+				<div className=" w-[32px] h-[32px]
 								bg-slate-500 rounded-full overflow-hidden">
 					<img src={game.users[1].profilPic} className="rounded-full" width="32" height="32" alt="userimage"></img>
-				</div> */}
+				</div>
 				<p>{game.users[1].username}</p>
 			</div>
 			

@@ -15,7 +15,6 @@ const SettingsProfile = ({username, userImage} : SettingsProfileProps) => {
 	const navigate = useNavigate();
 	const global = useSelector((state: any) => state.global)
 	const backtext : string = "<- back";
-	const [editUsername, setEditUsername] = useState(false);
 	const [editProfilPic, setEditProfilPic] = useState(false);
 	const [newUsername, setNewUsername] = useState(username);
 
@@ -64,7 +63,8 @@ const SettingsProfile = ({username, userImage} : SettingsProfileProps) => {
 									cursor pointer'>
 						<input
 							type="text"
-						
+							pattern="[A-Za-z0-9]+"
+							title="This field is required"
 							className='w-[368px] bg-transparent focus:outline-none'
 							placeholder={newUsername}
 							onChange={(event)=>setNewUsername(event.target.value)}

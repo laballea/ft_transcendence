@@ -6,12 +6,22 @@ const Canvas = (props:any) => {
 	const {height, width, game, ratio, username} = props
 	const canvasRef = useRef<any>()
 	const drawBall = (ctx:any) => {
-		ctx.fillStyle = '#8B5CF6'
-		ctx.beginPath()
-		ctx.arc(game.ball.posx * ratio, game.ball.posy * ratio, game.ball.size * ratio, 0, 2*Math.PI)
-		ctx.font = "16px Space Mono";
-		ctx.fillText((game.ball.speed * 0.00026 / 0.025).toFixed(2) + "m/s", 5, 15);
-		ctx.fill()
+		if (game.status === GAME_STATUS.RUNNING){
+			for (const user of game.users){
+				if (user.username === username) {
+					ctx.fillStyle = '#22c55e'
+					if (user.pos === "left" && game.ball.d.x < 0)
+						ctx.fillStyle = '#8B5CF6'
+					else if (user.pos === "right" && game.ball.d.x > 0)
+						ctx.fillStyle = '#8B5CF6'
+				}
+			}
+			ctx.beginPath()
+			ctx.arc(game.ball.posx * ratio, game.ball.posy * ratio, game.ball.size * ratio, 0, 2*Math.PI)
+			ctx.font = "16px Space Mono";
+			ctx.fillText((game.ball.speed * 0.00026 / 0.025).toFixed(2) + "m/s", 5, 15);
+			ctx.fill()
+		}
 	}
 	const drawPlayers = (ctx:any) => {
 		for (const user of game.users){

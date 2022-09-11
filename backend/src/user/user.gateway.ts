@@ -27,7 +27,7 @@ import {
 } from 'src/common/types';
 import { UserService } from './user.service';
 import { truncateString } from 'src/common/utils';
-import { Server } from 'socket.io';
+import {Socket, Server } from 'socket.io';
 import { FriendsService } from 'src/friends/friends.service';
 import { GameService } from 'src/game/game.service';
 import * as bcrypt from 'bcrypt';
@@ -38,9 +38,7 @@ import { AuthService } from '../auth/auth.service';
 		origin: '*',
 	},
 })
-
-@WebSocketGateway()
-export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit {
+export class UserGateway {
 	constructor(
 		@InjectRepository(User)
 		private userRepository: Repository<User>,
@@ -64,9 +62,8 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 	@WebSocketServer()
 	server: Server;
 
-	handleConnection(client: any) {
-		if (!this.server) this.server = client.server;
-	};
+	handleConnection(client: Socket) {
+	}
 	afterInit(server: any) {}
 
 	async handleDisconnect(client: any, ...args: any[]) {
@@ -91,7 +88,7 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 			user.status = user.gameID ? status.InGame : user.status
 			client.emit("UPDATE_DB", await this.userService.parseUserInfo(data.id))
 		}
-		catch (e){}
+		catch (e){console.log(e)}
 	}
 
 	@SubscribeMessage('FRIEND_REQUEST')
@@ -133,7 +130,7 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 			if (user_send)
 				user_send.socket.emit('UPDATE_DB', await this.userService.parseUserInfo(db_user_send.id))
 		}
-		catch (e){}
+		catch (e){console.log(e)}
 	}
 	@SubscribeMessage('BLOCKED')
 	async blocked(@MessageBody() data: BLOCKED_DATA) {
@@ -162,7 +159,7 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 			if (user_to_block)
 				user_to_block.socket.emit('UPDATE_DB', await this.userService.parseUserInfo(db_user_to_block.id))
 		}
-		catch (e){}
+		catch (e){console.log(e)}
 	}
 	/*
 		return array of object with id, username and status
@@ -617,7 +614,8 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 				user_send.status = status.InQueue
 				const otherUser:UserSocket = this.userService.findConnectedUserById(this.gameService.findOtherPlayer(user_send, data.mode));
 				if (otherUser){
-					let game = this.gameService.createGame([user_send, otherUser], data.mode)
+					const db_otherUser:User = await this.userRepository.findOne({ where:{id:otherUser.id} })
+					let game = this.gameService.createGame([user_send, otherUser], [db_user_send, db_otherUser], data.mode)
 					this.emitPopUp([user_send,otherUser], {error:false, message: `Game founded.`});
 					this.server.to(game.id).emit("GAME_FOUND", {gameID:game.id, mode:data.mode})
 					user_send.status = status.InGame
@@ -626,7 +624,7 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 					this.gameService.removeFromQueue([user_send.id, otherUser.id])
 				}
 			}
-		} catch (e){}
+		} catch (e){console.log(e)}
 	}
 
 	@SubscribeMessage('QUIT_QUEUE')
@@ -638,7 +636,7 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 			if (user_send != undefined){
 				this.gameService.removeFromQueue([user_send.id])
 			}
-		} catch (e){}
+		} catch (e){console.log(e)}
 	}
 
 	@SubscribeMessage('SPECTATE')
@@ -651,7 +649,7 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 				user.status = status.Spectate
 				user.socket.emit("JOIN_SPECTATE", {gameId})
 			}
-		} catch (e){}
+		} catch (e){console.log(e)}
 	}
 
 	@SubscribeMessage('QUIT_GAME')
@@ -663,7 +661,7 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 			if (user_send != undefined){
 				this.gameService.quitGame(data.gameID, user_send)
 			}
-		} catch (e){}
+		} catch (e){console.log(e)}
 	}
 
 	@SubscribeMessage('CHALLENGED')
@@ -684,8 +682,9 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 				case ("ACCEPT"):{
 					this.gameService.removeFromQueue([user_asking.id, user_receiving.id])
 					user_asking.socket.emit("CHALLENGED", {who:undefined})
-
-					let game = this.gameService.createGame([user_asking, user_receiving], data.mode)
+					const db_user_asking:User = await this.userRepository.findOne({ where:{id:data.asking} })
+					const db_user_receiving:User = await this.userRepository.findOne({ where:{id:data.receiving} })
+					let game = this.gameService.createGame([user_asking, user_receiving], [db_user_asking, db_user_receiving], data.mode)
 					this.emitPopUp([user_asking,user_receiving], {error:false, message: `Game founded.`});
 					this.server.to(game.id).emit("GAME_FOUND", {gameID:game.id, mode:data.mode})
 					user_asking.status = status.InGame
@@ -699,7 +698,7 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 					break;
 				}
 			}
-		} catch (e){}
+		} catch (e){console.log(e)}
 	}
 
 	@SubscribeMessage('KEYPRESS')
@@ -707,14 +706,14 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 		try {
 			await this.authService.validToken(data.jwt)
 			this.gameService.findGame(data.gameID).pong.keyPress(data.id, data.dir == "ArrowUp" ? -1 : 1, data.on)
-		} catch (e){}
+		} catch (e){console.log(e)}
 	}
 	@SubscribeMessage('MOUSE_CLICK')
 	async mouseclick(@MessageBody() data: {pos:{x:number, y:number},id:number,gameID:string,jwt:string}) {
 		try {
 			await this.authService.validToken(data.jwt)
 			this.gameService.findGame(data.gameID).pong.mouseclick(data.id, data.pos)
-		} catch (e){}
+		} catch (e){console.log(e)}
 	}
 
 	@SubscribeMessage('EDIT_USERNAME')
@@ -730,19 +729,23 @@ export class UserGateway implements OnGatewayConnection, OnGatewayDisconnect, On
 			let ret = await this.userService.editUsername(data.id, data.newUsername)
 			if (ret == 1) {
 				this.emitPopUp([userSocket], {error:false, message: `Username successfuly changed.`});
+				if (userSocket.gameID)
+					this.gameService.updateUser(userSocket.gameID, await this.userRepository.findOne({ where:{id:data.id} }))
 				userSocket.socket.emit("UPDATE_DB", await this.userService.parseUserInfo(data.id))
 			}
 			else
 				this.emitPopUp([userSocket], {error:true, message: `Username already exist.`});
-		} catch (e){}
+		} catch (e){console.log(e)}
 	}
 	@SubscribeMessage('EDIT_PROFILPIC')
 	async editProfilPic(@MessageBody() data:{id:number, url:string, jwt:string}) {
 		try {
 			await this.authService.validToken(data.jwt)
-			this.userService.changePic(data.id, data.url)
+			await this.userService.changePic(data.id, data.url)
 			const userSocket:UserSocket = this.userService.findConnectedUserById(data.id);
+			if (userSocket.gameID)
+				this.gameService.updateUser(userSocket.gameID, await this.userRepository.findOne({ where:{id:data.id} }))
 			this.emitPopUp([userSocket], {error:false, message: `Profil successfuly changed.`});
-		} catch (e){}
+		} catch (e){console.log(e)}
 	}
 }

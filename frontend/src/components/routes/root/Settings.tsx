@@ -3,7 +3,6 @@ import React from 'react'
 // Components
 import NavBar from '../../navbar/NavBar'
 import Footer from '../../commons/footer/Footer';
-import ContactList from '../../contactList/ContactList';
 import SettingsProfile from '../../settings/SettingsProfile';
 import Settings2FA from '../../settings/Settings2FA';
 

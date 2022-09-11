@@ -7,7 +7,7 @@ import NavBarButtonHome from		'../commons/buttons/NavBarButtonHome'
 import NavProfile from './NavProfile'
 
 // Icons
-import { FiZap, FiEyeOff, FiAlertOctagon} from 'react-icons/fi'
+import { FiZap} from 'react-icons/fi'
 
 // Hooks
 import { useSelector, useDispatch } from 'react-redux'

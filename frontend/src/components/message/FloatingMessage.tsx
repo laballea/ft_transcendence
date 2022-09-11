@@ -7,8 +7,7 @@ import { FiChevronsDown, FiChevronsUp, FiEdit, FiLogOut, FiSettings, FiSlash, Fi
 import { setCurrentConv } from '../../store/global/reducer';
 import './noScrollBar.css'
 import { truncateString } from '../commons/utils/truncateString';
-import { deleteMember, changePass, upgradeMember, downgradeMember, banMember, muteMember, unmutedMember } from '../../context/socket';
-import NavBarButtonSecondary from '../commons/buttons/NavBarButtonSecondary';
+import { deleteMember, upgradeMember, downgradeMember, banMember, muteMember, unmutedMember } from '../../context/socket';
 import MiniButtonSecondary from '../commons/buttons/MiniButtonSecondary';
 import MiniIconButton from '../commons/buttons/MiniIconButton';
 
@@ -23,10 +22,6 @@ function FloatingMessage() {
 	const dispatch = useDispatch();
 	const [settings, setSettings] = useState(false)
 	const [newPass, setNewPass] = useState(false)
-	const [input, setInput] = useState({
-		oldPass: "",
-		newPass: ""
-	})
 
 	const conv = global.currentConv === -1 ?
 		{
@@ -37,13 +32,6 @@ function FloatingMessage() {
 		}
 		:
 		global.currentConv
-
-	const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
-		setInput({
-			...input,
-			[e.target.name]: e.target.value
-		})
-	}
 
 	useEffect(() => {
 		var element = document.getElementById("someRandomID");

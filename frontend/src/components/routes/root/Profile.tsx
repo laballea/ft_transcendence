@@ -3,7 +3,6 @@ import React, {useState, useEffect} from 'react'
 // Components
 import NavBar from			'../../navbar/NavBar'
 import Footer from			'../../commons/footer/Footer';
-import ContactList from		'../../contactList/ContactList';
 import ProfileInfos from	'../../profile/ProfileInfos';
 import ProfileHistory from	'../../profile/ProfileHistory';
 import ProfileStats from	'../../profile/ProfileStats';
@@ -20,11 +19,8 @@ import { status } from '../../../common/types'
 
 import { useLocation } from "react-router-dom";
 import Loading from '../../commons/utils/Loading';
-import { useSelector } from 'react-redux';
-import CreateRoom from '../../message/CreateRoom';
-import FloatingMessage from '../../message/FloatingMessage';
-import ChatBar from '../../message/chatBar';
 import SocialInterface from '../../commons/socialInterface/SocialInterface';
+import { useSelector } from 'react-redux';
 
 type ProfileProps = {
 	contact: {
@@ -39,26 +35,32 @@ const Profile = ({contact} : ProfileProps) => {
 	const param:any = useLocation()
 	const id = param.state !== null ? param.state.id : contact.id
 	const [user, setUser] = useState(null)
+	const [loading, setLoading] = useState(true)
 
-	var eventSource:EventSource;
+	const getGame = () => {
+		const requestOptions = {
+			method: 'GET',
+			headers: {
+				'Content-Type': 'application/json;charset=utf-8',
+				'Access-Control-Allow-Origin': '*',
+				'Authorization': 'bearer ' + global.token,
+			},
+		}
+		fetch(`http://${process.env.REACT_APP_ip}:5000/users/gameStat?id=` + id, requestOptions)
+		.then(async resp=>{
+			let json = await resp.json();
+			setUser(prevState => (json))
+			setLoading(false)
+		})
+	}
 
 	useEffect(() => {
-		// eslint-disable-next-line
-		eventSource = new EventSource(`http://${process.env.REACT_APP_ip}:5000/users/gameStat?id=` + id);
-		window.addEventListener("beforeunload", function (event) {
-			eventSource.close();
-		})
-		eventSource.onmessage = ({ data }) => {
-			const json = JSON.parse(data)
-			setUser(prevState => (json.gameStats))
-		}
+		setLoading(true)
+		let inter = setInterval(getGame, 1000);
 		return () => {
-			setUser(null)
-			window.removeEventListener("beforeunload", function (event) {
-				eventSource.close();
-			})
-			eventSource.close()
+			clearInterval(inter)
 		};
+	// eslint-disable-next-line
 	}, [id]);
 	return (
 
@@ -69,7 +71,7 @@ const Profile = ({contact} : ProfileProps) => {
 				
 				<div className="w-[calc(100%-400px)] overflow-scroll h-full flex sm:block justify-between z-10 p-[40px]">
 					{
-							user && id ?
+							!loading && user ?
 							<div className=''>
 								<ProfileActions contact={user}/>
 								<ProfileInfos	contact={user}/>

@@ -239,6 +239,8 @@ const Logging = () => {
 						<label className="font-space text-slate-400 text-xs" >test-login:</label>
 						<input className="h-8 w-[260px] p-4 mb-2 font-space bg-transparent border-2 border-slate-400 hover:border-slate-200 text-md text-slate-400 placeholder:text-slate-600 rounded transition-all duration-300 ease-in-out"
 							type="text"
+							pattern="[A-Za-z0-9]+"
+							title="No whitespace."
 							placeholder="username"
 							value={username}
 							onChange={e => setUsername(e.target.value)} required

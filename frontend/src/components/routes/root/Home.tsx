@@ -2,18 +2,14 @@ import React from 'react'
 
 // Components
 import NavBar from '../../navbar/NavBar'
-import ContactList from '../../contactList/ContactList';
-import FloatingMessage from '../../message/FloatingMessage';
 import Footer from '../../commons/footer/Footer';
 // CSS
 import '../../../assets/fonts/fonts.css';
 
 //Redux
 import { useSelector } from 'react-redux';
-import ChatBar from '../../message/chatBar';
 import Game from '../../game/Game';
 import { status } from '../../../common/types';
-import CreateRoom from '../../message/CreateRoom';
 import BackgroundLobby from '../../commons/backgrounds/BackgroundLobby';
 import SocialInterface from '../../commons/socialInterface/SocialInterface';
 
@@ -35,7 +31,7 @@ export default function Home() {
 							<Game/>
 							:
 							<div className='w-full h-full'>
-								<BackgroundLobby></BackgroundLobby>
+								<BackgroundLobby/>
 							</div>
 						}
 					

@@ -1,4 +1,5 @@
 import { GameI, GameUserI, GameBallI, GAME_STATUS, gamemode } from 'src/common/types';
+import { UserI } from 'src/user/models/user.interface';
 
 export class Pong {
 	constructor(
@@ -21,7 +22,7 @@ export class Pong {
 	}
 	protected mode:gamemode
 	protected users:GameUserI[]
-	public		status:GAME_STATUS
+	public	status:GAME_STATUS
 	protected ball:GameBallI
 	protected map: {width:number, height:number}
 	protected timeBegin: number
@@ -107,7 +108,7 @@ export class Pong {
 			}
 		}
 		if (this.status != GAME_STATUS.ENDED){
-			setTimeout(function () {this.run()}.bind(this), 30)
+			setTimeout(function () {this.run()}.bind(this), 16)
 		}
 	}
 
@@ -208,7 +209,8 @@ export class Pong {
 	}
 
 	giveUp(userID:number){
-		for (const user of this.users){
+		for (const idx in this.users){
+			let user = this.users[idx]
 			if (user.id !== userID){
 				this.status = GAME_STATUS.WINNER
 				this.countDown = 5
@@ -220,8 +222,18 @@ export class Pong {
 				break ;
 			}
 		}
-	}
 
+	}
+	updateUser(userDb:UserI){
+		for (const idx in this.users){
+			let user = this.users[idx]
+			if (user.id === userDb.id){
+				user.username = userDb.username
+				user.profilPic = userDb.profilPic
+				break ;
+			}
+		}
+	}
 	pause(status:boolean, userId:number){
 		if (status){
 			this.countDown = 10

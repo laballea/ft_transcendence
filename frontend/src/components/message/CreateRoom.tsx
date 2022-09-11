@@ -1,16 +1,12 @@
 import React, { useState} from 'react';
-import { useDispatch, useSelector } from 'react-redux'
-import IconButton from '../commons/buttons/IconButton';
-import { FiArrowUpCircle, FiKey, FiPlusSquare, FiX } from 'react-icons/fi';
-import { setCreateRoom } from '../../store/global/reducer';
+import { useSelector } from 'react-redux'
+import { FiKey, FiPlusSquare} from 'react-icons/fi';
 import './noScrollBar.css'
 import { joinRoomSocket, newChatRoom } from '../../context/socket';
 import ChatBar from './chatBar';
-import MiniIconButton from '../commons/buttons/MiniIconButton';
 
 function CreateRoom() {
 	const global = useSelector((state: any) => state.global)
-	const dispatch = useDispatch();
 	const [mode, setMode] = useState(0)
 	const [input, setInput] = useState({
 		roomName: "",
@@ -36,7 +32,7 @@ function CreateRoom() {
 			//alert("room has no name")
 		else {
 			newChatRoom(global, input.roomName, input.password)
-			dispatch(setCreateRoom({}))
+			setMode(0)
 		}
 		setInput({
 			roomName: "",
@@ -48,6 +44,7 @@ function CreateRoom() {
 	const joinRoom = (e : any):void => {
 		e.preventDefault()
 		joinRoomSocket(global, input.roomName, input.password)
+		setMode(0)
 		setInput({
 			roomName: "",
 			password: "",

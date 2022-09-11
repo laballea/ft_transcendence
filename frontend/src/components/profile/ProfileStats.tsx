@@ -33,7 +33,7 @@ const victoryprct = (gameStats:any, userId:number):number => {
 		else
 			return accumulator
 	}, 0)
-	return totalWin * 100 / gameStats.length
+	return Math.round(totalWin * 100 / gameStats.length)
 }
 
 const maxBallSpeed = (gameStats:any):string => {

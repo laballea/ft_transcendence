@@ -1,7 +1,7 @@
 import React from "react";
-import { Canvas } from '@react-three/fiber'
+// import { Canvas } from '@react-three/fiber'
 
-import Text from "./3d/Text";
+// import Text from "./3d/Text";
 
 // CSS
 import '../../../assets/fonts/fonts.css';
