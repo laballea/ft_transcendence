@@ -7,9 +7,10 @@ import { FiChevronsDown, FiChevronsUp, FiEdit, FiLogOut, FiSettings, FiSlash, Fi
 import { setCurrentConv } from '../../store/global/reducer';
 import './noScrollBar.css'
 import { truncateString } from '../commons/utils/truncateString';
-import { deleteMember, upgradeMember, downgradeMember, banMember, muteMember, unmutedMember } from '../../context/socket';
+import { deleteMember, upgradeMember, downgradeMember, banMember, muteMember, unmutedMember, changePass } from '../../context/socket';
 import MiniButtonSecondary from '../commons/buttons/MiniButtonSecondary';
 import MiniIconButton from '../commons/buttons/MiniIconButton';
+import { useNavigate } from 'react-router-dom';
 
 export interface MessageI {
 		author: string
@@ -22,6 +23,11 @@ function FloatingMessage() {
 	const dispatch = useDispatch();
 	const [settings, setSettings] = useState(false)
 	const [newPass, setNewPass] = useState(false)
+	let navigate = useNavigate();
+	const [input, setInput] = useState({
+		oldPass: "",
+		newPass: ""
+	})
 
 	const conv = global.currentConv === -1 ?
 		{
@@ -32,6 +38,13 @@ function FloatingMessage() {
 		}
 		:
 		global.currentConv
+
+	const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
+		setInput({
+			...input,
+			[e.target.name]: e.target.value
+		})
+	}
 
 	useEffect(() => {
 		var element = document.getElementById("someRandomID");
@@ -44,8 +57,11 @@ function FloatingMessage() {
 			<div className={`flex 
 							w-full rounded-[4px] p-2 pl-4 pr-4
 							border-[1px] border-slate-700
-							font-space text-slate-800`} key={index}>
-				<h3>{ truncateString(user.username, 15) }</h3>
+							font-space text-slate-800  cursor-pointer`} key={index}>
+				<h3 className={`hover:text-slate-300 transition-all duration-300 ease-in-out`}
+								onClick={()=>navigate('/app/profile/' + user.username, { state: {id:user.id} })}>
+					{ truncateString(user.username, 15) }
+				</h3>
 				<div className='flex items-center justify-end w-full'>
 				{
 					conv.adminId.find((e:number) => e === global.id) !== undefined && conv.adminId.find((e:number) => e === user.id) === undefined &&
