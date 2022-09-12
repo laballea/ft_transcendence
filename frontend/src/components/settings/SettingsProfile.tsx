@@ -66,7 +66,8 @@ const SettingsProfile = ({username, userImage} : SettingsProfileProps) => {
 							pattern="[A-Za-z0-9]+"
 							title="This field is required"
 							className='w-[368px] bg-transparent focus:outline-none'
-							placeholder={newUsername}
+							value={newUsername}
+							required
 							onChange={(event)=>setNewUsername(event.target.value)}
 						>
 						</input>

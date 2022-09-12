@@ -8,11 +8,13 @@ export class GameController {
 	constructor(private gameService:GameService) {}
 
 	@Get('queue')
+	@UseGuards(JwtAuthGuard)
 	getQueue():any {
 		return this.gameService.Queue;
 	}
 
 	@Get('games')
+	@UseGuards(JwtAuthGuard)
 	getGames():any {
 		return this.gameService.Games.map(game => {return {
 			id:game.id,

@@ -42,21 +42,25 @@ export class UserController {
 	}
 
 	@Get('search')
+	@UseGuards(JwtAuthGuard)
 	async findUserByUsername(@Query() query,  @Res() res) {
 		res.send(await this.getUserLIst(0, query.username))
 	}
 
 	@Get()
+	@UseGuards(JwtAuthGuard)
 	findAll():Promise<UserI[]> {
 		return this.userService.findAll();
 	}
 
 	@Get('connected')
+	@UseGuards(JwtAuthGuard)
 	findCon():Object {
 		return this.userService.getConnected();
 	}
 
 	@Get('gameStat')
+	@UseGuards(JwtAuthGuard)
 	async gameStat(@Query() query) {
 		return await this.userService.getGameStatByUserId(query.id)
 		return interval(1000).pipe(
@@ -66,6 +70,7 @@ export class UserController {
 
 
 	@Get('contactList')
+	@UseGuards(JwtAuthGuard)
 	async contactList(@Query() query){
 		return await this.getUserLIst(query.id, query.searchUsername)
 		return interval(1000).pipe(

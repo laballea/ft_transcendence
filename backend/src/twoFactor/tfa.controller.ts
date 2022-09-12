@@ -43,8 +43,6 @@ export class TwoFactorAuthenticationController {
 			return ;
 		}
 		await this.userService.turnOnTwoFactorAuthentication(request.user.id);
-		/*const userSocket:UserSocket = this.userService.findConnectedUserById(request.user.id);
-		userSocket.socket.emit("UPDATE_DB", await this.userService.parseUserInfo(request.user.id))*/
 		res.sendStatus(HttpStatus.OK)
 		return ;
 	}
@@ -53,8 +51,6 @@ export class TwoFactorAuthenticationController {
 	@UseGuards(JwtAuthGuard)
 	async turnOffTwoFactorAuthentication(@Req() request: RequestWithUser) {
 		await this.userService.turnOffTwoFactorAuthentication(request.user.id);
-		/*const userSocket:UserSocket = this.userService.findConnectedUserById(request.user.id);
-		userSocket.socket.emit("UPDATE_DB", await this.userService.parseUserInfo(request.user.id))*/
 		return HttpStatus.OK
 	}
 

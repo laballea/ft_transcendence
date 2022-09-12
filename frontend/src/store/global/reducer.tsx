@@ -82,7 +82,7 @@ export const globalSlice = createSlice({
 			}
 			else if (conv === undefined) {
 				let tmp_conv = state.conv.find((conv:any) => {
-					return conv.users.length === 2 && conv.users.findIndex((user:any) => user.username === username) >= 0
+					return conv.ownerId === undefined && conv.users.length === 2 && conv.users.findIndex((user:any) => user.username === username) >= 0
 				})
 				if (tmp_conv === undefined){
 					state.clientChat = username

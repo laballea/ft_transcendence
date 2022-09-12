@@ -157,7 +157,6 @@ function FloatingMessage() {
 											value={input.oldPass}
 											onChange={handleChange}
 											name="oldPass"
-											required
 										/>
 										<input
 											className="	flex h-12 w-full
@@ -174,7 +173,6 @@ function FloatingMessage() {
 											value={input.newPass}
 											onChange={handleChange}
 											name="newPass"
-											required
 										/>
 									</div>
 									<button

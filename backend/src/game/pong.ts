@@ -172,6 +172,8 @@ export class Pong {
 				this.ball.d = this.randomDir(newPosx < this.ball.size ? 1 : 0)
 				bounce = true
 			}
+			if (this.ball.speed > this.maxBallSpeed)
+				this.maxBallSpeed = this.ball.speed
 			this.ball.posx = newPosx
 			this.ball.posy = newPosy
 			if (bounce)

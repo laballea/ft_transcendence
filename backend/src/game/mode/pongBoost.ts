@@ -67,8 +67,6 @@ export class Boost extends Pong {
 						}
 						user.clickpos = []
 						this.ball.speed += 1
-						if (this.ball.speed > this.maxBallSpeed)
-							this.maxBallSpeed = this.ball.speed
 						bounce = true
 					}
 				}
