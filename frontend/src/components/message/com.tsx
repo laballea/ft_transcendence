@@ -22,6 +22,10 @@ const Com: React.FC<IProps> = ({ conv }) => {
 		})
 	}
 
+	const onlySpaces = (str : string) => {
+		return str.trim().length === 0;
+	  }
+
 	const sendMessage = (event : any): void => {
 		event.preventDefault();
 		if (conv.adminId !== undefined) {
@@ -33,7 +37,7 @@ const Com: React.FC<IProps> = ({ conv }) => {
 				jwt:global.token
 			})
 		}
-		else {
+		else if(!onlySpaces(input.content)){
 			socket.emit('dmServer', {
 				content: input.content,
 				client_send: global.username,
