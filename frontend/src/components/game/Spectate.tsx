@@ -45,18 +45,32 @@ const Spectate = () => {
 	useEffect(() => {
 		const resizeObserver = new ResizeObserver((event) => {
 			if (overlayEl.current != null) {
-					let width = overlayEl.current.clientHeight * 1.9 > (window.innerWidth - 400) ? window.innerWidth - 400 : overlayEl.current.clientHeight * 1.9;
-					let height = overlayEl.current.clientHeight * 1.9 > (window.innerWidth - 400) ? (window.innerWidth - 400)/ 1.9 : overlayEl.current.clientHeight;
-					setWidth(width);
-					setHeight(height);
+				let limitHeight = window.innerHeight - 250
+				let limitWidth = window.innerWidth - 450
+				let tmpwidth = limitWidth;
+				let tmpheight = limitWidth / 1.9;
+				if (tmpheight >= limitHeight){
+					tmpheight = limitHeight
+					tmpwidth = limitHeight * 1.9
 				}
+				setWidth(tmpwidth)
+				setHeight(tmpheight)
+			}
 		});
 		resizeObserver.observe(document.getElementById("GameDiv")!);
 	})
 	return (
-		<div ref={overlayEl} className="relative flex-1 h-full justify-center
-										animate-slidein" id="GameDiv">
-			{game != null && <Canvas width={width} height={height} game={game} username={global.username} ratio={width / 1900}/>}
+		<div ref={overlayEl} className="relative flex h-full justify-center items-center p-[24px] overflow-hidden animate-slidein" id="GameDiv">
+			{width > 500 ?
+				<div className="relative w-full h-auto" >
+					{game != null && <Canvas width={width} global={global} height={height} game={game} username={global.username} ratio={width / 1900}/>}
+				</div>
+				:
+				<div className="relative w-full h-auto 
+								font-pilowlava text-transparent backgroundTextOutline text-[32px]">
+					<p>too small</p>
+				</div>
+			}
 		</div>
 	)
 }

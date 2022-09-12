@@ -108,7 +108,8 @@ const Pong = () => {
 					{game != null && <Canvas width={width} global={global} height={height} game={game} username={global.username} ratio={width / 1900}/>}
 				</div>
 				:
-				<div className="relative w-full h-auto" >
+				<div className="relative w-full h-auto 
+								font-pilowlava text-transparent backgroundTextOutline text-[32px]">
 					<p>too small</p>
 				</div>
 			}

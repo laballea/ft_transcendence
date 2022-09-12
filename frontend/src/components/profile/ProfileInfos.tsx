@@ -4,6 +4,7 @@ import {useDispatch, useSelector } from 'react-redux';
 // Components
 import DefaultButtonPrimary from '../commons/buttons/DefaultButtonPrimary';
 import { FiEye, FiMessageCircle, FiZap } from 'react-icons/fi';
+import { useNavigate } from "react-router-dom";
 
 // CSS
 import '../../assets/fonts/fonts.css';
@@ -27,6 +28,7 @@ type ProfileInfosProps = {
 const ProfileInfos = ({contact} : ProfileInfosProps) => {
 	const global = useSelector((state: any) => state.global)
 	const dispatch = useDispatch()
+	let navigate = useNavigate();
 	let statusTag : JSX.Element;
 	let actions : JSX.Element;
 	if (contact.username === global.username) // Check if the profile infos gernetated are from loggedin user
@@ -56,11 +58,11 @@ const ProfileInfos = ({contact} : ProfileInfosProps) => {
 		{
 			statusTag = 
 			<span className='text-yellow-500'>
-				{contact.status}
+				{contact.status}			
 			</span>
 			actions = 
 			<>
-				<DefaultButtonPrimary cta='Watch'  icon={FiEye} onClick={()=>{spectateGame(global, global.id, contact.id)}} />
+				<DefaultButtonPrimary cta='Watch'  icon={FiEye} onClick={()=>{navigate('/app');spectateGame(global, global.id, contact.id)}} />
 				<div className='w-4'></div>
 				<DefaultButtonPrimary cta='Message'  icon={FiMessageCircle} onClick={()=>{dispatch(setCurrentConv({username:contact.username}))}} />
 			</>
