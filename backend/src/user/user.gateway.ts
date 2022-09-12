@@ -32,6 +32,7 @@ import { FriendsService } from 'src/friends/friends.service';
 import { GameService } from 'src/game/game.service';
 import * as bcrypt from 'bcrypt';
 import { AuthService } from '../auth/auth.service';
+import e from 'express';
 
 @WebSocketGateway({
 	cors: {
@@ -705,7 +706,13 @@ export class UserGateway {
 	async keyPress(@MessageBody() data: {dir:string,id:number, on:boolean,gameID:string,jwt:string}) {
 		try {
 			await this.authService.validToken(data.jwt)
-			this.gameService.findGame(data.gameID).pong.keyPress(data.id, data.dir == "ArrowUp" ? -1 : 1, data.on)
+			let dir = undefined;
+			if (data.dir == "ArrowUp" || data.dir == "w" || data.dir == "z")
+				dir = -1;
+			else if (data.dir == "ArrowDown" || data.dir == "s" )
+				dir = 1
+			if (dir != undefined)
+				this.gameService.findGame(data.gameID).pong.keyPress(data.id,dir, data.on)
 		} catch (e){console.log(e)}
 	}
 	@SubscribeMessage('MOUSE_CLICK')

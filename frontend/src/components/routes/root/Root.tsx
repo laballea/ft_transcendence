@@ -10,7 +10,7 @@ import { logout, updateDB, gameFound, gameEnd, spectate, challenged } from '../.
 
 //socket
 import { SocketContext, socket} from '../../../context/socket';
-import { Navigate, Routes, Route } from 'react-router-dom';
+import { Navigate, Routes, Route, useNavigate } from 'react-router-dom';
 import Profile from './Profile';
 import Popup from 'reactjs-popup'; 
 import PopUpToaster from '../../commons/popup/PopUpToaster';
@@ -30,6 +30,7 @@ const SocketConnection = (props:any) => {
 	const dispatch = useDispatch();
 	const global = useSelector((state: any) => state.global)
 	const [popup, setPopup] = useState({open:false, error:true, message:""});
+	const navigate = useNavigate();
 
 	React.useEffect(() => {
 		if (popup.open) {
@@ -56,6 +57,7 @@ const SocketConnection = (props:any) => {
 					dispatch(logout())
 				});
 				socket.on("GAME_FOUND", (data) => {
+					navigate('/app')
 					dispatch(gameFound(data))
 				});
 				socket.on("GAME_END", () => {

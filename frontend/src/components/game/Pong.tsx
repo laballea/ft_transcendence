@@ -71,7 +71,7 @@ const Pong = () => {
 		})
 	}
 	useEffect(() => {
-		if (global.gameID != undefined)
+		if (global.gameID !== undefined)
 			getgame()
 		window.addEventListener('keydown',keyDown, true);
 		window.addEventListener('keyup', keyUp, true);
