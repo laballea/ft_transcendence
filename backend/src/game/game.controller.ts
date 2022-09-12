@@ -23,7 +23,11 @@ export class GameController {
 	@Get('games/:id')
 	@UseGuards(JwtAuthGuard)
 	getGamesId(@Param() param):any {
-		return this.gameService.findGame(param.id).pong.getGameInfo()
+		let game = this.gameService.findGame(param.id)
+		if (game)
+			return game.pong.getGameInfo()
+		else
+			return false
 	}
 
 	/*
