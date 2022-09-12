@@ -13,7 +13,8 @@ const Waiting = () => {
 	const socket = useContext(SocketContext);
 	return(
 		<div 
-			className='flex h-full w-full items-center justify-center flex-col'
+			className='flex h-full w-full items-center justify-center flex-col
+						animate-rollin'
 		>
 			<div className='absolute z-0 opacity-25'>
 				<Loading></Loading>

@@ -20,8 +20,7 @@ const Game = () => {
 						to-purple-700/50 
 						bg-[length:400%]
 						animate-bgpanright">
-			<div className='font-pilowlava text-transparent backgroundTextOutline 
-							animate-deglingo'>
+			<div >
 				{global.status === status.InQueue && <Waiting/>}
 				{global.status === status.InGame && <Pong/>}
 				{global.status === status.Spectate && <Spectate/>}
