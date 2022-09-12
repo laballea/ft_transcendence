@@ -22,7 +22,10 @@ const FriendRequestOut = ({username} : FriendRequestOutProps) => {
 					{/* Fetch image */}
 					
 					<div className="border-2 border-transparent rounded-full ml-[8px]">
-						<img src={userImage} width="40" height="40" alt="userimage" className='rounded-full'></img>
+					<div 
+						style={{backgroundImage:`url(${userImage})`}}
+						className='w-[40px] h-[40px] rounded-full' >
+					</div>
 					</div>
 					<div className="ml-[16px]">
 						<p className='absolute mt-[-8px] text-slate-400 font-space text-[10px]'>Request Sent</p>

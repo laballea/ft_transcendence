@@ -49,7 +49,10 @@ function GameBar({game}: GameBarProps) {
 
 				<div className=" w-[32px] h-[32px]
 								bg-slate-500 rounded-full overflow-hidden">
-					<img src={game.users[1].profilPic} className="rounded-full" width="32" height="32" alt="userimage"></img>
+					<div 
+						style={{backgroundImage:`url(${game.users[1].profilPic})`}}
+						className='w-[32px] h-[32px] rounded-full' >
+					</div>
 				</div>
 				<p>{game.users[1].username}</p>
 			</div>

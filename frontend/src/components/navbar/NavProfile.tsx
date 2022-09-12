@@ -30,6 +30,10 @@ const NavProfile = ({username, userImage, onClickSettings, onClickLogOut, onClic
 								cursor-pointer
 								"
 					onClick={onClickProfile}>
+						<div 
+							style={{backgroundImage:`url(${userImage})`}}
+							className='w-[40px] h-[40px] rounded-full' >
+						</div>
 					<img src={userImage} width="40" height="40" alt="userimage" className="rounded-full mr-[8px]"></img>
 					<p className="sm:block hidden">
 						{truncateString(username, 15)}

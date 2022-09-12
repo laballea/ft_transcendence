@@ -30,7 +30,10 @@ const FriendRequestIn = ({username} :  FriendRequestInProps) => {
 					{/* Fetch image */}
 					
 					<div className="border-2 border-green-500 rounded-full ml-[8px]">
-						<img src={userImage} width="40" height="40" alt="userimage" className='rounded-full'></img>
+						<div 
+							style={{backgroundImage:`url(${userImage})`}}
+							className='w-[40px] h-[40px] rounded-full' >
+						</div>
 					</div>
 					<div className="ml-[16px]">
 						<p className='absolute mt-[-8px] text-green-500 font-space text-[10px]'>added You</p>

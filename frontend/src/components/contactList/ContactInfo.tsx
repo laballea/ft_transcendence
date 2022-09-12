@@ -30,21 +30,27 @@ const ContactInfo = ({contact, userImage, challenge} : ContactInfoProps) => {
 					{
 						contact.status === status.Disconnected ?
 							<div className="border-2 border-transparent rounded-full ml-[8px]">
-								<img src={userImage} width="40" height="40" alt="userimage" className='rounded-full' >
-								</img>
+								<div 
+										style={{backgroundImage:`url(${userImage})`}}
+										className='w-[40px] h-[40px] rounded-full' >
+								</div>
 							</div>
 						:
 							<>
 							{
 								contact.status === status.InGame ?
 								<div className="border-2 border-yellow-500 rounded-full ml-[8px]">
-									<img src={userImage} width="40" height="40" alt="userimage" className='rounded-full' onClick={()=>{}}>
-									</img>
+									<div 
+										style={{backgroundImage:`url(${userImage})`}}
+										className='w-[40px] h-[40px] rounded-full' >
+									</div>
 								</div>
 								:
 								<div className="border-2 border-green-500 rounded-full ml-[8px]">
-									<img src={userImage} width="40" height="40" alt="userimage" className='rounded-full'onClick={()=>{}}>
-									</img>
+									<div 
+										style={{backgroundImage:`url(${userImage})`}}
+										className='w-[40px] h-[40px] rounded-full' >
+									</div>
 								</div>
 							}
 							</>

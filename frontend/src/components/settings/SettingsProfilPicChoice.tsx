@@ -61,13 +61,16 @@ const SettingsProfilPicChoice = () => {
 	}, []);
 
 	const profilPicsComp = profilPics.length > 0 ? profilPics.map((url:string, index:number) =>
-		<div className='w-[64px] h-[64px] rounded-full' key={index} onClick={()=> {editProfilPicSocket(global, url)}}>
-			<img src={url} width="64" height="64" alt="profilpic" className='rounded-full'></img>
+		<div 
+			style={{backgroundImage:`url(${url})`}}
+			className='w-[64px] h-[64px] rounded-full' 
+			key={index} 
+			onClick={()=> {editProfilPicSocket(global, url)}}>
 		</div>
 	): [];
 	return (
-		<>
-			<div className='flex items-center gap-2 h-[200px] overflow-scroll'>
+		<div className='w-full'>
+			<div className='flex items-center gap-2 h-fullS w-full flex-wrap'>
 				<div className='w-[64px] h-[64px] rounded-full
 								bg-slate-700 hover:bg-slate-600
 								flex items-center justify-center
@@ -91,11 +94,11 @@ const SettingsProfilPicChoice = () => {
 							onChange={onFileChange} 
 					>
 					</input>
-					<FiPlus/>
+					<FiPlus size={32}/>
 				</div> 
 				{ profilPicsComp }
 			</div>
-		</>
+		</div>
 	)
 }
 
