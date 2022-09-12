@@ -71,6 +71,7 @@ const ContactList = () => {
 							<Loading/>
 						</div>
 				}
+				<div className="absolute bottom-0 w-full h-[1px] bg-slate-700 "></div>
 			</div>
 		</div>
 	)
