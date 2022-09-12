@@ -42,6 +42,7 @@ const NavBar = () => {
 								mode:global.gamemode,
 								jwt:global.token
 							})
+							navigate('/app')
 							dispatch(setGameStatus(status.InQueue))
 						}					
 					}/>
