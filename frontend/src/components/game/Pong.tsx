@@ -54,7 +54,6 @@ const Pong = () => {
 		}
 	}
 	const getgame = () => {
-		console.log("HERE", global.gameID)
 		const requestOptions = {
 			method: 'GET',
 			headers: {
@@ -67,25 +66,13 @@ const Pong = () => {
 		.then(async response=>{
 			let resp = await response.json();
 			setGame(resp)
-			console.log(resp.status)
 			if (resp.status !== GAME_STATUS.WINNER && global.gameID !== undefined)
 				setTimeout(getgame.bind(global), 16);
 		})
 	}
-	console.log("HERE", global.gameID)
-
 	useEffect(() => {
 		if (global.gameID != undefined)
 			getgame()
-		/*let eventSource = new EventSource(`http://${process.env.REACT_APP_ip}:5000/game/` + global.gameID);
-
-		eventSource.onmessage = async ({ data }) => {
-			const json = await JSON.parse(data)
-			setGame(json.game)
-		}*/
-		/*window.addEventListener("beforeunload", function (event) {
-			eventSource.close();
-		})*/
 		window.addEventListener('keydown',keyDown, true);
 		window.addEventListener('keyup', keyUp, true);
 		window.addEventListener('mousedown', mouseDown, true);
@@ -93,10 +80,6 @@ const Pong = () => {
 			window.removeEventListener('keydown', keyDown, true)
 			window.removeEventListener('keyup', keyUp, true)
 			window.removeEventListener('mousedown', mouseDown, true)
-			/*window.removeEventListener("beforeunload", function (event) {
-				eventSource.close();
-			})
-			eventSource.close()*/
 		};
 	// eslint-disable-next-line
 	}, []);
@@ -104,19 +87,27 @@ const Pong = () => {
 	useEffect(() => {
 		const resizeObserver = new ResizeObserver((event) => {
 			if (overlayEl.current != null) {
-					let width = overlayEl.current.clientHeight * 1.9 > (window.innerWidth - 400) ? window.innerWidth - 400 : overlayEl.current.clientHeight * 1.9;
-					let height = overlayEl.current.clientHeight * 1.9 > (window.innerWidth - 400) ? (window.innerWidth - 400)/ 1.9 : overlayEl.current.clientHeight;
-					setWidth(width)
-					setHeight(height)
+				let limitHeight = window.innerHeight - 250
+				let limitWidth = window.innerWidth - 450
+				let tmpwidth = limitWidth;
+				let tmpheight = limitWidth / 1.9;
+				if (tmpheight >= limitHeight){
+					tmpheight = limitHeight
+					tmpwidth = limitHeight * 1.9
 				}
+				setWidth(tmpwidth)
+				setHeight(tmpheight)
+			}
 		});
 		resizeObserver.observe(document.getElementById("GameDiv")!);
 	})
 	return (
-		<div  className="relative flex h-full justify-center items-center p-[24px] overflow-hidden" id="GameDiv">
-			<div className="relative w-full h-full" ref={overlayEl}>
-				{game != null && <Canvas width={width} global={global} height={height} game={game} username={global.username} ratio={width / 1900}/>}
-			</div>
+		<div ref={overlayEl} className="relative flex h-full justify-center items-center p-[24px] overflow-hidden" id="GameDiv">
+			{
+				<div className="relative w-full h-auto" >
+					{game != null && <Canvas width={width} global={global} height={height} game={game} username={global.username} ratio={width / 1900}/>}
+				</div>
+			}
 		</div>
 	)
 }
