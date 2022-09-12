@@ -61,7 +61,7 @@ const SettingsProfilPicChoice = () => {
 	}, []);
 
 	const profilPicsComp = profilPics.length > 0 ? profilPics.map((url:string, index:number) =>
-		<div className='w-[64px] h-[64px] rounded-full' key={index} onClick={()=> {editProfilPicSocket(global, url)}}>
+		<div className='w-[64px] h-[64px] rounded-full cursor-pointer' key={index} onClick={()=> {editProfilPicSocket(global, url)}}>
 			<img src={url} width="64" height="64" alt="profilpic" className='rounded-full'></img>
 		</div>
 	): [];

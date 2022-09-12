@@ -141,7 +141,7 @@ function FloatingMessage() {
 								<form  className='flex flex-grow flex-col items-center w-full justify-between'
 										onSubmit={ () => {changePass(global, conv.id, global.id, input.oldPass, input.newPass)
 											setNewPass(!newPass)
-							}}>
+									}}>
 									<div className='flex flex-col items-center gap-2 w-full'>
 										<input
 											className="flex h-12 w-full
@@ -185,7 +185,7 @@ function FloatingMessage() {
 									>
 										<p>Confirm</p>
 									</button>
-							</form>
+								</form>
 								: 
 								users 
 							}
