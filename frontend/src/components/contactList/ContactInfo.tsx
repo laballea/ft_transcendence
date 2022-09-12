@@ -32,7 +32,7 @@ const ContactInfo = ({contact, userImage, challenge} : ContactInfoProps) => {
 							<div className="border-2 border-transparent rounded-full ml-[8px]">
 								<div 
 										style={{backgroundImage:`url(${userImage})`}}
-										className='w-[40px] h-[40px] rounded-full' >
+										className='w-[40px] h-[40px] rounded-full bg-cover' >
 								</div>
 							</div>
 						:
@@ -42,14 +42,14 @@ const ContactInfo = ({contact, userImage, challenge} : ContactInfoProps) => {
 								<div className="border-2 border-yellow-500 rounded-full ml-[8px]">
 									<div 
 										style={{backgroundImage:`url(${userImage})`}}
-										className='w-[40px] h-[40px] rounded-full' >
+										className='w-[40px] h-[40px] rounded-full bg-cover' >
 									</div>
 								</div>
 								:
 								<div className="border-2 border-green-500 rounded-full ml-[8px]">
 									<div 
 										style={{backgroundImage:`url(${userImage})`}}
-										className='w-[40px] h-[40px] rounded-full' >
+										className='w-[40px] h-[40px] rounded-full bg-cover' >
 									</div>
 								</div>
 							}

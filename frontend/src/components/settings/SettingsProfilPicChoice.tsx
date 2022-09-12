@@ -63,14 +63,14 @@ const SettingsProfilPicChoice = () => {
 	const profilPicsComp = profilPics.length > 0 ? profilPics.map((url:string, index:number) =>
 		<div 
 			style={{backgroundImage:`url(${url})`}}
-			className='w-[64px] h-[64px] rounded-full' 
+			className='w-[64px] h-[64px] rounded-full bg-cover cursor-pointer' 
 			key={index} 
 			onClick={()=> {editProfilPicSocket(global, url)}}>
 		</div>
 	): [];
 	return (
 		<div className='w-full'>
-			<div className='flex items-center gap-2 h-fullS w-full flex-wrap'>
+			<div className='flex items-center gap-2 h-full w-full flex-wrap'>
 				<div className='w-[64px] h-[64px] rounded-full
 								bg-slate-700 hover:bg-slate-600
 								flex items-center justify-center

@@ -32,9 +32,9 @@ const NavProfile = ({username, userImage, onClickSettings, onClickLogOut, onClic
 					onClick={onClickProfile}>
 						<div 
 							style={{backgroundImage:`url(${userImage})`}}
-							className='w-[40px] h-[40px] rounded-full' >
+							className='w-[40px] h-[40px] mr-[8px] rounded-full bg-cover' >
 						</div>
-					<img src={userImage} width="40" height="40" alt="userimage" className="rounded-full mr-[8px]"></img>
+						
 					<p className="sm:block hidden">
 						{truncateString(username, 15)}
 					</p>
@@ -50,7 +50,11 @@ const NavProfile = ({username, userImage, onClickSettings, onClickLogOut, onClic
 							cursor-pointer" 
 				onClick={() => setShowMenu(!showMenu)}>
 				<div>
-					<img src={userImage} width="40" height="40" alt="userimage" className="rounded-full mr-[8px]"></img>
+					<div 
+						style={{backgroundImage:`url(${userImage})`}}
+						className='w-[40px] h-[40px] rounded-full bg-cover' >
+					</div>
+					
 				</div>
 				{ showMenu 
 					? 

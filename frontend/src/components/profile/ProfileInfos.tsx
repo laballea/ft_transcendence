@@ -95,7 +95,11 @@ const ProfileInfos = ({contact} : ProfileInfosProps) => {
 
 	return (
 		<div className='flex items-center mb-[64px]'>
-			<img src={contact.profilPic} width="200" height="200" alt="userimage" className="rounded-full mr-[16px]"></img>
+			<div 
+							style={{backgroundImage:`url(${contact.profilPic})`}}
+							className='w-[200px] h-[200px] rounded-full mr-[16px] bg-cover' >
+						</div>
+			
 			<div className='relative'>
 				<div className='absolute flex items-center justify-between gap-[8px] mt-[-8px] font-space w-full'>
 					{statusTag}

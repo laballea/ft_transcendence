@@ -49,7 +49,10 @@ const SettingsProfile = ({username, userImage} : SettingsProfileProps) => {
 						<FiEdit2 size='24px' onClick={() => {setEditProfilPic(!editProfilPic)}}/>
 					</div>
 					<div className='w-[200px] h-[200px] rounded-full'>
-						<img src={userImage} width="200" height="200" alt="userimage" className='rounded-full'></img>
+						<div 
+							style={{backgroundImage:`url(${userImage})`}}
+							className='w-[200px] h-[200px] rounded-full bg-cover' >
+						</div>
 					</div>
 				</div>
 				<form 	onSubmit={

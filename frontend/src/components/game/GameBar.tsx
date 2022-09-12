@@ -28,7 +28,10 @@ function GameBar({game}: GameBarProps) {
 							onClick={()=>{navigate('/app/profile/' + game.users[0].username, { state: {id:game.users[0].id} })}}>
 				<div className="	w-[32px] h-[32px]
 								bg-slate-500 rounded-full overflow-hidden">
-					<img src={game.users[0].profilPic} className="rounded-full " width="32" height="32" alt="userimage"></img>
+					<div 
+						style={{backgroundImage:`url(${game.users[0].profilPic})`}}
+						className='w-[32px] h-[32px] rounded-full bg-cover' >
+					</div>
 				</div>
 				<p>{game.users[0].username}</p>
 			</div>

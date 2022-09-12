@@ -38,11 +38,10 @@ const ProfileHistory = ({contact} : ProfileHistoryProps) => {
 				</div>
 				<div className='flex items-center justify-left gap-[8px]'>
 					<div className='w-[32px]'>
-						<img src={
-								getProfilImg(winner.profilPic)
-							} 
-							width="32" height="32" alt="userimage" className="rounded-full mr-[16px]">	
-						</img>
+						<div 
+							style={{backgroundImage:`url(${getProfilImg(winner.profilPic)})`}}
+							className='w-[32px] h-[32px] mr-[16px] rounded-full bg-cover' >
+						</div>
 					</div>
 					<span	className='w-[144px] font-space text-[16px]
 										cursor-pointer' 
@@ -84,11 +83,10 @@ const ProfileHistory = ({contact} : ProfileHistoryProps) => {
 					}
 					</span>
 					<div className='w-[32px]'>
-						<img src={
-								getProfilImg(loser.profilPic)
-							}
-							width="32" height="32" alt="userimage" className="rounded-full mr-[16px]">	
-						</img>
+					<div 
+							style={{backgroundImage:`url(${getProfilImg(loser.profilPic)})`}}
+							className='w-[32px] h-[32px] mr-[16px] rounded-full bg-cover' >
+						</div>
 					</div>
 				</div>
 			</div>
