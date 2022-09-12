@@ -101,7 +101,6 @@ export class UserGateway {
 
 			const user_send:UserSocket = this.userService.findConnectedUserById(db_user_send.id);
 			const user_recv:UserSocket = this.userService.findConnectedUserById(db_user_recv.id);
-
 	
 			if (!db_user_recv){
 				return this.emitPopUp([user_send], {error:true, message: `User ${truncateString(data.client_recv, 10)} does not exist.`});
@@ -146,8 +145,8 @@ export class UserGateway {
 			/* find user in db */
 
 			if (user){
-				if (db_user.blocked.includes(user_to_block.id)){
-					db_user.blocked.splice(db_user.blocked.indexOf(user_to_block.id), 1);
+				if (db_user.blocked.includes(db_user_to_block.id)){
+					db_user.blocked.splice(db_user.blocked.indexOf(db_user_to_block.id), 1);
 				} else {
 					this.friendsService.remove(db_user, db_user_to_block)
 					db_user.blocked.push(db_user_to_block.id)
@@ -197,36 +196,51 @@ export class UserGateway {
 			})
 		
 			let db_user_recv:User = await this.userRepository.findOne({ where:{username:data.client_recv} })
-			db_user_recv = db_user_recv == undefined ? conv.users.find((user:any)=> user.id != user_send.id): db_user_recv
-			if (db_user_recv.blocked.includes(db_user_send.id))
-				return this.emitPopUp([user_send], {error:true, message: `User blocked you.`});
-			if (db_user_send.blocked.includes(db_user_recv.id))
-				return this.emitPopUp([user_send], {error:true, message: `User is blocked.`});
-	
-			if (!conv && data.client_recv != undefined){
-				conv = new Conversation();
-				conv.users = [db_user_send, db_user_recv];
-				conv.name = db_user_recv.username
+			db_user_recv = db_user_recv == undefined ? conv.users.find((user:any)=> user.id != db_user_send.id): db_user_recv
+			if (db_user_recv && (db_user_recv.blocked.includes(db_user_send.id) || db_user_send.blocked.includes(db_user_recv.id))){
+				if (conv){
+					await this.messageRepository
+					.createQueryBuilder()
+					.delete()
+					.from(Message)
+					.where("conversationId = :conversationId", { conversationId: conv.id })
+					.execute();
+					// //delete muted then delete room
+					await this.convRepository
+					.createQueryBuilder()
+					.delete()
+					.from(Conversation)
+					.where("id = :id", { id: conv.id })
+					.execute();
+				}
+				this.emitPopUp([user_send], {error:true, message: `User blocked.`});
+			} else {
+				if (!conv && data.client_recv != undefined){
+					conv = new Conversation();
+					conv.users = [db_user_send, db_user_recv];
+					conv.name = db_user_recv.username
+					await this.convRepository.save(conv);
+				} else if (!conv && data.client_recv == undefined)
+					return this.emitPopUp([user_send], {error:true, message: `User ${data.client_recv} does not exist.`});
+				/* create new message, save it, update conv */
+				let msg = new Message();
+				msg.content = data.content;
+				msg.date = new Date().toUTCString();
+				msg.idSend = db_user_send.id;
+				msg.author = db_user_send.username;
+				msg.conversation = conv;
+				await this.messageRepository.save(msg);
 				await this.convRepository.save(conv);
-			} else if (!conv && data.client_recv == undefined)
-				return this.emitPopUp([user_send], {error:true, message: `User ${data.client_recv} does not exist.`});
-			/* create new message, save it, update conv */
-			let msg = new Message();
-			msg.content = data.content;
-			msg.date = new Date().toUTCString();
-			msg.idSend = db_user_send.id;
-			msg.author = db_user_send.username;
-			msg.conversation = conv;
-			await this.messageRepository.save(msg);
-			await this.convRepository.save(conv);
-	
-			for (let idx in conv.users){
-				let userSocket = this.userService.findConnectedUserById(conv.users[idx].id)
-				if (userSocket)
-					userSocket.socket.emit('UPDATE_DB', await this.userService.parseUserInfo(conv.users[idx].id))
+			}
+			if (conv){
+				for (let idx in conv.users){
+					let userSocket = this.userService.findConnectedUserById(conv.users[idx].id)
+					if (userSocket)
+						userSocket.socket.emit('UPDATE_DB', await this.userService.parseUserInfo(conv.users[idx].id))
+				}
 			}
 		}
-		catch(e){}
+		catch(e){console.log(e)}
 	}
 
 	@SubscribeMessage('newChatRoom')
