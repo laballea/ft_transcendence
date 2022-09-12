@@ -157,6 +157,16 @@ export class GameService {
 		for (let id of game.usersID){
 			if (user.id === id){
 				game.pong.giveUp(id)
+				return ;
+			}
+		}
+		for (let id of game.spectatesID){
+			if (user.id === id){
+				user.socket.emit("GAME_END")
+				user.socket.leave(gameID)
+				user.status = status.Connected
+				user.gameID = undefined
+				return ;
 			}
 		}
 	}
