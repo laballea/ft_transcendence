@@ -20,7 +20,11 @@ const SettingsProfilPicChoice = () => {
 			"file", 
 			file,
 			file.filename
-		); 
+		);
+		if (file.size >= 10000000){
+			alert("File is too big!");
+			return ;
+		}
 		fetch(`http://${process.env.REACT_APP_ip}:5000/users/upload`, {
 			headers: {
 				'Accept': 'application/json',
@@ -91,27 +95,6 @@ const SettingsProfilPicChoice = () => {
 				</div> 
 				{ profilPicsComp }
 			</div>
-			{/* <div>
-				<div className='flex w-[100px] flex-column justify-center items-center flex-wrap h-[200px]'>
-					<div className='flex w-[60px] flex-wrap h-[120px] justify-center items-center'>
-						
-						<div className='flex w-[60px] h-[60px] justify-center  items-center'>
-							<input id="uploadButton" ref={uploadRef} className='w-[60px] h-[60px] rounded-full invisible absolute' type="file" onChange={onFileChange} /> 
-							<FiDownload	className={`w-[60px] h-[60px] rounded-full
-													${!preview ? "text-green-400" : "text-blue-400"}
-													cursor-pointer
-													transition-all duration-300 ease-in-out`}
-							onClick={(()=>{
-								if(!file){
-									let element: HTMLElement = document.getElementById('uploadButton') as HTMLElement;
-									element.click();
-								}else
-									fileUpload()
-							})}/>
-						</div>
-					</div>
-				</div>
-			</div> */}
 		</>
 	)
 }

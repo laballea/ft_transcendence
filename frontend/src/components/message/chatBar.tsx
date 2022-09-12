@@ -8,7 +8,7 @@ const ChatBar = () => {
 	const global = useSelector((state: any) => state.global)
 	const dispatch = useDispatch()
 
-	const convList = global.conv.length > 0 ? global.conv.map((conv: any) =>
+	const convList = global.conv.length > 0 ? global.conv.map((conv: any, index:number) =>
 		
 		<button className="bg-transparent w-full p-4 pl-4 pr-4 rounded-[8px]
 							border-[1px] border-slate-400 hover:border-slate-200 
@@ -17,7 +17,7 @@ const ChatBar = () => {
 							transition-all duration-300 ease-in-out
 							cursor-pointer
 							"
-					key={conv.id}
+					key={index}
 			onClick={() => dispatch(setCurrentConv({conv:conv}))}
 		>
 			{ truncateString(conv.adminId !== undefined ? conv.name : conv.users.find((user:any) => user.username !== global.username).username, 25)}

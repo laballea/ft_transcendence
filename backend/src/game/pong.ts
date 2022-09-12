@@ -49,7 +49,6 @@ export class Pong {
 			d:{x:0, y:0},
 			size:30 //rayon
 		}
-		//this.ball.d = {x:Math.cos(this.ball.angle), y:Math.sin(this.ball.angle)}
 		this.ball.d = this.randomDir(0)
 	}
 
@@ -58,15 +57,14 @@ export class Pong {
 	}
 	randomNumber(min, max) {
 		let res = Math.random() * (max - min) + min
-		console.log(res)
 		return res;
 	} 
 	randomDir(winner:number){
 		let dir = winner != 0 ? -winner : Math.round(Math.random()) == 0 ? -1 : 1
 		return (
 			{
-				x:this.randomNumber(0.25, 0.75) * dir,
-				y:this.randomNumber(0.25, 0.75) * Math.round(Math.random()) == 0 ? -1 : 1
+				x:this.randomNumber(0.5, 1) * dir,
+				y:this.randomNumber(0.5, 1) * Math.round(Math.random()) == 0 ? -1 : 1
 			}
 		)
 	}

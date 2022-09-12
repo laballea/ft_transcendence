@@ -23,12 +23,10 @@ const ProfileHistory = ({contact} : ProfileHistoryProps) => {
 
 	let navigate = useNavigate();
 
-	
-	const gamesList = contact.gameStats.length > 0 ? contact.gameStats.map((games:any, index:number) =>
+	const gamesList = contact.gameStats.length > 0 ? contact.gameStats.slice(-10).reverse().map((games:any, index:number) =>
 	{
 		const winner : any  = games.users.find((user:any) => user.id === games.winner)
 		const loser : any  = games.users.find((user:any) => user.id !== games.winner)
-		
 
 		return (<div key={index}>
 			<div className='flex items-center text-slate-500 font-pilowlava text-[22px]'>

@@ -57,7 +57,6 @@ export class UserController {
 	}
 
 	@Get('gameStat')
-	@UseGuards(JwtAuthGuard)
 	async gameStat(@Query() query) {
 		return await this.userService.getGameStatByUserId(query.id)
 		return interval(1000).pipe(
@@ -67,7 +66,6 @@ export class UserController {
 
 
 	@Get('contactList')
-	@UseGuards(JwtAuthGuard)
 	async contactList(@Query() query){
 		return await this.getUserLIst(query.id, query.searchUsername)
 		return interval(1000).pipe(
@@ -79,9 +77,6 @@ export class UserController {
 	@Post('upload')
 	@UseGuards(JwtAuthGuard)
 	@UseInterceptors(FileInterceptor('file', {
-		limits: {
-			fileSize: 10000,
-		},
 		fileFilter: function(req: any, file: any, cb: any) {
 			if (file.mimetype.match(/\/(jpg|jpeg|png|gif)$/))
 				cb(null, true);
