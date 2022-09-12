@@ -13,6 +13,21 @@ export class Boost extends Pong {
 	}
 	private balltraj: {x:number, y:number}[]
 	private balltrajpos: number
+
+
+	calculateBounce(posY:number, pos:string):number{
+		let diff = Math.PI * 0.5
+		let angle = -(Math.PI / 2) + (pos == "left" ? Math.PI * 0.25 : -Math.PI * 0.25)
+		for (let i = 0; i < 300; i += 300/6){
+			if (i >= posY){
+				break;
+			}
+			angle += (pos == "left" ? diff/6 : -diff/6)
+		}
+		return (angle)
+	}
+
+
 	ballTrajectory(){
 		let factor = this.ball.speed / 10
 		for (let i=1; i < factor; i++) {
@@ -47,7 +62,8 @@ export class Boost extends Pong {
 							this.ball.angle = this.angle(this.ball.posx, this.ball.posy, this.balltraj[this.balltrajpos].x, this.balltraj[this.balltrajpos].y)
 							this.ball.d = {x:Math.cos(this.ball.angle), y:Math.sin(this.ball.angle)}
 						} else {
-							this.ball.d.x *= -1
+							let angle:number = this.calculateBounce(newPosy - user.posy, user.pos)
+							this.ball.d = {x:Math.cos(angle), y:Math.sin(angle)}
 						}
 						user.clickpos = []
 						this.ball.speed += 1

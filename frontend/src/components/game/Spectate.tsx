@@ -3,6 +3,7 @@
 // Hooks
 import React, {useState, useEffect, useRef} from 'react'
 import { useSelector } from 'react-redux'
+import { GAME_STATUS } from '../../common/types';
 
 //
 import Canvas from './Canvas';
@@ -12,24 +13,32 @@ const Spectate = () => {
 	const [game, setGame] = useState(null)
 	const [width, setWidth] = useState(100);
 	const [height, setHeight] = useState(100);
-	var eventSource:EventSource;
+
+	const getgame = () => {
+		const requestOptions = {
+			method: 'GET',
+			headers: {
+				'Content-Type': 'application/json;charset=utf-8',
+				'Access-Control-Allow-Origin': '*',
+				'Authorization': 'bearer ' + global.token,
+			},
+		}
+		fetch(`http://${process.env.REACT_APP_ip}:5000/game/games/${global.gameID}`, requestOptions)
+		.then(async response=>{
+			let resp = await response.json();
+			setGame(resp)
+			if (resp.status !== GAME_STATUS.WINNER && global.gameID !== undefined)
+				setTimeout(getgame.bind(global), 16);
+		})
+	}
 
 	useEffect(() => {
-		// eslint-disable-next-line
-		eventSource = new EventSource(`http://${process.env.REACT_APP_ip}:5000/game/` + global.gameID);
-		window.addEventListener("beforeunload", function (event) {
-			eventSource.close();
-		})
-		eventSource.onmessage = async ({ data }) => {
-			const json = await JSON.parse(data)
-			setGame(json.game)
-		}
+		if (global.gameID != undefined)
+			getgame()
 		return () => {
-			window.removeEventListener("beforeunload", function (event) {
-				eventSource.close();
-			})
-			eventSource.close()
+
 		};
+		// eslint-disable-next-line
 	}, []);
 
 	const overlayEl = useRef<HTMLDivElement>(null);

@@ -49,22 +49,24 @@ export class Pong {
 			d:{x:0, y:0},
 			size:30 //rayon
 		}
-		this.ball.d = {x:Math.cos(this.ball.angle), y:Math.sin(this.ball.angle)}
-		//this.ball.d = this.randomDir(0)
+		//this.ball.d = {x:Math.cos(this.ball.angle), y:Math.sin(this.ball.angle)}
+		this.ball.d = this.randomDir(0)
 	}
 
 	between(x:number, min:number, max:number) {
 		return x >= min && x <= max;
 	}
-	randomNumber(min, max) { 
-		return Math.random() * (max - min) + min;
+	randomNumber(min, max) {
+		let res = Math.random() * (max - min) + min
+		console.log(res)
+		return res;
 	} 
 	randomDir(winner:number){
 		let dir = winner != 0 ? -winner : Math.round(Math.random()) == 0 ? -1 : 1
 		return (
 			{
-				x:this.randomNumber(0.5, 1) * dir,
-				y:this.randomNumber(0.5, 1) * Math.round(Math.random()) == 0 ? -1 : 1
+				x:this.randomNumber(0.25, 0.75) * dir,
+				y:this.randomNumber(0.25, 0.75) * Math.round(Math.random()) == 0 ? -1 : 1
 			}
 		)
 	}
@@ -72,7 +74,7 @@ export class Pong {
 	run() {
 		switch (this.status){
 			case (GAME_STATUS.COUNTDOWN):{
-				this.countDown -= 0.060
+				this.countDown -= 0.030
 				if (this.countDown <= 0) {
 					this.status = GAME_STATUS.RUNNING;
 					this.countDown = 3;
@@ -91,7 +93,7 @@ export class Pong {
 				break ;
 			}
 			case (GAME_STATUS.WINNER):{
-				this.countDown -= 0.060;
+				this.countDown -= 0.030;
 				if (this.countDown <= 0) {
 					this.status = GAME_STATUS.ENDED;
 					this.gameEnd(this.gameID, true)
@@ -99,7 +101,7 @@ export class Pong {
 				break ;
 			}
 			case (GAME_STATUS.PAUSE):{
-				this.countDown -= 0.060;
+				this.countDown -= 0.030;
 				if (this.countDown <= 0) {
 					this.status = GAME_STATUS.ENDED;
 					this.gameEnd(this.gameID, true)
@@ -110,6 +112,18 @@ export class Pong {
 		if (this.status != GAME_STATUS.ENDED){
 			setTimeout(function () {this.run()}.bind(this), 16)
 		}
+	}
+
+	calculateBounce(posY:number, pos:string):number{
+		let diff = Math.PI * 0.5
+		let angle = -(Math.PI / 2) + (pos == "left" ? Math.PI * 0.25 : -Math.PI * 0.25)
+		for (let i = 0; i < 300; i += 300/6){
+			if (i >= posY){
+				break;
+			}
+			angle += (pos == "left" ? diff/6 : -diff/6)
+		}
+		return (angle)
 	}
 
 	ballTrajectory(){
@@ -129,7 +143,8 @@ export class Pong {
 				let user = this.users[idx]
 				if (this.between(newPosy, user.posy - this.ball.size, user.posy + this.ball.size + 300)){
 					if (this.between(newPosx + Math.sign(this.ball.d.x) * this.ball.size, idx ? user.posx : user.posx + 5, idx ? user.posx + 15: user.posx + 20)){
-						this.ball.d.x *= -1
+						let angle:number = this.calculateBounce(newPosy - user.posy, user.pos)
+						this.ball.d = {x:Math.cos(angle), y:Math.sin(angle)}
 						this.ball.speed += 1
 						bounce = true
 					}
@@ -156,7 +171,7 @@ export class Pong {
 				newPosx = this.map.width / 2
 				newPosy = this.map.height / 2
 				this.ball.speed = 10 + this.users[0].point + this.users[1].point
-				this.ball.angle = this.randomNumber(0, 360)
+				this.ball.d = this.randomDir(newPosx < this.ball.size ? 1 : 0)
 				bounce = true
 			}
 			this.ball.posx = newPosx

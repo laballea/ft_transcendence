@@ -34,7 +34,6 @@ export default function Home() {
 								<BackgroundLobby/>
 							</div>
 						}
-					
 						<SocialInterface/>
 					</div>
 				</div>

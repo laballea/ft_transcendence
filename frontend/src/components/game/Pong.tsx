@@ -54,6 +54,7 @@ const Pong = () => {
 		}
 	}
 	const getgame = () => {
+		console.log("HERE", global.gameID)
 		const requestOptions = {
 			method: 'GET',
 			headers: {
@@ -66,12 +67,16 @@ const Pong = () => {
 		.then(async response=>{
 			let resp = await response.json();
 			setGame(resp)
-			if (resp.status !== GAME_STATUS.WINNER)
-				setTimeout(getgame, 16);
+			console.log(resp.status)
+			if (resp.status !== GAME_STATUS.WINNER && global.gameID !== undefined)
+				setTimeout(getgame.bind(global), 16);
 		})
 	}
+	console.log("HERE", global.gameID)
+
 	useEffect(() => {
-		getgame()
+		if (global.gameID != undefined)
+			getgame()
 		/*let eventSource = new EventSource(`http://${process.env.REACT_APP_ip}:5000/game/` + global.gameID);
 
 		eventSource.onmessage = async ({ data }) => {
