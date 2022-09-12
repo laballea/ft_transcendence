@@ -16,6 +16,7 @@ COPY . .
 EXPOSE 3000
 
 # Launch server
+CMD ["npm", "start"]
 
-CMD ["npm", "run", "build"]
-CMD ["npx", "serve", "-s", "build"]
+# CMD ["npm", "run", "build"]
+# CMD ["npx", "serve", "-s", "build"]
