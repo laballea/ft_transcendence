@@ -54,7 +54,8 @@ const Spectate = () => {
 		resizeObserver.observe(document.getElementById("GameDiv")!);
 	})
 	return (
-		<div ref={overlayEl} className="relative flex-1 h-full justify-center" id="GameDiv">
+		<div ref={overlayEl} className="relative flex-1 h-full justify-center
+										animate-slidein" id="GameDiv">
 			{game != null && <Canvas width={width} height={height} game={game} username={global.username} ratio={width / 1900}/>}
 		</div>
 	)

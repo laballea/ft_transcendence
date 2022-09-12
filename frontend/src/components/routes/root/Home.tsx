@@ -21,7 +21,7 @@ export default function Home() {
 			<NavBar/>
 			<div className="absolute flex justify-between
 							w-full top-[80px] sm:top-[112px] bottom-0 sm:bottom-[48px]">
-				<div className="hidden w-full h-full flex sm:block justify-between bg-slate-700 z-50">
+				<div className="w-full h-full flex sm:block justify-between bg-slate-700 z-50">
 					<div className="relative h-full w-full flex justify-between bg-slate-700 ">
 						{
 							(global.status === status.InGame 

@@ -102,8 +102,8 @@ const Pong = () => {
 		resizeObserver.observe(document.getElementById("GameDiv")!);
 	})
 	return (
-		<div ref={overlayEl} className="relative flex h-full justify-center items-center p-[24px] overflow-hidden" id="GameDiv">
-			{width > 500 ?
+		<div ref={overlayEl} className="relative flex h-full justify-center items-center p-[24px] overflow-hidden animate-slidein" id="GameDiv">
+			{{width > 500 ?
 				<div className="relative w-full h-auto" >
 					{game != null && <Canvas width={width} global={global} height={height} game={game} username={global.username} ratio={width / 1900}/>}
 				</div>
