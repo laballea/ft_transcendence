@@ -80,7 +80,7 @@ export class UserController {
 	@UseGuards(JwtAuthGuard)
 	@UseInterceptors(FileInterceptor('file', {
 		limits: {
-			fileSize: 10000,
+			fileSize: 10000000,
 		},
 		fileFilter: function(req: any, file: any, cb: any) {
 			if (file.mimetype.match(/\/(jpg|jpeg|png|gif)$/))
