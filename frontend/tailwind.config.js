@@ -12,7 +12,10 @@ module.exports = {
         'vibrate' : 'vibrate 0.3s linear infinite both',
         'bgpanright' : 'bgpanright 8s infinite',
         'deglingo' : 'deglingo 1.5s both, fadein 1.5s ease both',
-        'fadein' : 'fadein 1.5s ease both'
+        'fadein' : 'fadein 1.5s ease both',
+        'rollin' : 'rollin 0.65s cubic-bezier(0.230, 1.000, 0.320, 1.000) both',
+        'slidein' : 'slidein 0.7s cubic-bezier(0.250, 0.460, 0.450, 0.940) both'
+
       },
       keyframes : {
         'vibrate' : {
@@ -39,6 +42,20 @@ module.exports = {
         'fadein' : {
           '0%' : { opacity : '0%'},
           '100%' : { opacity : '100%'},
+        },
+        'slidein' : {
+          '0%' : { transform : 'translateZ(600px)',
+                    opacity: '0'},
+          '100%' : { transform : 'translateZ(0px)',
+                   opacity: '1'},
+        },
+        'rollin' : {
+          '0%' : { transform : 'translateX(0) rotate(720deg)',
+                    filter: 'blur(50px)',
+                    opacity: '0'},
+          '100%' : { transform : 'translateX(0) rotate(0deg)',
+                    filter: 'blur(0)',
+                   opacity: '1'},
         }
       }
       ,
