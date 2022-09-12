@@ -7,16 +7,12 @@ import { editProfilPicSocket } from '../../context/socket';
 
 const SettingsProfilPicChoice = () => {
 	const global = useSelector((state: any) => state.global)
-	//const [file, setFile] = React.useState<any>(null);
 	const [profilPics, setProfilPics] = useState([]);
 	const uploadRef = useRef<any>()
 
 
 	const onFileChange = (event:any) => {
 		fileUpload(event.target.files[0])
-		/*setFile(event.target.files[0])
-		let url = URL.createObjectURL(event.target.files[0])
-		setPreview(url)*/
 	};
 	const fileUpload = (file:any) => {
 		const formData = new FormData();

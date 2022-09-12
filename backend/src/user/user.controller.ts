@@ -57,6 +57,7 @@ export class UserController {
 	}
 
 	@Get('gameStat')
+	@UseGuards(JwtAuthGuard)
 	async gameStat(@Query() query) {
 		return await this.userService.getGameStatByUserId(query.id)
 		return interval(1000).pipe(
@@ -66,6 +67,7 @@ export class UserController {
 
 
 	@Get('contactList')
+	@UseGuards(JwtAuthGuard)
 	async contactList(@Query() query){
 		return await this.getUserLIst(query.id, query.searchUsername)
 		return interval(1000).pipe(
