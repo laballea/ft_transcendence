@@ -63,6 +63,7 @@ const Com: React.FC<IProps> = ({ conv }) => {
 				onChange={handleChange}
 				name="content"
 				autoComplete="off"
+				required
 			/>
 			<button type="submit" className="flex items-center justify-center">
 				<FiArrowRight className="sm:w-[24px] w-[16px] sm:h-[24px] h-[16px]" />

@@ -16,7 +16,6 @@ const SettingsProfilPicChoice = () => {
 	};
 	const fileUpload = (file:any) => {
 		const formData = new FormData();
-		console.log(file)
 		formData.append(
 			"file", 
 			file,
