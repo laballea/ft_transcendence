@@ -30,7 +30,7 @@ export class Boost extends Pong {
 
 	ballTrajectory(){
 		let factor = this.ball.speed / 10
-		for (let i=1; i < factor; i++) {
+		for (let i=0; i < factor; i++) {
 			let speed = this.ball.speed / factor
 			let newPosx = this.ball.posx + speed * this.ball.d.x
 			let newPosy = this.ball.posy + speed * this.ball.d.y

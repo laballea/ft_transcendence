@@ -33,7 +33,7 @@ const Spectate = () => {
 	}
 
 	useEffect(() => {
-		if (global.gameID != undefined)
+		if (global.gameID !== undefined)
 			getgame()
 		return () => {
 
