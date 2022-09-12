@@ -66,7 +66,7 @@ const Pong = () => {
 		.then(async response=>{
 			let resp = await response.json();
 			setGame(resp)
-			if (resp.status !== GAME_STATUS.WINNER && global.gameID !== undefined)
+			if (resp !== false && resp.status !== GAME_STATUS.WINNER && global.gameID !== undefined)
 				setTimeout(getgame.bind(global), 16);
 		})
 	}
@@ -103,9 +103,13 @@ const Pong = () => {
 	})
 	return (
 		<div ref={overlayEl} className="relative flex h-full justify-center items-center p-[24px] overflow-hidden" id="GameDiv">
-			{
+			{width > 500 ?
 				<div className="relative w-full h-auto" >
 					{game != null && <Canvas width={width} global={global} height={height} game={game} username={global.username} ratio={width / 1900}/>}
+				</div>
+				:
+				<div className="relative w-full h-auto" >
+					<p>too small</p>
 				</div>
 			}
 		</div>
