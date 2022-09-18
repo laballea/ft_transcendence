@@ -30,15 +30,18 @@ export class User {
 
 	@Column("int", {nullable:true})
 	intraID:number;
+	@Column({nullable:true})
+	googleID:string;
+	@Column({nullable:true})
+	discordID:string;
+	@Column({nullable:true})
+	testID:string;
 
 	@Column("int", {nullable:true})
 	lvl:number;
 
-	@Column({ unique: true, nullable: true })
-	public email: string;
-
 	@Column({nullable:true})
-	profilIntraUrl:string;
+	savedProfilPic:string;
 
 	@Column({nullable:true})
 	profilPic:string;

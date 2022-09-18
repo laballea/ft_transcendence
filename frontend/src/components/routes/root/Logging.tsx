@@ -27,7 +27,9 @@ const Logging = () => {
 	const dispatch = useDispatch();
 	const [popup, setPopup] = useState({open:false, error:true, message:""});
 	const navigate = useNavigate();
-	const url = new URL(`http://${process.env.REACT_APP_ip}:5000/auth/login`); //url for intra auth
+	const urlIntra = new URL(`http://${process.env.REACT_APP_ip}:5000/auth/intra`); //url for intra auth
+	const urlGoogle = new URL(`http://${process.env.REACT_APP_ip}:5000/auth/google`); //url for google auth
+	const urlDiscord = new URL(`http://${process.env.REACT_APP_ip}:5000/auth/discord`); //url for discord auth
 	const [searchParams, setSearchParams] = useSearchParams();
 	const jwt = searchParams.get("jwt") == null ? null : searchParams.get("jwt"); // get jwt token on query
 	const id = searchParams.get("id") == null ? null : searchParams.get("id"); // get jwt token on query
@@ -251,9 +253,19 @@ const Logging = () => {
 					</div>
 				</form> 
 				<button 
-					className="w-[260px] h-[80px] sm:h-[64px] bg-transparent border-2 border-slate-400 hover:border-slate-200 text-md text-slate-400 hover:text-slate-200 font-space rounded transition-all duration-700 ease-in-out"
-					onClick={event =>  window.location.href=url.toString()}> {/*on click redirect to backend auth/login*/}
-						Log in with 42 account
+					className="w-[260px] m-3 h-[80px] sm:h-[64px] bg-transparent border-2 border-slate-400 hover:border-slate-200 text-md text-slate-400 hover:text-slate-200 font-space rounded transition-all duration-700 ease-in-out"
+					onClick={event =>  window.location.href=urlIntra.toString()}> {/*on click redirect to backend auth/login*/}
+						42 account
+				</button>
+				<button 
+					className="w-[260px] m-3 h-[80px] sm:h-[64px] bg-transparent border-2 border-slate-400 hover:border-slate-200 text-md text-slate-400 hover:text-slate-200 font-space rounded transition-all duration-700 ease-in-out"
+					onClick={event =>  window.location.href=urlGoogle.toString()}> {/*on click redirect to backend auth/login*/}
+						Google account
+				</button>
+				<button 
+					className="w-[260px] m-3 h-[80px] sm:h-[64px] bg-transparent border-2 border-slate-400 hover:border-slate-200 text-md text-slate-400 hover:text-slate-200 font-space rounded transition-all duration-700 ease-in-out"
+					onClick={event =>  window.location.href=urlDiscord.toString()}> {/*on click redirect to backend auth/login*/}
+						Discord account
 				</button>
 				<Popup open={popup.open} contentStyle={{position:'absolute', bottom:0, left:0}}>
 					<PopUpToaster content={popup.message}/>

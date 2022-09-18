@@ -6,26 +6,26 @@ import { HttpService } from '@nestjs/axios';
 import { lastValueFrom } from 'rxjs';
 
 @Injectable()
-export class IntraStrategy extends PassportStrategy(Strategy, 'intra-oauth') {
+export class DiscordStrategy extends PassportStrategy(Strategy, 'discord-oauth') {
 	constructor(
 		private authService: AuthService,
 		private httpService: HttpService,
 	) {
 	super({
-		authorizationURL: 'https://api.intra.42.fr/oauth/authorize',
-		tokenURL: 'https://api.intra.42.fr/oauth/token',
-		clientID: process.env.clientID,
-		clientSecret: process.env.clientSecret,
+		authorizationURL: 'https://discord.com/api/oauth2/authorize?client_id=1021000693580038204&redirect_uri=http%3A%2F%2Flocalhost%3A5000%2Fauth%2Flogin&response_type=code&scope=identify',
+		tokenURL: 'https://discordapp.com/api/oauth2/token',
+		clientID: process.env.discordID,
+		clientSecret: process.env.discordSecret,
 		callbackURL:
-			`http://${process.env.REACT_APP_ip}:5000/auth/intra`,
+			`http://${process.env.REACT_APP_ip}:5000/auth/discord`,
 		});
 	}
 
 	async validate(accessToken: string): Promise<any> {
 		let { data } = await lastValueFrom(this.httpService
-		.get('https://api.intra.42.fr/v2/me', {
+		.get('https://discordapp.com/api/users/@me', {
 			headers: { Authorization: `Bearer ${accessToken}` },
-		}));
-		return this.authService.loginIntra(data, accessToken);
+		}))
+		return this.authService.loginDiscord(data, accessToken);
 	}
 }

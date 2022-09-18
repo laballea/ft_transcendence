@@ -80,6 +80,14 @@ export class UserService {
 		return this.userRepository.findOne({ where:{intraID:intraID} });
 	}
 
+	findUserByGoogleId(googleID: string):Promise<UserI | undefined> {
+		return this.userRepository.findOne({ where:{googleID:googleID} });
+	}
+
+	findUserByDiscordId(discordID: string):Promise<UserI | undefined> {
+		return this.userRepository.findOne({ where:{discordID:discordID} });
+	}
+
 	/*
 	*/
 	connectUser(data: {id:number,username:string,socket: any,status:status, gameID:string}) {

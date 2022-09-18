@@ -8,13 +8,14 @@ import { AuthHelper } from './auth.helper';
 import { AuthService } from './auth.service';
 import { JwtStrategy } from './auth.strategy';
 import { ConfigService } from '@nestjs/config';
-import { UserService } from 'src/user/user.service';
 import { HttpModule } from '@nestjs/axios';
-import { IntraStrategy } from './intra.strategy';
 import { SessionSerializer } from './auth.serializer';
 import { UserModule } from 'src/user/user.module';
 import { TwoFactorAuthenticationController } from '../twoFactor/tfa.controller';
 import { TwoFactorAuthenticationService } from '../twoFactor/tfa.service';
+import { GoogleStrategy } from './google.strategy';
+import { DiscordStrategy } from './discord.strategy';
+import { IntraStrategy } from './intra.strategy';
 
 @Module({
 	imports: [
@@ -37,7 +38,9 @@ import { TwoFactorAuthenticationService } from '../twoFactor/tfa.service';
 		AuthHelper,
 		JwtStrategy,
 		IntraStrategy,
-		SessionSerializer],
+		DiscordStrategy,
+		SessionSerializer,
+		GoogleStrategy],
 	exports:[AuthService]
 })
 export class AuthModule {}

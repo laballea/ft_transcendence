@@ -11,14 +11,15 @@ export interface UserI {
 	username:string;
 
 	intraID:number;
-
+	googleID:string;
+	discordID:string;
+	testID:string;
+	
 	lvl:number;
-
-	email:string;
 
 	token42:string;
 
-	profilIntraUrl:string;
+	savedProfilPic:string;
 	
 	profilPic:string;
 

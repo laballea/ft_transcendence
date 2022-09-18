@@ -38,3 +38,24 @@ export class IntraAuthGuard extends AuthGuard('intra-oauth') {
 		return user;
 	}
 }
+
+@Injectable()
+export class DiscordAuthGuard extends AuthGuard('discord-oauth') {
+	constructor() {
+		super();
+	}
+
+	async canActivate(context: ExecutionContext) {
+		const activate = (await super.canActivate(context)) as boolean;
+		const request = context.switchToHttp().getRequest();
+		await super.logIn(request);
+		return activate;
+	}
+
+	handleRequest(err: any, user: any) {
+		if (err || !user) {
+			throw new HttpException(HTTP_STATUS.LOGIN_FAILED, err.status);
+		}
+		return user;
+	}
+}

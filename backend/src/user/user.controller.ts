@@ -114,8 +114,8 @@ export class UserController {
 	@UseGuards(JwtAuthGuard)
 	getFile(@Req() req) {
 		let res = []
-		if (req.user.profilIntraUrl != null)
-			res.push(req.user.profilIntraUrl)
+		if (req.user.savedProfilPic != null)
+			res.push(req.user.savedProfilPic)
 		let filenames = readdirSync(process.cwd() + '/uploads/profilpic');
 		filenames.forEach((file) => {
 			res.push(`http://${process.env.REACT_APP_ip}:5000/users/image/` + file)
