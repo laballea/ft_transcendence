@@ -1,20 +1,26 @@
-# ft_transcendence
+# 42 Cursus ft_transcendence
 
-# DEV
+![Subject](./en.subject.pdf)
+---
 
-run `npm update` to update and install missing depencies.
-run `npm run` to run server locally
+ft_transcendence
+===============
 
-# HOW TO USE
+### Techonology
+Main language is Typescript
 
-  sudo docker-compose build && sudo docker-compose up
-  
-  http://localhost:5000 => api
-  
-  http://localhost:3000 => react app
+## Backend
+	- Nestjs
+	- Postgres
+	- TypeOrm
+	
+## Frontend
+	- React
+	
+### Heroku
+Project accessible at: https://frontend-transcendence.herokuapp.com/
 
-  http://localhost:5050 => postgres admin
-
-		email: admin@admin.com
-		pw:	admin
-
+### Contact
+laballea@student.42.fr
+qgimenez@student.42.fr
+cmeunier@student.42.fr 
