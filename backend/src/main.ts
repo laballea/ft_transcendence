@@ -18,6 +18,6 @@ async function bootstrap() {
 	  resave: false,
 	  saveUninitialized: false,
 	}));
-  await app.listen(443);
+  await app.listen(process.env.PORT || 5000);
 }
 bootstrap();
