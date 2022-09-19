@@ -25,7 +25,7 @@ const SettingsProfilPicChoice = () => {
 			alert("File is too big!");
 			return ;
 		}
-		fetch(`http://${process.env.REACT_APP_ip}:5000/users/upload`, {
+		fetch(`${process.env.REACT_APP_BACK_IP}/users/upload`, {
 			headers: {
 				'Accept': 'application/json',
 				'Authorization': 'bearer ' + global.token,
@@ -46,7 +46,7 @@ const SettingsProfilPicChoice = () => {
 			  'Authorization': 'bearer ' + global.token,
 			},
 		}
-		fetch(`http://${process.env.REACT_APP_ip}:5000/users/image`, requestOptions)
+		fetch(`${process.env.REACT_APP_BACK_IP}/users/image`, requestOptions)
 		.then(async response=>{
 			let resp = await response.json();
 			if (response.ok){

@@ -17,7 +17,7 @@ export class IntraStrategy extends PassportStrategy(Strategy, 'intra-oauth') {
 		clientID: process.env.clientID,
 		clientSecret: process.env.clientSecret,
 		callbackURL:
-			`http://${process.env.REACT_APP_ip}:5000/auth/intra`,
+			`${process.env.REACT_APP_BACK_IP}/auth/intra`,
 		});
 	}
 

@@ -28,7 +28,7 @@ const ContactList = () => {
 				'Authorization': 'bearer ' + global.token,
 			},
 		}
-		fetch(`http://${process.env.REACT_APP_ip}:5000/users/contactList?searchUsername=${global.searchUserContactList}&id=${global.id}`, requestOptions)
+		fetch(`${process.env.REACT_APP_BACK_IP}/users/contactList?searchUsername=${global.searchUserContactList}&id=${global.id}`, requestOptions)
 		.then(async resp=>{
 			let json = await resp.json();
 			dispatch(setContactList(json.sort((a:any, b:any) => Number(b.friend) - Number(a.friend))))

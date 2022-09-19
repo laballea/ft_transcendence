@@ -97,7 +97,7 @@ export class UserController {
 	}))
 	uploadFile(@UploadedFile() file: Express.Multer.File, @Req() req) {
 		if (file != undefined)
-			this.userService.changePic(req.user.id, `http://${process.env.REACT_APP_ip}:5000/users/image/` + file.originalname)
+			this.userService.changePic(req.user.id, `${process.env.REACT_APP_BACK_IP}/users/image/` + file.originalname)
 		else {
 			const userSocket:any = this.userService.findConnectedUserById(req.user.id)
 			this.userGateway.emitPopUp([userSocket], {error:true, message: `Invalide format.`});
@@ -107,7 +107,7 @@ export class UserController {
 	@Get('image/:imgpath')
 	seeUploadedFile(@Param('imgpath') image, @Res() res){
 		res.contentType('image/png');
-		return res.sendFile(image, { root: './uploads/profilpic' });
+		return res.sendFile(image, { root: './app/profil_pic' });
 	}
 
 	@Get('image/')
@@ -116,9 +116,9 @@ export class UserController {
 		let res = []
 		if (req.user.savedProfilPic != null)
 			res.push(req.user.savedProfilPic)
-		let filenames = readdirSync(process.cwd() + '/uploads/profilpic');
+		let filenames = readdirSync(process.cwd() + '/app/profil_pic');
 		filenames.forEach((file) => {
-			res.push(`http://${process.env.REACT_APP_ip}:5000/users/image/` + file)
+			res.push(`${process.env.REACT_APP_BACK_IP}/users/image/` + file)
 		});
 		return res
 	}

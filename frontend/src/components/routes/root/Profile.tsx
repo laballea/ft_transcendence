@@ -46,7 +46,7 @@ const Profile = ({contact} : ProfileProps) => {
 				'Authorization': 'bearer ' + global.token,
 			},
 		}
-		fetch(`http://${process.env.REACT_APP_ip}:5000/users/gameStat?id=` + id, requestOptions)
+		fetch(`${process.env.REACT_APP_BACK_IP}/users/gameStat?id=` + id, requestOptions)
 		.then(async resp=>{
 			let json = await resp.json();
 			setUser(prevState => (json))

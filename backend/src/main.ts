@@ -10,7 +10,7 @@ async function bootstrap() {
     }});
   app.enableCors();
   app.useWebSocketAdapter(
-    new SocketIOAdapter(app, ['http://localhost', `${process.env.REACT_APP_ip}`]),
+    new SocketIOAdapter(app, [`${process.env.REACT_APP_BACK_IP}`]),
   );
   app.use(
 	session({

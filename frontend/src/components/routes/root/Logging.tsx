@@ -27,9 +27,9 @@ const Logging = () => {
 	const dispatch = useDispatch();
 	const [popup, setPopup] = useState({open:false, error:true, message:""});
 	const navigate = useNavigate();
-	const urlIntra = new URL(`http://${process.env.REACT_APP_ip}:5000/auth/intra`); //url for intra auth
-	const urlGoogle = new URL(`http://${process.env.REACT_APP_ip}:5000/auth/google`); //url for google auth
-	const urlDiscord = new URL(`http://${process.env.REACT_APP_ip}:5000/auth/discord`); //url for discord auth
+	const urlIntra = new URL(`${process.env.REACT_APP_BACK_IP}/auth/intra`); //url for intra auth
+	const urlGoogle = new URL(`${process.env.REACT_APP_BACK_IP}/auth/google`); //url for google auth
+	const urlDiscord = new URL(`${process.env.REACT_APP_BACK_IP}/auth/discord`); //url for discord auth
 	const [searchParams, setSearchParams] = useSearchParams();
 	const jwt = searchParams.get("jwt") == null ? null : searchParams.get("jwt"); // get jwt token on query
 	const id = searchParams.get("id") == null ? null : searchParams.get("id"); // get jwt token on query
@@ -53,7 +53,7 @@ const Logging = () => {
 				'Authorization': 'bearer ' + token,
 			},
 		}
-		fetch(`http://${process.env.REACT_APP_ip}:5000/auth/user`, requestOptions)
+		fetch(`${process.env.REACT_APP_BACK_IP}/auth/user`, requestOptions)
 		.then(async response=>{
 			let resp = await response.json();
 			if (response.ok){
@@ -86,7 +86,7 @@ const Logging = () => {
 				username: username,
 			})
 		}
-		fetch(`http://${process.env.REACT_APP_ip}:5000/auth/login`, requestOptions)
+		fetch(`${process.env.REACT_APP_BACK_IP}/auth/login`, requestOptions)
 		.then(async response=>{
 			const resp:any = await response.json()
 			if (response.ok){
@@ -114,7 +114,7 @@ const Logging = () => {
 				id:id
 			})
 		}
-		fetch(`http://${process.env.REACT_APP_ip}:5000/2fa/authenticate`, requestOptions)
+		fetch(`${process.env.REACT_APP_BACK_IP}/2fa/authenticate`, requestOptions)
 		.then(async response=>{
 			const resp:any = await response.json()
 			if (response.ok){

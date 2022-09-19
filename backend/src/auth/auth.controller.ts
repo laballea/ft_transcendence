@@ -43,7 +43,7 @@ export class AuthController {
 	@Get('/intra')
 	@UseGuards(IntraAuthGuard)
 	loginIntra(@Res() res, @Req() req): any {
-		var url = new URL(`http://${process.env.REACT_APP_ip}:3000/login`);
+		var url = new URL(`${process.env.REACT_APP_FRONT_IP}/login`);
 		if (req.user.isTwoFactorAuthenticationEnabled){
 			url.searchParams.append('2fa', "true");
 			url.searchParams.append('id',(req.user.id).toString());
@@ -58,7 +58,7 @@ export class AuthController {
 	@Get('/discord')
 	@UseGuards(DiscordAuthGuard)
 	loginDiscord(@Res() res, @Req() req): any {
-		var url = new URL(`http://${process.env.REACT_APP_ip}:3000/login`);
+		var url = new URL(`${process.env.REACT_APP_FRONT_IP}/login`);
 		if (req.user.isTwoFactorAuthenticationEnabled){
 			url.searchParams.append('2fa', "true");
 			url.searchParams.append('id',(req.user.id).toString());
@@ -73,7 +73,7 @@ export class AuthController {
 	@Get('/google')
 	@UseGuards(AuthGuard('google'))
 	logingGoogle(@Res() res, @Req() req): any {
-		var url = new URL(`http://${process.env.REACT_APP_ip}:3000/login`);
+		var url = new URL(`${process.env.REACT_APP_FRONT_IP}/login`);
 		if (req.user.isTwoFactorAuthenticationEnabled){
 			url.searchParams.append('2fa', "true");
 			url.searchParams.append('id',(req.user.id).toString());

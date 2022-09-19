@@ -62,7 +62,7 @@ const Pong = () => {
 				'Authorization': 'bearer ' + global.token,
 			},
 		}
-		fetch(`http://${process.env.REACT_APP_ip}:5000/game/games/${global.gameID}`, requestOptions)
+		fetch(`${process.env.REACT_APP_BACK_IP}/game/games/${global.gameID}`, requestOptions)
 		.then(async response=>{
 			let resp = await response.json();
 			setGame(resp)
