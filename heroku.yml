@@ -3,6 +3,16 @@ setup:
     - plan: heroku-postgresql
       as: DATABASE
   config:
+      clientID: e6a9f9c6d8327f24df7e0820f571e3e4aeb97dfc6a26d47e8af3ce015550bbe5
+      clientSecret: 2a0a446a7ed5cadfa7acc48381ad3ec0dfc3fd3e5390e52adf01ab2a379992cb
+      discordID: 1021000693580038204
+      discordSecret: Pu4ZkMuMZyI0hL0g_jIaDhIsMWNKYE3P
+      googleID: 714663008807-qbi33k50ffu3su5t8he9pqav2mghd3j9.apps.googleusercontent.com
+      googleSecret: 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
+      REACT_APP_ip: localhost
+      DATABASE_URL: postgres://idcvbjpukyrgev:53818ccfd3c558e8e61404532e1e056f600b010e526a54dec1664c00902bc049@ec2-176-34-215-248.eu-west-1.compute.amazonaws.com:5432/defr1b6636831h
+      # DATABASE_URL: postgres://admin:admin@postgres:5432/db
+      SECRET_KEY: pRJ2SH4h0bYv4KDsiQ2Gt55qe3O75aXL
       env_file: .env # <-- important line
 build:
   docker:
