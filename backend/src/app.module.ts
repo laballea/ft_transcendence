@@ -17,7 +17,7 @@ import { GameModule } from './game/game.module';
 		TypeOrmModule.forRoot({
 			type: 'postgres',
 			url: process.env.DATABASE_URL,
-			ssl: {
+			ssl: process.env.DATABASE_URL == "postgres://admin:admin@postgres:5432/db" ? false : {
 			  rejectUnauthorized: false,
 			},
 			entities: ['dist/**/*.entity{.ts,.js}'],

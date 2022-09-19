@@ -27,6 +27,7 @@ const Logging = () => {
 	const dispatch = useDispatch();
 	const [popup, setPopup] = useState({open:false, error:true, message:""});
 	const navigate = useNavigate();
+	console.log(process.env);
 	const urlIntra = new URL(`${process.env.REACT_APP_BACK_IP}/auth/intra`); //url for intra auth
 	const urlGoogle = new URL(`${process.env.REACT_APP_BACK_IP}/auth/google`); //url for google auth
 	const urlDiscord = new URL(`${process.env.REACT_APP_BACK_IP}/auth/discord`); //url for discord auth

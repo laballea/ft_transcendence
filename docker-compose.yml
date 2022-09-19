@@ -4,13 +4,15 @@ services:
       build:
           dockerfile: Dockerfile
           context: ./frontend
+      environment:
+          - REACT_APP_BACK_IP=http://localhost:5000
       env_file:
           - .env
       depends_on: 
           - api
       ports:
           - "3000:3000"
-
+      command:  bash -c "npm run build && npx serve -s build"
     api:
         build:
             dockerfile: Dockerfile
