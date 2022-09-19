@@ -44,7 +44,7 @@ function PopUp2FAModal({ closeFunc } : PopUp2FAModalProps) {
 				'Authorization': 'bearer ' + global.token,
 			},
 		}
-		fetch(`http://${process.env.REACT_APP_ip}:5000/2fa/generate`, requestOptions)
+		fetch(`${process.env.REACT_APP_BACK_IP}/2fa/generate`, requestOptions)
 		.then(response =>
 			response.blob()
 		)
@@ -74,7 +74,7 @@ function PopUp2FAModal({ closeFunc } : PopUp2FAModalProps) {
 				code: image.code,
 			})
 		}
-		fetch(`http://${process.env.REACT_APP_ip}:5000/2fa/turn-on`, requestOptions).then(resp => {
+		fetch(`${process.env.REACT_APP_BACK_IP}/2fa/turn-on`, requestOptions).then(resp => {
 			if (resp.ok)
 			{	
 				closeFunc()

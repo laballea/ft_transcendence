@@ -8,7 +8,7 @@ let socketOptions = {
 	transports: ["websocket"]
  };
 
-export const socket:Socket = io(`http://${process.env.REACT_APP_ip}:5000/`, socketOptions);
+export const socket:Socket = io(`${process.env.REACT_APP_BACK_IP}/`, socketOptions);
 export const SocketContext = React.createContext(socket);
 
 export function acceptFriendRequest(global:any, username:string) {

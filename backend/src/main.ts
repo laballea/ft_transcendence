@@ -10,7 +10,7 @@ async function bootstrap() {
     }});
   app.enableCors();
   app.useWebSocketAdapter(
-    new SocketIOAdapter(app, ['http://localhost', `${process.env.REACT_APP_ip}`]),
+    new SocketIOAdapter(app, [`${process.env.REACT_APP_BACK_IP}`]),
   );
   app.use(
 	session({
@@ -18,6 +18,6 @@ async function bootstrap() {
 	  resave: false,
 	  saveUninitialized: false,
 	}));
-  await app.listen(5000);
+  await app.listen(process.env.PORT || 5000);
 }
 bootstrap();

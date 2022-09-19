@@ -8,11 +8,21 @@ import { GameModule } from './game/game.module';
 
 	imports: [
 		ConfigModule.forRoot({ isGlobal: true }),
+		// TypeOrmModule.forRoot({
+		// 	type: 'postgres',
+		// 	url: process.env.DATABASE_URL,
+		// 	autoLoadEntities: true,
+		// 	synchronize: true,
+		// }),
 		TypeOrmModule.forRoot({
 			type: 'postgres',
 			url: process.env.DATABASE_URL,
+			ssl: {
+			  rejectUnauthorized: false,
+			},
+			entities: ['dist/**/*.entity{.ts,.js}'],
+			synchronize: true, // This for development
 			autoLoadEntities: true,
-			synchronize: true,
 		}),
 		UserModule,
 		AuthModule,

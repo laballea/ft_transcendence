@@ -17,7 +17,7 @@ export class DiscordStrategy extends PassportStrategy(Strategy, 'discord-oauth')
 		clientID: process.env.discordID,
 		clientSecret: process.env.discordSecret,
 		callbackURL:
-			`http://${process.env.REACT_APP_ip}:5000/auth/discord`,
+			`${process.env.REACT_APP_BACK_IP}/auth/discord`,
 		});
 	}
 

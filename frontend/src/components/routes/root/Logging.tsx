@@ -27,9 +27,9 @@ const Logging = () => {
 	const dispatch = useDispatch();
 	const [popup, setPopup] = useState({open:false, error:true, message:""});
 	const navigate = useNavigate();
-	const urlIntra = new URL(`http://${process.env.REACT_APP_ip}:5000/auth/intra`); //url for intra auth
-	const urlGoogle = new URL(`http://${process.env.REACT_APP_ip}:5000/auth/google`); //url for google auth
-	const urlDiscord = new URL(`http://${process.env.REACT_APP_ip}:5000/auth/discord`); //url for discord auth
+	const urlIntra = new URL(`${process.env.REACT_APP_BACK_IP}/auth/intra`); //url for intra auth
+	const urlGoogle = new URL(`${process.env.REACT_APP_BACK_IP}/auth/google`); //url for google auth
+	const urlDiscord = new URL(`${process.env.REACT_APP_BACK_IP}/auth/discord`); //url for discord auth
 	const [searchParams, setSearchParams] = useSearchParams();
 	const jwt = searchParams.get("jwt") == null ? null : searchParams.get("jwt"); // get jwt token on query
 	const id = searchParams.get("id") == null ? null : searchParams.get("id"); // get jwt token on query
@@ -53,7 +53,7 @@ const Logging = () => {
 				'Authorization': 'bearer ' + token,
 			},
 		}
-		fetch(`http://${process.env.REACT_APP_ip}:5000/auth/user`, requestOptions)
+		fetch(`${process.env.REACT_APP_BACK_IP}/auth/user`, requestOptions)
 		.then(async response=>{
 			let resp = await response.json();
 			if (response.ok){
@@ -86,7 +86,7 @@ const Logging = () => {
 				username: username,
 			})
 		}
-		fetch(`http://${process.env.REACT_APP_ip}:5000/auth/login`, requestOptions)
+		fetch(`${process.env.REACT_APP_BACK_IP}/auth/login`, requestOptions)
 		.then(async response=>{
 			const resp:any = await response.json()
 			if (response.ok){
@@ -114,7 +114,7 @@ const Logging = () => {
 				id:id
 			})
 		}
-		fetch(`http://${process.env.REACT_APP_ip}:5000/2fa/authenticate`, requestOptions)
+		fetch(`${process.env.REACT_APP_BACK_IP}/2fa/authenticate`, requestOptions)
 		.then(async response=>{
 			const resp:any = await response.json()
 			if (response.ok){
@@ -236,7 +236,7 @@ const Logging = () => {
 		<>
 			<BackgroundLogging/>
 			<div className="absolute w-screen h-screen flex flex-col justify-center items-center">
-				<form onSubmit={handleSubmit}>			
+				{/* <form onSubmit={handleSubmit}>			
 					<div className="flex flex-col mb-[40px]">
 						<label className="font-space text-slate-400 text-xs" >test-login:</label>
 						<input className="h-8 w-[260px] p-4 mb-2 font-space bg-transparent border-2 border-slate-400 hover:border-slate-200 text-md text-slate-400 placeholder:text-slate-600 rounded transition-all duration-300 ease-in-out"
@@ -254,17 +254,17 @@ const Logging = () => {
 				</form> 
 				<button 
 					className="w-[260px] m-3 h-[80px] sm:h-[64px] bg-transparent border-2 border-slate-400 hover:border-slate-200 text-md text-slate-400 hover:text-slate-200 font-space rounded transition-all duration-700 ease-in-out"
-					onClick={event =>  window.location.href=urlIntra.toString()}> {/*on click redirect to backend auth/login*/}
+					onClick={event =>  window.location.href=urlIntra.toString()}>
 						42 account
-				</button>
+				</button> */}
 				<button 
 					className="w-[260px] m-3 h-[80px] sm:h-[64px] bg-transparent border-2 border-slate-400 hover:border-slate-200 text-md text-slate-400 hover:text-slate-200 font-space rounded transition-all duration-700 ease-in-out"
-					onClick={event =>  window.location.href=urlGoogle.toString()}> {/*on click redirect to backend auth/login*/}
+					onClick={event =>  window.location.href=urlGoogle.toString()}>
 						Google account
 				</button>
 				<button 
 					className="w-[260px] m-3 h-[80px] sm:h-[64px] bg-transparent border-2 border-slate-400 hover:border-slate-200 text-md text-slate-400 hover:text-slate-200 font-space rounded transition-all duration-700 ease-in-out"
-					onClick={event =>  window.location.href=urlDiscord.toString()}> {/*on click redirect to backend auth/login*/}
+					onClick={event =>  window.location.href=urlDiscord.toString()}>
 						Discord account
 				</button>
 				<Popup open={popup.open} contentStyle={{position:'absolute', bottom:0, left:0}}>

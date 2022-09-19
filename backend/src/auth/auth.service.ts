@@ -35,7 +35,7 @@ export class AuthService {
 		user.username = username;
 		user.lvl = 0;
 		user.testID = s4()
-		user.profilPic = `http://${process.env.REACT_APP_ip}:5000/users/image/default.png`;
+		user.profilPic = `${process.env.REACT_APP_BACK_IP}/users/image/default.png`;
 		return this.repository.save(user);
 	}
 
