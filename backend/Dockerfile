@@ -18,7 +18,7 @@ RUN npm run build
 ADD . /uploads/profilpic
 
 # Expost port
-EXPOSE 5000
+EXPOSE 80
 
 # Launch server
 CMD ["node", "dist/main"]
