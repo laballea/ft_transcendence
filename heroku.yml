@@ -7,5 +7,5 @@ build:
     web: frontend/Dockerfile
     api: backend/Dockerfile
 run:
-  web: npx serve -s /user/src/app/build
+  # web: npx serve -s /user/src/app/build
   api: npm run start:prod

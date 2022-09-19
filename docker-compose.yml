@@ -6,29 +6,29 @@ services:
           context: ./frontend
       env_file:
           - .env
-      depends_on: 
-          - api
+    #   depends_on: 
+    #       - api
       ports:
           - "3000:3000"
       volumes:
           - ./frontend:/app/frontend
 
-    api:
-        build:
-            dockerfile: Dockerfile
-            context: ./backend
-        # depends_on: 
-        #     - postgres
-        env_file:
-          - .env
-        environment:
-            NODE_ENV: development
-            PORT: 5000
-        volumes:
-          - "./backend/app/profil_pic/:/user/src/app/uploads/profilpic"
-          - ./backend:/app/backend
-        ports:
-            - "5000:5000"
+    # api:
+    #     build:
+    #         dockerfile: Dockerfile
+    #         context: ./backend
+    #     # depends_on: 
+    #     #     - postgres
+    #     env_file:
+    #       - .env
+    #     environment:
+    #         NODE_ENV: development
+    #         PORT: 5000
+    #     volumes:
+    #       - "./backend/app/profil_pic/:/user/src/app/uploads/profilpic"
+    #       - ./backend:/app/backend
+    #     ports:
+    #         - "5000:5000"
 
 #     postgres:
 #         image: postgres:10.4
