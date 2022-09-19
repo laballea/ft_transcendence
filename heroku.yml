@@ -13,5 +13,8 @@ setup:
       SECRET_KEY: pRJ2SH4h0bYv4KDsiQ2Gt55qe3O75aXL
 build:
   docker:
-    front: frontend/Dockerfile
-    back: backend/Dockerfile
+    web: frontend/Dockerfile
+    worker: backend/Dockerfile
+run:
+  web: npx serve -s build
+  worker: npm run start:prod
