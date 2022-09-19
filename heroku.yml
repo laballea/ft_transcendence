@@ -16,5 +16,5 @@ build:
     web: frontend/Dockerfile
     worker: backend/Dockerfile
 run:
-  web: npx serve -s build
+  web: npx serve -s /user/src/app/build
   worker: npm run start:prod
