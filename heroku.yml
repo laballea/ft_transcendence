@@ -4,8 +4,7 @@ setup:
       as: DATABASE
 build:
   docker:
-    web: frontend/Dockerfile
+    # web: frontend/Dockerfile
     api: backend/Dockerfile
 run:
-  # web: npx serve -s /user/src/app/build
   api: npm run start:prod

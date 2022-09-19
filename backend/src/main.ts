@@ -18,6 +18,6 @@ async function bootstrap() {
 	  resave: false,
 	  saveUninitialized: false,
 	}));
-  await app.listen(80);
+  await app.listen(443);
 }
 bootstrap();
