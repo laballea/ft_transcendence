@@ -236,7 +236,7 @@ const Logging = () => {
 		<>
 			<BackgroundLogging/>
 			<div className="absolute w-screen h-screen flex flex-col justify-center items-center">
-				<form onSubmit={handleSubmit}>			
+				{/* <form onSubmit={handleSubmit}>			
 					<div className="flex flex-col mb-[40px]">
 						<label className="font-space text-slate-400 text-xs" >test-login:</label>
 						<input className="h-8 w-[260px] p-4 mb-2 font-space bg-transparent border-2 border-slate-400 hover:border-slate-200 text-md text-slate-400 placeholder:text-slate-600 rounded transition-all duration-300 ease-in-out"
@@ -256,7 +256,7 @@ const Logging = () => {
 					className="w-[260px] m-3 h-[80px] sm:h-[64px] bg-transparent border-2 border-slate-400 hover:border-slate-200 text-md text-slate-400 hover:text-slate-200 font-space rounded transition-all duration-700 ease-in-out"
 					onClick={event =>  window.location.href=urlIntra.toString()}>
 						42 account
-				</button>
+				</button> */}
 				<button 
 					className="w-[260px] m-3 h-[80px] sm:h-[64px] bg-transparent border-2 border-slate-400 hover:border-slate-200 text-md text-slate-400 hover:text-slate-200 font-space rounded transition-all duration-700 ease-in-out"
 					onClick={event =>  window.location.href=urlGoogle.toString()}>
