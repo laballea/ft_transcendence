@@ -16,6 +16,10 @@ COPY . .
 EXPOSE 3000
 
 # Launch server
-# CMD ["npm", "i", "--global", "serve"]
+
+# for production
 CMD ["npm", "build"]
 CMD ["npx", "serve", "-s", "/user/src/app/build"]
+
+# for developpement
+# CMD ["npm", "start"]
