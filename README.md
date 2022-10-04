@@ -6,21 +6,25 @@
 ft_transcendence
 ===============
 
-### Techonology
-Main language is Typescript
+## Techonologies
 
-## Backend
+
+### Backend
 	- Nestjs
 	- Postgres
 	- TypeOrm
 	
-## Frontend
+### Frontend
 	- React
+	- Tailwind.css
 	
-### Heroku
+### Deployment
 Project accessible at: https://frontend-transcendence.herokuapp.com/
 
-### Contact
-laballea@student.42.fr
-qgimenez@student.42.fr
+## Contacts
+laballea@student.42.fr 
+qgimenez@student.42.fr 
 cmeunier@student.42.fr 
+
+## Preview
+![](github/previews/screenshot_ft_trans_1.png)
