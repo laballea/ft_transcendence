@@ -28,3 +28,7 @@ cmeunier@student.42.fr
 
 ## Preview
 ![](github/previews/screenshot_ft_trans_1.png)
+![](github/previews/screenshot_ft_trans_0.png)
+![](github/previews/screenshot_ft_trans_3.png)
+![](github/previews/screenshot_ft_trans_2.png)
+![](github/previews/screenshot_ft_trans_4.png)
